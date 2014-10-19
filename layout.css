@@ -1,0 +1,207 @@
+.novel-container {
+	position: relative;
+}
+
+.unSelectable {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.novel {
+
+	position: absolute;
+	top: 0px;
+	left: 0px;
+
+	overflow: hidden;
+
+	font-family: arial;
+}
+
+#screen-start {
+
+}
+
+#startMenuButtonContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	padding: 10px;
+
+	background-color: rgba( 0, 0, 0, 0.5 );
+}
+
+.startMenuButton {
+
+	padding: 5px 10px;
+
+	border: none;
+
+	background-color: transparent;
+
+	color: rgba( 255, 255, 255, 0.8 );
+	font-size: 50px;
+	font-weight: bold;
+
+}
+
+.startMenuButton:hover {
+
+	color: white;
+	background-color: rgba( 0, 0, 0, 0.8 );
+
+}
+
+#screen-bg {
+	
+}
+
+#screen-scene {
+	
+}
+
+#screen-character {
+	
+}
+
+#dialog-menu {
+	
+}
+
+#dialogMenuChoiceContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	padding: 10px;
+
+	background-color: white;
+
+	border: 10px solid lightblue;
+	border-radius: 5px;
+}
+
+#dialogMenuChoiceButtonsContainer {
+	float: left;
+}
+
+#dialogMenuChoiceImageContainer {
+	float: left;
+}
+
+.dialogMenuChoiceButton {
+
+	width: 100%;
+
+	border: none;
+
+	background-color: white;
+
+	color: black;
+	font-weight: bold;
+	font-size: 15px;
+	text-align: left;
+
+}
+
+.dialogMenuChoiceButton:hover {
+
+	background-color: black;
+	color: white;
+
+}
+
+#dialog-dialogmode {
+	padding: 10px;
+}
+
+#dialog-novelmode {
+	padding: 10px;
+}
+
+#dialogName {
+	color: blue;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+#dialogText {
+	color: rgba( 0, 0, 0, 0.8 );
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#dialogButton {
+	position: absolute;
+	top: 100px;
+	left: 650px;
+
+	padding: 5px;
+
+	border: none;
+
+	background-color: transparent;
+
+	color: black;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+#dialogButton:hover {
+	color: white;
+	background-color: black;
+}
+
+#userInputContainer {
+	width: 300px;
+
+	margin: 100px auto;
+	padding: 10px;
+
+	border: 10px solid lightblue;
+	border-radius: 5px;
+
+	background-color: ivory;
+}
+
+#userInputMessage {
+	color: black;
+	font-size: 15px;
+
+	text-align: center;
+}
+
+#userInput {
+	width: 200px;
+
+	margin: 0 50px;
+
+	color: orange;
+	font-size: 15px;
+
+	border: none;
+	border-bottom: 1px solid gray;
+
+	background-color: transparent;
+}
+
+#userInputButton {
+	padding: 10px;
+	
+	font-size: 15px;
+	font-weight: bold;
+
+	border: none;
+
+	background-color: transparent;
+}
+
+#userInputButton:hover {
+	color: white;
+	background-color: black;
+}
