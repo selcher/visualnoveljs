@@ -22,16 +22,38 @@
 	font-family: arial;
 }
 
-#screen-start {
+.novelTitleContainer {
+
+	position: absolute;
+
+	padding: 20px;
+
+	background-color: #000;
+	color: rgba( 255, 255, 255, 0.7 );
+	text-shadow: 0px 0px 20px rgba( 255, 255, 255, 0.5 );
 
 }
 
-#startMenuButtonContainer {
+.novelTitleText {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.novelSubtitleText {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.screen-start {
+	border: 0px solid black;
+}
+
+.startMenuButtonContainer {
 	position: absolute;
 	top: 0;
 	left: 0;
 
-	padding: 10px;
+	padding: 0px;
 
 	background-color: rgba( 0, 0, 0, 0.5 );
 }
@@ -44,36 +66,38 @@
 
 	background-color: transparent;
 
-	color: rgba( 255, 255, 255, 0.8 );
+	color: rgba( 255, 255, 255, 0.5 );
 	font-size: 50px;
 	font-weight: bold;
+	text-shadow: 0px 0px 2px rgba( 255, 255, 255, 0.5 );
 
 }
 
 .startMenuButton:hover {
 
-	color: white;
-	background-color: rgba( 0, 0, 0, 0.8 );
+	background-color: white;
+	color: black;
+	text-shadow: 0px 0px 5px rgba( 0, 0, 0, 0.8 );
 
 }
 
-#screen-bg {
+.screen-bg {
 	
 }
 
-#screen-scene {
+.screen-scene {
 	
 }
 
-#screen-character {
+.screen-character {
 	
 }
 
-#dialog-menu {
+.dialog-menu {
 	
 }
 
-#dialogMenuChoiceContainer {
+.dialogMenuChoiceContainer {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -86,11 +110,11 @@
 	border-radius: 5px;
 }
 
-#dialogMenuChoiceButtonsContainer {
+.dialogMenuChoiceButtonsContainer {
 	float: left;
 }
 
-#dialogMenuChoiceImageContainer {
+.dialogMenuChoiceImageContainer {
 	float: left;
 }
 
@@ -116,29 +140,30 @@
 
 }
 
-#dialog-dialogmode {
+.dialog-dialogmode {
 	padding: 10px;
 }
 
-#dialog-novelmode {
+.dialog-novelmode {
 	padding: 10px;
 }
 
-#dialogName {
+.dialogName {
 	color: blue;
 	font-size: 25px;
 	font-weight: bold;
 }
 
-#dialogText {
-	color: rgba( 0, 0, 0, 0.8 );
+.dialogText {
+	padding: 10px 20px;
+	
 	font-size: 18px;
 	font-weight: bold;
 }
 
-#dialogButton {
+.dialogButton {
 	position: absolute;
-	top: 100px;
+	bottom: 10px;
 	left: 650px;
 
 	padding: 5px;
@@ -152,12 +177,12 @@
 	font-size: 15px;
 }
 
-#dialogButton:hover {
+.dialogButton:hover {
 	color: white;
 	background-color: black;
 }
 
-#userInputContainer {
+.userInputContainer {
 	width: 300px;
 
 	margin: 100px auto;
@@ -169,14 +194,14 @@
 	background-color: ivory;
 }
 
-#userInputMessage {
+.userInputMessage {
 	color: black;
 	font-size: 15px;
 
 	text-align: center;
 }
 
-#userInput {
+.userInputText {
 	width: 200px;
 
 	margin: 0 50px;
@@ -190,7 +215,7 @@
 	background-color: transparent;
 }
 
-#userInputButton {
+.userInputButton {
 	padding: 10px;
 	
 	font-size: 15px;
@@ -201,7 +226,7 @@
 	background-color: transparent;
 }
 
-#userInputButton:hover {
+.userInputButton:hover {
 	color: white;
 	background-color: black;
 }
