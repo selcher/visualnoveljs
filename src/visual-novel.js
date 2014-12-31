@@ -130,7 +130,67 @@ function VisualNovel( id, width, height, imgPath ) {
 
 		// TODO : refactor calculations
 
-		this.init( id );
+		this.templates = {
+
+			'novelcontainer' : [
+				"<div class='novel-container unSelectable'>",
+					"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
+					"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
+					"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
+					"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
+					"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
+					"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
+					"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
+					"<div id='{novelId}-images' style='display:none;'></div>",
+				"</div>"
+			],
+			'startmenu' : [
+				"<div id='{novelId}-novelTitleContainer' class='novelTitleContainer'>",
+					"<div id='{novelId}-novelTitleText' class='novelTitleText'>{novelTitle}</div>",
+					"<div id='{novelId}-novelSubtitleText' class='novelSubtitleText'>{novelSubtitle}</div>",
+				"</div>",
+				"<div id='{novelId}-startMenuButtonContainer' class='startMenuButtonContainer'>",
+					"<button id='{novelId}-startMenuButton' class='startMenuButton' >",
+					"START</button>",
+				"</div>"
+			],
+			'say' : [
+				"<if={showDialogImage}><img id='{novelId}-dialog-dialogImage' src='{dialogImage}' style='{dialogImageStyle}' /></if>",
+				"<div id='{novelId}-dialog-dialogName' class='dialogName' style='{dialogNameStyle}'>{name}</div>",
+				"<div id='{novelId}-dialog-dialogText' class='dialogText'>{dialogLine}</div>",
+				"<if={showButtonText}><button id='{novelId}-dialog-dialogButton' class='dialogButton' >{dialogButtonText}</button></if>",
+				"<if={showButtonImage}><img id='{novelId}-dialog-dialogButton' class='dialogButton' src='{dialogButtonImage}' style='{dialogButtonImageStyle}' /></if>"
+			],
+			'userinput' : [
+				"<div id='userInputContainer' class='userInputContainer'>",
+					"<div id='userInputMessage' class='userInputMessage'>{message}</div><hr/><br/>",
+					"<input id='{novelId}-userInputText' class='userInputText' type='text' /><br/><br/>",
+					"<input type='button' id='{novelId}-userInputButton' class='userInputButton' value='OK' />",
+				"</div>"
+			],
+
+			// For choice menu:
+			// 1. build choice buttons
+			// 2. build choice image
+			// 3. insert buttons and image to menu container
+			'menuchoice' : [
+				"<div id='{novelId}-dialogMenuChoiceContainer' class='dialogMenuChoiceContainer'>",
+					"<div id='{novelId}-dialogMenuChoiceButtonsContainer' class='dialogMenuChoiceButtonsContainer'>",
+						"<foreach={choice in choices}>",
+							"<button class='dialogMenuChoiceButton' id='{novelId}-dialogMenuChoiceButton{index}' >",
+								"{choice.label}",
+							"</button><br/>",
+						"</foreach>",
+					"</div>",
+					"<div id='{novelId}-dialogMenuChoiceImageContainer' class='dialogMenuChoiceImageContainer'>",
+						"<if={imgPath}><img src='{imgPath}' style='width:{imgWidth}px;height:{imgHeight}px;' /></if>",
+					"</div>",
+				"</div>"
+			]
+
+		};
+
+		// this.init( id );
 
 		return this;
 
@@ -152,11 +212,13 @@ function VisualNovel( id, width, height, imgPath ) {
  */
 VisualNovel.prototype.init = function init( novelId ) {
 
+	var id = typeof novelId === 'undefined' ? this.novelId : novelId;
+
 	this.initObjects();
 
-	this.initContainers( novelId );
+	this.initContainers( id );
 
-	this.initScreenStart( novelId );
+	this.initScreenStart( id );
 
 };
 
@@ -170,6 +232,7 @@ VisualNovel.prototype.initObjects = function initObjects() {
 	this.util = new Util();
 	this.parser = new Parser();
 	this.eventTracker = new EventTracker();
+	this.templates = new TemplateFactory( this.templates );
 
 };
 
@@ -417,26 +480,40 @@ VisualNovel.prototype.initNovelContainer = function initNovelContainer( novelId 
 
 	this.novelContainerId = document.getElementById( novelId );
 
-	this.buildNovelContainer( novelId );
+	var content = this.buildNovelContainerContent( novelId );
+	this.setNovelContainerContent( content );
 	this.updateNovelContainerReference( novelId );
-	this.setNovelContainerSize( this.screenWidth, this.screenHeight, novelId );
+	this.setNovelContainerSize( this.screenWidth, this.screenHeight );
 
 };
 
 /**
  * Function: buildNovelContainer
  *
- * Build the html container for the novel
+ * Build the html content for the novel container
  *
  * @param novelId = id of visual novel div, and instance reference
  */
-VisualNovel.prototype.buildNovelContainer = function buildNovelContainer( novelId ) {
+VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerContent( novelId ) {
 
-	var novelContainer = TemplateFactory( "novelcontainer" );
+	var novelContainer = this.templates.get( "novelcontainer" );
 
 	novelContainer = this.parser.parseTemplate( novelContainer, { novelId : novelId } );
 
-	this.novelContainerId.innerHTML = novelContainer;
+	return novelContainer;
+
+};
+
+/**
+ * Function: setNovelContainerContent
+ *
+ * Set the html content of the novel container
+ *
+ * @param content = content of the novel container
+ */
+VisualNovel.prototype.setNovelContainerContent = function setNovelContainerContent( content ) {
+
+	this.novelContainerId.innerHTML = content;
 
 };
 
@@ -467,8 +544,8 @@ VisualNovel.prototype.updateNovelContainerReference = function updateNovelContai
  *
  * Set the size of the main novel container, and the containers inside
  *
- * @param width
- * @param height
+ * @param width = new width
+ * @param height = new height
  */
 VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( width, height ) {
 
@@ -476,8 +553,8 @@ VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( wi
 
 	var novelContainer = this.novelContainerId;
 	var containers = novelContainer ? novelContainer.getElementsByClassName( "novel" ) : [];
-	var newStyle = ";overflow:hidden;width:" + this.screenWidth +
-		"px;height:" + this.screenHeight + "px;";
+	var newStyle = ";overflow:hidden;width:" + width +
+		"px;height:" + height + "px;";
 	
 	// novel container
 	novelContainer.style.cssText += newStyle;
@@ -561,7 +638,7 @@ VisualNovel.prototype.buildStartMenu = function builStartMenu( novelId ) {
 
 	var screenStart = this.screenStartId;
 
-	var startMenuTemplate = TemplateFactory( "startmenu" );
+	var startMenuTemplate = this.templates.get( "startmenu" );
 	var parseVariables = {
 		novelId : novelId,
 		novelTitle : this.novelTitle,
@@ -656,6 +733,11 @@ VisualNovel.prototype.setStartScreenMenuPos = function setStartScreenMenuPos( x,
 
 
 
+/**
+ * Function: initSceneContainer
+ *
+ * Initialize the container for the scenes
+ */
 VisualNovel.prototype.initSceneContainer = function initSceneContainer() {
 
 	// TODO : needs refactoring
@@ -668,6 +750,15 @@ VisualNovel.prototype.initSceneContainer = function initSceneContainer() {
 
 };
 
+/**
+ * Function: createSceneContainer
+ *
+ * Create the container for the scenes
+ *
+ * @param element = dom container for scenes
+ * @param width = width of container
+ * @param height = height of container
+ */
 VisualNovel.prototype.createSceneContainer = function createSceneContainer( element, width, height ) {
 
 	// build scene container
@@ -699,6 +790,19 @@ VisualNovel.prototype.rotateScene = function rotateScene( axis, angle, speed, lo
 	function eventToAdd() {
 		
 		self.sceneFloor.rotate( axis, angle, speed, loop );
+	
+	}
+
+	this.eventTracker.addEvent( "nowait", eventToAdd );
+};
+
+VisualNovel.prototype.moveScene = function moveScene( x, y, z, speed ) {
+
+	var self = this;
+
+	function eventToAdd() {
+		
+		self.sceneFloor.move( x, y, z, speed );
 	
 	}
 
@@ -841,7 +945,7 @@ VisualNovel.prototype.setDialogTextColor = function setDialogTextColor( color ) 
 	// TODO: refactor
 	// move to say dialog
 	// also add to set color of name in dialog
-	this.dialogModeId.style[ "color" ] = color ? color : "white";
+	this.dialogModeId.style.color = color ? color : "white";
 
 };
 
@@ -893,10 +997,10 @@ VisualNovel.prototype.updateDialogButtonPosition = function updateDialogButtonPo
 	var characterObject = typeof character == "object" ? true : false;
 	var dialogButton = characterObject && character.dialog && character.dialog.button ?
 		character.dialog.button : null;
-	var updateDialogButtonPosition = dialogButton && dialogButton.width;
+	var updateButtonPosition = dialogButton && dialogButton.width;
 	
 	// Update button position based on image width
-	if ( updateDialogButtonPosition ) {
+	if ( updateButtonPosition ) {
 
 		var dialogPadding = this.dialogPadding;
 
@@ -1061,7 +1165,7 @@ VisualNovel.prototype.initBGContainer = function initBGContainer() {
 
 };
 
-VisualNovel.prototype.setBgImage = function setBgImage( bgImg, width, height, repeat ) {
+VisualNovel.prototype.setBgImage = function setBgImage( bgImg, width, height, repeat, widthSize, heightSize ) {
 
 	var self = this;
 
@@ -1071,7 +1175,15 @@ VisualNovel.prototype.setBgImage = function setBgImage( bgImg, width, height, re
 
 		// TODO : check how Sprite3D updates css...
 		screenBg.setPosition( 0, 0, 0 ).setSize( width, height ).setCSS(
-			"background-image", "url('" + self.imgPath + bgImg + "')" ).update();
+			"background-image", "url('" + self.imgPath + bgImg + "')" );
+
+		if ( widthSize && heightSize ) {
+
+			screenBg.setCSS( "background-size", widthSize + "px " + heightSize + "px" );
+
+		}
+
+		screenBg.update();
 
 	}
 
@@ -1288,7 +1400,7 @@ VisualNovel.prototype.rotateBg = function rotateBg( axis, angle, speed, loop, sp
 
 };
 
-VisualNovel.prototype.rotateBgTo = function rotateBg( axis, angle, speed, loop, sprite ) {
+VisualNovel.prototype.rotateBgTo = function rotateBgTo( axis, angle, speed, loop, sprite ) {
 
 	// Test : Rotate bg to
 	// vn.rotateBgTo( "z", -45, 25 );
@@ -1317,7 +1429,7 @@ VisualNovel.prototype.stopRotateBg = function stopRotateBg( delay ) {
 
 	function eventToAdd() {
 
-		window.clearInterval( self.screenBgId.timer[ "rotate" ] );
+		window.clearInterval( self.screenBgId.timer.rotate );
 
 	}
 
@@ -1356,7 +1468,7 @@ VisualNovel.prototype.resetBg = function resetBg( action, delay ) {
 		var screenBg = self.screenBgId;
 
 		if ( action == "rotate" ) {
-			window.clearInterval( screenBg.timer[ "rotate" ] );
+			window.clearInterval( screenBg.timer.rotate );
 			screenBg.setRotation( 0, 0, 0 ).update();
 		}
 
@@ -1392,7 +1504,7 @@ VisualNovel.prototype.resetBg = function resetBg( action, delay ) {
 
 
 
-VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, imageInfo, position, delay, fade, fadeSpeed ) {
+VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, bgInfo, position, delay, fade, fadeSpeed ) {
 
 	var self = this;
 
@@ -1400,8 +1512,8 @@ VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, imageI
 
 		// container parallel to floor
 		// x & y = 0 ~ 1
-		var width = imageInfo.width;
-		var height = imageInfo.height;
+		var width = bgInfo.width;
+		var height = bgInfo.height;
 		var pos = self.util.scalePosition(
 				{ x : position.x, y : position.y, z : position.z },
 				{ x : self.sceneFloorWidth, y : -self.sceneFloorHeight, z : self.sceneFloorHeight }
@@ -1409,7 +1521,8 @@ VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, imageI
 
 		var sceneObject = ObjectFactory( "SceneObject", width, height, pos );
 
-		sceneObject.setBackground( width, height, self.imgPath + imageInfo.path );
+		sceneObject.setBackground( width, height, 
+			bgInfo.path ? self.imgPath + bgInfo.path : "", bgInfo.color );
 
 		if ( fade ) {
 
@@ -1422,7 +1535,7 @@ VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, imageI
 		
 		// Add scene object to floor and store in scenes list
 		self.sceneFloor.sprite.addChild( sceneObject.sprite );
-		self.scenes[ "object" ].push( sceneObject );
+		self.scenes.object.push( sceneObject );
 
 	}
 
@@ -1436,20 +1549,30 @@ VisualNovel.prototype.moveSceneObject = function moveSceneObject( name, x, y, z,
 
 	function eventToAdd() {
 
-		var util = self.util;
-		var sceneObjectInfo = util.getObjectInList( self.scenes[ "object" ], "name", name );
-		var sceneObject = sceneObjectInfo.obj;
-		var sprite = sceneObject.sprite;
-		var newPos = util.scalePosition(
-				{ x : x ? x : sprite.x, y : y ? y : sprite.y, z : z ? z : sprite.z },
-				{ x : self.screenWidth, y : self.screenHeight, z : self.screenHeight }
-			);
-
-		sceneObject.move( newPos.x, newPos.y, newPos.z, moveSpeed );
+		self.setSceneObjectPosition( name, x, y, z, moveSpeed );
 
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd, delay ? delay : 0 );
+
+};
+
+VisualNovel.prototype.setSceneObjectPosition = function setSceneObjectPosition( name, x, y, z, moveSpeed ) {
+
+	var util = this.util;
+	var sceneObjectInfo = util.getObjectInList( this.scenes.object, "name", name );
+	var sceneObject = sceneObjectInfo.obj;
+	var sprite = sceneObject.sprite;
+	var newPos = util.scalePosition(
+			{ x : x ? x : sprite.x, y : y ? y : sprite.y, z : z ? z : sprite.z },
+			{ x : this.screenWidth, y : this.screenHeight, z : this.screenHeight }
+		);
+
+	if ( moveSpeed ) {
+		sceneObject.move( newPos.x, newPos.y, newPos.z, moveSpeed );
+	} else {
+		sceneObject.moveTo( newPos.x, newPos.y, newPos.z );
+	}
 
 };
 
@@ -1459,14 +1582,28 @@ VisualNovel.prototype.rotateSceneObject = function rotateSceneObject( name, axis
 
 	function eventToAdd() {
 
-		var sceneObjectInfo = self.util.getObjectInList( self.scenes[ "object" ], "name", name );
-		var sceneObject = sceneObjectInfo.obj;
-
-		sceneObject.rotate( axis, angle, speed, loop );
+		self.setSceneObjectRotation( name, axis, angle, speed, loop );
 
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd );
+
+};
+
+VisualNovel.prototype.setSceneObjectRotation = function setSceneObjectRotation( name, axis, angle, speed, loop ) {
+
+	var sceneObjectInfo = this.util.getObjectInList( this.scenes.object, "name", name );
+	var sceneObject = sceneObjectInfo.obj;
+
+	if ( loop ) {
+		
+		sceneObject.rotate( axis, angle, speed, loop );
+	
+	} else {
+
+		sceneObject.rotateTo( axis, angle, speed );
+
+	}
 
 };
 
@@ -1476,21 +1613,36 @@ VisualNovel.prototype.fadeSceneObject = function fadeSceneObject( name, type, fa
 
 	function eventToAdd() {
 
-		var sceneObjectInfo = self.util.getObjectInList( self.scenes[ "object" ], "name", name );
-		var sceneObject = sceneObjectInfo.obj;
-		var fadeType = typeof type === "string" ? type.toLowerCase() : "";
-
-		if ( fadeType === "in" ) {
-			sceneObject.fadeIn( fadeSpeed );
-		}
-
-		if ( fadeType === "out" ) {
-			sceneObject.fadeOut( fadeSpeed );
-		}
+		self.setSceneObjectFade( name, type, fadeSpeed );
 
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd );
+
+};
+
+VisualNovel.prototype.setSceneObjectFade = function setSceneObjectFade( name, type, fadeSpeed ) {
+
+	var sceneObjectInfo = this.util.getObjectInList( this.scenes.object, "name", name );
+	var sceneObject = sceneObjectInfo.obj;
+	var fadeType = typeof type === "string" ? type.toLowerCase() : "";
+
+	if ( fadeType === "in" ) {
+		sceneObject.fadeIn( fadeSpeed );
+	}
+
+	if ( fadeType === "out" ) {
+		sceneObject.fadeOut( fadeSpeed );
+	}
+
+};
+
+VisualNovel.prototype.setSceneObjectStyle = function setSceneObjectStyle( name, style ) {
+
+	var sceneObjectInfo = this.util.getObjectInList( this.scenes.object, "name", name );
+	var sceneObject = sceneObjectInfo.obj;
+
+	sceneObject.sprite.children[0].style.cssText += style;
 
 };
 
@@ -1502,7 +1654,7 @@ VisualNovel.prototype.resetSceneObject = function resetSceneObject( name, action
 
 	function eventToAdd() {
 
-		var sceneObjectInfo = self.util.getObjectInList( self.scenes[ "object" ], "name", name );
+		var sceneObjectInfo = self.util.getObjectInList( self.scenes.object, "name", name );
 		var sceneObject = sceneObjectInfo.obj;
 
 		// sceneObject.sprite => container
@@ -1534,11 +1686,11 @@ VisualNovel.prototype.removeSceneObject = function removeSceneObject( name ) {
 
 	function eventToAdd() {
 
-		var sceneObjectInfo = self.util.getObjectInList( self.scenes[ "object" ], "name", name );
+		var sceneObjectInfo = self.util.getObjectInList( self.scenes.object, "name", name );
 		var sceneIndex = sceneObjectInfo.id;
 
 		self.sceneFloor.sprite.removeChildAt( sceneIndex );
-		self.scenes[ "object" ].splice( sceneIndex, 1 );
+		self.scenes.object.splice( sceneIndex, 1 );
 
 	}
 
@@ -1609,7 +1761,7 @@ VisualNovel.prototype.addTextToScene = function addTextToScene( name, text, info
 		
 		// Add scene object to floor and store in scenes list
 		self.sceneFloor.sprite.addChild( sceneObject.sprite );
-		self.scenes[ "object" ].push( sceneObject );
+		self.scenes.object.push( sceneObject );
 
 	}
 
@@ -1621,6 +1773,18 @@ VisualNovel.prototype.addTextToScene = function addTextToScene( name, text, info
 VisualNovel.prototype.fadeSceneText = function fadeSceneText( name, type, fadeSpeed ) {
 
 	this.fadeSceneObject( name, type, fadeSpeed );
+
+};
+
+VisualNovel.prototype.moveSceneText = function moveSceneText( name, x, y, z, moveSpeed, delay ) {
+
+	this.moveSceneObject( name, x, y, z, moveSpeed, delay );
+
+};
+
+VisualNovel.prototype.rotateSceneText = function rotateSceneText( name, axis, angle, speed, loop ) {
+
+	this.rotateSceneObject( name, axis, angle, speed, loop );
 
 };
 
@@ -1678,6 +1842,23 @@ VisualNovel.prototype.fadeCharacter = function fadeCharacter( character, type, s
 			characterObject.fadeOut( speed, from, to );
 
 		}
+	}
+
+	this.eventTracker.addEvent( "nowait", eventToAdd );
+
+};
+
+VisualNovel.prototype.flipCharacter = function flipCharacter( character ) {
+
+	var self = this;
+
+	function eventToAdd() {
+
+		var characterObject = self.getCharacter( character.name );
+		var sprite = characterObject.sprite;
+		var newScale = sprite.scaleX > 0 ? -1 : 1;
+		
+		sprite.setScaleX( newScale ).update();
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd );
@@ -1777,9 +1958,26 @@ VisualNovel.prototype.getCharacterImage = function getCharacterImage( character,
 
 		}
 
+		if ( typeof charImage === "object" ) {
+
+			charImage = {
+				src : imgPath + charImage.src,
+				position : charImage.position
+			};
+
+		} else {
+
+			charImage = imgPath + charImage;
+
+		}
+
+	} else if ( charImage ) {
+
+		charImage = imgPath + charImage;
+
 	}
 
-	return imgPath + charImage;
+	return charImage;
 
 };
 
@@ -1800,9 +1998,20 @@ VisualNovel.prototype.changeCharacterImage = function changeCharacterImage( char
 VisualNovel.prototype.setCharacterImage = function setCharacterImage( character, type ) {
 
 	var characterObject = this.getCharacter( character.name );
+	var characterImage = this.getCharacterImage( character, type );
 
-	characterObject.sprite.setCSS( "background-image", 
-		"url('" + this.getCharacterImage( character, type ) + "')" );
+	if ( typeof characterImage === "object" ) {
+
+		characterObject.sprite.setCSS( "background-image", 
+			"url('" + characterImage.src + "')" );
+		characterObject.sprite.setCSS( "background-position", characterImage.position );
+
+	} else {
+
+		characterObject.sprite.setCSS( "background-image", 
+			"url('" + characterImage + "')" );
+	
+	}
 
 };
 
@@ -1972,7 +2181,7 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 		// 0 = line, 1 = delay, 2 = include previous lines flag
 		if ( typeof l[ l.length -1 ] === "boolean" ) {
 
-			if ( l[ 1 ] == 0 ) {
+			if ( l[ 1 ] === 0 ) {
 
 				// delay is 0, so sayLine to show OK button
 				// including previous lines
@@ -2060,7 +2269,7 @@ VisualNovel.prototype.getSayTemplate = function getSayTemplate( character, line,
 	var templateVariables = this.getSayTemplateVariables( character, line, delay );
 
 	// get template
-	var sayTemplate = TemplateFactory( "say" );
+	var sayTemplate = this.templates.get( "say" );
 	sayTemplate = this.parser.parseTemplate( sayTemplate, templateVariables );
 
 	// debug
@@ -2074,72 +2283,76 @@ VisualNovel.prototype.getSayTemplate = function getSayTemplate( character, line,
 VisualNovel.prototype.getSayTemplateVariables = function getSayTemplateVariables( character, line, delay ) {
 
 	var name = typeof character === "object" ? character.name : character;
+	var dialogNameStyle = typeof character === "object" ? character.nameStyle : "";
 	var dialogLine = this.util.replaceVariablesInText( line, this.userInput );
 
 	var characterDialogSettings = character.dialog;
 	var dialogSettings = characterDialogSettings ? true : false;
 
+	var dialogImage = "";
+	var dialogImageWidth = "";
+	var dialogImageHeight = "";
+	var dialogImageLocation = "";
+	var dialogImageBorder = "";
+
+	var showButtonText = delay ? false : true;
+	var dialogButtonText = "OK";
+
+	var showButtonImage = false;
+	var dialogButtonImage = "";
+	var dialogButtonImageWidth = "";
+	var dialogButtonImageHeight = "";
+
 	if ( dialogSettings ) {
 
-		var dialogImage = characterDialogSettings.image ?
+		dialogImage = characterDialogSettings.image ?
 			this.imgPath + characterDialogSettings.image : "";
-		var dialogImageWidth = characterDialogSettings.width ?
+		dialogImageWidth = characterDialogSettings.width ?
 			"width:" + characterDialogSettings.width + "px;" : "";
-		var dialogImageHeight = characterDialogSettings.height ?
+		dialogImageHeight = characterDialogSettings.height ?
 			"height:" + characterDialogSettings.height + "px;" : "";
-		var dialogImageLocation = characterDialogSettings.location ?
+		dialogImageLocation = characterDialogSettings.location ?
 				"float:" + characterDialogSettings.location + ";" : "";
-		var dialogImageBorder = dialogImageLocation ? 
+		dialogImageBorder = dialogImageLocation ? 
 			( dialogImageLocation == "left" ? "margin-right:10px;" : "margin-left:10px;" ) :
 			"";
 		var dialogButton = characterDialogSettings.button;
+		
 		// dialogButtonImage
-		var showButtonImage = delay ? false : 
+		showButtonImage = delay ? false : 
 			dialogButton && dialogButton.image ? dialogButton.image : false;
-		var dialogButtonImage = showButtonImage ? 
+		dialogButtonImage = showButtonImage ? 
 			this.imgPath + dialogButton.image : "";
-		var dialogButtonImageWidth = showButtonImage ? 
+		dialogButtonImageWidth = showButtonImage ? 
 			"width:" + dialogButton.width + "px;" : "";
-		var dialogButtonImageHeight = showButtonImage ? 
+		dialogButtonImageHeight = showButtonImage ? 
 			"height:" + dialogButton.height + "px;" : "";
+		
 		// dialogButtonText
-		var showButtonText = delay || showButtonImage ? false :
+		showButtonText = delay || showButtonImage ? false :
 			dialogButton && dialogButton.text ? dialogButton.text : true;
-		var dialogButtonText = dialogButton && dialogButton.text ? dialogButton.text : "OK";
-
-	} else {
-
-		var dialogImage = "";
-		var dialogImageWidth = "";
-		var dialogImageHeight = "";
-		var dialogImageLocation = "";
-		var dialogImageBorder = "";
-		var showButtonText = delay ? false : true;
-		var dialogButtonText = "OK";
-		var showButtonImage = false;
-		var dialogButtonImage = "";
-		var dialogButtonImageWidth = "";
-		var dialogButtonImageHeight = "";
+		dialogButtonText = dialogButton && dialogButton.text ? dialogButton.text : "OK";
 
 	}
 
 	// TODO : build style here instead of replacing it in the template!! only style variable in template...
 	
 	var templateVariables = {
-		novelId : this.novelId,
-		name : name,
-		dialogLine : dialogLine,
+		"novelId" : this.novelId,
+		"name" : name,
+		"dialogNameStyle" : dialogNameStyle,
+		"dialogLine" : dialogLine,
 
-		showDialogImage : dialogSettings,
-		dialogImage : dialogImage,
-		dialogImageStyle : dialogImageLocation + dialogImageWidth + dialogImageHeight + dialogImageBorder,
+		"showDialogImage" : dialogSettings,
+		"dialogImage" : dialogImage,
+		"dialogImageStyle" : dialogImageLocation + dialogImageWidth + dialogImageHeight + dialogImageBorder,
 
-		showButtonText : showButtonText,
-		dialogButtonText : dialogButtonText,
+		"showButtonText" : showButtonText,
+		"dialogButtonText" : dialogButtonText,
 
-		showButtonImage : showButtonImage,
-		dialogButtonImage : dialogButtonImage,
-		dialogButtonImageStyle : dialogButtonImageWidth + dialogButtonImageHeight
+		"showButtonImage" : showButtonImage,
+		"dialogButtonImage" : dialogButtonImage,
+		"dialogButtonImageStyle" : dialogButtonImageWidth + dialogButtonImageHeight
 	};
 
 	return templateVariables;
@@ -2230,7 +2443,7 @@ VisualNovel.prototype.getUserInputTemplate = function getUserInputTemplate( mess
 	};
 
 	// get template
-	var userInputTemplate = TemplateFactory( "userinput" );
+	var userInputTemplate = this.templates.get( "userinput" );
 	userInputTemplate = this.parser.parseTemplate( userInputTemplate, toReplace );
 
 	return userInputTemplate;
@@ -2258,21 +2471,33 @@ VisualNovel.prototype.getInput = function getInput( storeInputKey ) {
 
 };
 
+VisualNovel.prototype.setInput = function setInput( key, value ) {
+
+	if ( key ) {
+
+		this.userInput[ key ] = value;
+
+	}
+
+};
+
 VisualNovel.prototype.setValue = function setValue( key, value ) {
 
 	var self = this;
 
 	function eventToAdd() {
 		
-		if ( key ) {
-
-			self.userInput[ key ] = value;
-
-		}
+		self.setInput( key, value );
 
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd );
+
+};
+
+VisualNovel.prototype.getValue = function getValue( key ) {
+
+	return this.userInput[ key ];
 
 };
 
@@ -2393,10 +2618,10 @@ VisualNovel.prototype.choice = function choice( choiceEventId, listOfChoices, me
 
 };
 
-VisualNovel.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImg ) {
+VisualNovel.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImage ) {
 
 	// Get menu choices template
-	var menuImg = menuImg ? menuImg : { image : "", width : 0, height : 0 };
+	var menuImg = menuImage ? menuImage : { image : "", width : 0, height : 0 };
 	var imgPath = this.imgPath + menuImg.image;
 	var menuChoiceTemplate = this.getMenuChoicesTemplate( listOfChoices, imgPath, 
 		menuImg.width, menuImg.height );
@@ -2417,7 +2642,7 @@ VisualNovel.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( 
 	};
 
 	// get template
-	var menuChoiceTemplate = TemplateFactory( "menuchoice", choices, imgPath, imgWidth, imgHeight );
+	var menuChoiceTemplate = this.templates.get( "menuchoice" );
 	
 	menuChoiceTemplate = this.parser.parseTemplate( menuChoiceTemplate, toReplace );
 
@@ -2435,25 +2660,25 @@ VisualNovel.prototype.addMenuChoicesHandler = function addMenuChoicesHandler( ch
 
 	var self = this;
 	var novelId = this.novelId;
+	var onMenuChoiceClick = function( i ) {
+
+		var index = i;
+
+		return function clickDialogMenuChoiceButton() {
+
+			// hide menu
+			self.dialogMenuId.style.display = "none";
+
+			self.performMenuChoice( choiceEventId, index );
+
+		};
+
+	};
 
 	for ( var i = totalChoices; i--; ) {
 
 		// TODO: add event delegation to menu choice container
-		document.getElementById( novelId + "-dialogMenuChoiceButton" + i ).onclick =
-			( function() {
-
-				var index = i;
-
-				return function clickDialogMenuChoiceButton() {
-
-					// hide menu
-					self.dialogMenuId.style.display = "none";
-
-					self.performMenuChoice( choiceEventId, index );
-
-				};
-
-			} )();
+		document.getElementById( novelId + "-dialogMenuChoiceButton" + i ).onclick = onMenuChoiceClick( i );
 
 	}
 
@@ -2541,9 +2766,9 @@ VisualNovel.prototype.loop = function loop( id, repeat, action, delay ) {
 	if ( action ) {
 
 		var self = this;
-		var delay = delay ? delay : 100;
+		var timerDelay = delay ? delay : 100;
 
-		function eventToAdd() {
+		var eventToAdd = function eventToAdd() {
 
 			// check if loop exists, and clear if it does
 			if ( self.timers[ id ] ) {
@@ -2560,7 +2785,7 @@ VisualNovel.prototype.loop = function loop( id, repeat, action, delay ) {
 					type : "interval",
 					timer : setInterval( function() {
 						action();
-					}, delay )
+					}, timerDelay )
 				};
 
 			} else if ( repeat > 0 ) {
@@ -2575,7 +2800,7 @@ VisualNovel.prototype.loop = function loop( id, repeat, action, delay ) {
 				var checkRepeat = function() {
 					
 					if ( repeatTimes ) {
-						self.timers[ id ].timer = setTimeout( repeatTimeout, delay );
+						self.timers[ id ].timer = setTimeout( repeatTimeout, timerDelay );
 					} else {
 						self.timers[ id ].timer = null;
 					}
@@ -2595,7 +2820,7 @@ VisualNovel.prototype.loop = function loop( id, repeat, action, delay ) {
 			
 			}
 
-		}
+		};
 
 		this.eventTracker.addEvent( "nowait", eventToAdd );
 
@@ -2662,10 +2887,11 @@ VisualNovel.prototype.clearTimer = function clearTimer( id ) {
 VisualNovel.prototype.resetLoops = function resetLoops() {
 
 	var loops = this.timers;
+	var loopType = null;
 
-	for ( loopId in loops ) {
+	for ( var loopId in loops ) {
 
-		var loopType = loops[ loopId ].type;
+		loopType = loops[ loopId ] ? loops[ loopId ].type : null;
 
 		if ( loopType && ( loopType === "timeout" || loopType === "interval" ) ) {
 
@@ -2750,7 +2976,14 @@ VisualNovel.prototype.preLoadImages = function preLoadImages() {
 
 
 
+/***
+ * Function: EventTracker
+ *
+ * Create object for tracking events
+ */
 function EventTracker() {
+
+	var eventTracker = null;
 
 	if ( this instanceof EventTracker ) {
 
@@ -2769,21 +3002,28 @@ function EventTracker() {
 			eventId : {}
 		};
 
-		return this;
+		eventTracker = this;
 
 	} else {
 
-		return new EventTracker();
+		eventTracker = new EventTracker();
 
 	}
 
+	return eventTracker;
+
 }
 
+/**
+ * Function: addEvent
+ *
+ * Add event to eventList
+ *
+ * @param type = wait / nowait
+ * @param evt = event to perform
+ * @param delay = delay before next event
+ */
 EventTracker.prototype.addEvent = function addEvent( type, evt, delay ) {
-
-	// type : wait / nowait
-	// evt : event to perform
-	// delay : delay before next event
 
 	var eventsInProgress = this.eventsInProgress;
 	var currentEvent = eventsInProgress[ eventsInProgress.length - 1 ];
@@ -2798,6 +3038,15 @@ EventTracker.prototype.addEvent = function addEvent( type, evt, delay ) {
 
 };
 
+/**
+ * Function: addNewEventInProgress
+ *
+ * Add new type of event in list of events that are in progress
+ * eventsInProgress = events in progress
+ * eventList = stores the events of each event in progress
+ *
+ * @param eventName = new event to add in eventList, eventsInProgress, & eventId
+ */
 EventTracker.prototype.addNewEventInProgress = function addNewEventInProgress( eventName ) {
 
 	// store in events in progress
@@ -2811,40 +3060,18 @@ EventTracker.prototype.addNewEventInProgress = function addNewEventInProgress( e
 
 };
 
-EventTracker.prototype.resetEventsInProgress = function resetEventsInProgress() {
-
-	this.eventId = { "main" : 0	};
-	this.eventsInProgress = [ "main" ];
-
-};
-
-EventTracker.prototype.delayCallback = function delayCallback( delay, callback ) {
-
-	if ( delay ) {
-
-		setTimeout( function() {
-			callback();
-		}, delay );
-
-	} else {
-
-		callback();
-
-	}
-
-};
-
+/**
+ * Function: startEvent
+ *
+ * Perform event in eventList of current event in progress
+ * then perform next event if event type = 'nowait'
+ */
 EventTracker.prototype.startEvent = function startEvent() {
 
 	var self = this;
 
 	// TODO: implement deferred w/o jquery
 	var deferred = $.Deferred();
-	// deferred.resolve();
-	// return deferred.promise();
-	// promise.then( function() {
-	// 	// next step
-	// });
 
 	// Get event
 	var eventsInProgress = this.eventsInProgress;
@@ -2879,6 +3106,12 @@ EventTracker.prototype.startEvent = function startEvent() {
 
 };
 
+/**
+ * Function: nextEvent
+ *
+ * Perform next event in eventList of
+ * events in progress
+ */
 EventTracker.prototype.nextEvent = function nextEvent( ) {
 
 	var eventsInProgress = this.eventsInProgress;
@@ -2930,42 +3163,99 @@ EventTracker.prototype.nextEvent = function nextEvent( ) {
 
 };
 
+/**
+ * Function: resetEventsInProgress
+ *
+ * Reset eventsInProgress and eventId
+ * eventList is not cleared since the events only get added on page load
+ */
+EventTracker.prototype.resetEventsInProgress = function resetEventsInProgress() {
 
+	this.eventsInProgress = [ "main" ];
+	this.eventId = { "main" : 0	};
 
+};
 
+/**
+ * Function: delayCallback
+ *
+ * Delay the execution of the callback
+ *
+ * @param delay
+ * @param callback
+ */
+EventTracker.prototype.delayCallback = function delayCallback( delay, callback ) {
 
+	if ( delay ) {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Utility ( General purpose ) functions
-
-function Util() {
-
-	if ( this instanceof Util ) {
-
-		return this;
+		setTimeout( function() {
+			callback();
+		}, delay );
 
 	} else {
 
-		return new Util();
+		callback();
 
 	}
 
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Function: Util
+ *
+ * Utility ( General purpose ) functions
+ */
+function Util() {
+
+	var util = null;
+
+	if ( this instanceof Util ) {
+
+		util = this;
+
+	} else {
+
+		util = new Util();
+
+	}
+
+	return util;
+
 }
 
+/**
+ * Function: getObjectInList
+ *
+ * Get the object in the list where the key and value matches
+ * Return {
+ *     id : index of object in list
+ *     obj : object found	
+ * }
+ *
+ * @param list = list of objects
+ * @param key = object key
+ * @value = value of object key
+ */
 Util.prototype.getObjectInList = function getObjectInList( list, key, value ) {
 
 	var objectFound = {
@@ -2991,6 +3281,15 @@ Util.prototype.getObjectInList = function getObjectInList( list, key, value ) {
 
 };
 
+/**
+ * Function: scalePosition
+ *
+ * Returns the scaled position based on the range
+ * e.g. 0.5 of 800 = 400
+ *
+ * @param position
+ * @param range
+ */
 Util.prototype.scalePosition = function scalePosition( position, range ) {
 
 	var posx = position.x;
@@ -3006,6 +3305,15 @@ Util.prototype.scalePosition = function scalePosition( position, range ) {
 
 };
 
+/**
+ * Function: foreach
+ *
+ * Loop list and perform callback in each item in list
+ *
+ * @param list
+ * @param callback
+ * @param context
+ */
 Util.prototype.foreach = function foreach( list, callback, context ) {
 
 	for( var i = list.length; i--; ) {
@@ -3024,12 +3332,18 @@ Util.prototype.foreach = function foreach( list, callback, context ) {
 
 };
 
+/**
+ * Function: replaceVariablesInText
+ *
+ * Replace the variables in the string with the passed values
+ *
+ * text : "My name is {name}..."
+ * valuesToReplace : { name : "elizabeth" }
+ *
+ * @param text
+ * @param valuesToReplace = object containing keys that will be replaced in text
+ */
 Util.prototype.replaceVariablesInText = function replaceVariablesInText( text, valuesToReplace ) {
-
-	// text : "My name is {name}..."
-
-	// valuesToReplace is an object containing keys that will be replaced in text:
-	// { name : "elizabeth" }
 
 	var processedText = text + "";
 	var key = "";
@@ -3049,6 +3363,13 @@ Util.prototype.replaceVariablesInText = function replaceVariablesInText( text, v
 
 };
 
+/**
+ * Function: isArray
+ *
+ * Check if passed object is an array
+ *
+ * @param obj
+ */
 Util.prototype.isArray = function isArray( obj ) {
 
 	return Object.prototype.toString.call( obj ) === "[object Array]";
@@ -3086,25 +3407,23 @@ function vector2D( v1, v2, param1, param2 ) {
 	var signDiffx = v1prop1 < v2prop1 ? 1 : -1;
 	var signDiffy = v1prop2 < v2prop2 ? 1 : -1;
 
+	var maxPtDiff = ptDiffy;
+	var maxPtDiffAxis = param2.slice();
+	var x = signDiffx * ( ptDiffx / ptDiffy );
+	var y = signDiffy;
+
 	if ( ptDiffx > ptDiffy ) {
 
-		var maxPtDiff = ptDiffx;
-		var maxPtDiffAxis = param1.slice();
-		var x = signDiffx;
-		var y = signDiffy * ( ptDiffy / ptDiffx );
-
-	} else {
-
-		var maxPtDiff = ptDiffy;
-		var maxPtDiffAxis = param2.slice();
-		var x = signDiffx * ( ptDiffx / ptDiffy );
-		var y = signDiffy;
+		maxPtDiff = ptDiffx;
+		maxPtDiffAxis = param1.slice();
+		x = signDiffx;
+		y = signDiffy * ( ptDiffy / ptDiffx );
 
 	}
 
 	var unitVector = {
-		axis : maxPtDiffAxis,
-		maxDifference : maxPtDiff
+		"axis" : maxPtDiffAxis,
+		"maxDifference" : maxPtDiff
 	};
 
 	unitVector[ param1 ] = x;
@@ -3133,29 +3452,47 @@ function vector2D( v1, v2, param1, param2 ) {
 
 
 
-// Parser : parsing templates
-
+/**
+ * Function: Parser
+ *
+ * Parser : parsing templates
+ * Extends Util
+ */
 function Parser() {
+
+	var parser = null;
 
 	if ( this instanceof Parser ) {
 
 		Util.apply( this, arguments );
 
-		return this;
+		parser = this;
 
 	} else {
 
-		return new Parser();
+		parser = new Parser();
 
 	}
 
+	return parser;
+
 }
+
 // Create a Parser.prototype object that inherits from Util.prototype
 Parser.prototype = Object.create( Util.prototype );
 
 // Set the "constructor" property to refer to Parser
 Parser.prototype.constructor = Parser;
 
+/**
+ * Function: parseTemplate
+ *
+ * Parse conditions and loops in template,
+ * and replace variables in template
+ *
+ * @param template
+ * @param valuesToReplace
+ */
 Parser.prototype.parseTemplate = function parseTemplate( template, valuesToReplace ) {
 
 	// Parse conditions first before parsing variables
@@ -3171,11 +3508,19 @@ Parser.prototype.parseTemplate = function parseTemplate( template, valuesToRepla
 
 };
 
+/**
+ * Function: parseConditionsInTemplate
+ *
+ * template : '<if={delay}><button>OK</button></if>'
+ * valuesToReplace : { delay : true }
+ *
+ * @param template = array of strings
+ * @param valuesToReplace = object of values to replace in template
+ */
 Parser.prototype.parseConditionsInTemplate = function parseConditionsInTemplate( template, valuesToReplace ) {
 
 	// TODO: refactor...
-	// <if={delay}><button>OK</button></if>
-
+	
 	var parsedTemplate = template.slice();
 	var conditions = [];
 	var tempConditions = parsedTemplate.split( /(<\s*if\s*[^>]*>(.|\n)*?<\s*\/\s*if>)/i );
@@ -3183,13 +3528,13 @@ Parser.prototype.parseConditionsInTemplate = function parseConditionsInTemplate(
 	// trim "" and ">" returned by the split...expression may need refactoring
 	this.foreach( tempConditions, function( condition ) {
 		
-		if ( condition != "" && condition != ">" ) {
+		if ( condition !== "" && condition !== ">" ) {
 			conditions.unshift( condition );
 		}
 
 	} );
 
-	if ( conditions && conditions.length > 1 ) {
+	if ( conditions.length > 1 ) {
 
 		// there may be multiple conditions, so parse each condition
 		this.foreach( conditions, function( condition, conditionIndex ) {
@@ -3212,9 +3557,18 @@ Parser.prototype.parseConditionsInTemplate = function parseConditionsInTemplate(
 
 };
 
+/**
+ * Function: parseLoopsInTemplate
+ *
+ * template : <foreach={choice in choices}><button>{choice.label}</button></foreach>
+ * valuesToReplace : { choices : [ { label:'new' }, {label:'continue'}, {label:'exit'} ] }
+ *
+ * @param template
+ * @param valuesToReplace
+ */
 Parser.prototype.parseLoopsInTemplate = function parseLoopsInTemplate( template, valuesToReplace ) {
 
-	// <foreach={choice in choices}><button>{choice.label}</button></foreach>
+	// TODO : refactor...
 
 	var parsedTemplate = template.slice();
 	var loops = parsedTemplate.match( /<foreach={.*}>.*<\/foreach>/gi );
@@ -3351,96 +3705,72 @@ function ObjectFactory( type ) {
 
 	return newObject;
 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Function: TemplateFactory
+ *
+ */
+function TemplateFactory( templates ) {
+
+	var template = null;
+
+	if ( this instanceof TemplateFactory ) {
+
+		this.templates = templates ? templates : {};
+
+		template = this;
+
+	} else {
+
+		template = new TemplateFactory( templates );
+
+	}
+
+	return template;
+
+}
+
+/**
+ * Function: get
+ *
+ * Get a template
+ *
+ * @param name
+ */
+TemplateFactory.prototype.get = function get( name ) {
+
+	var templates = this.templates;
+	var template = templates[ name ] ? templates[ name ].join( '' ) : '';
+
+	return template;
+
 };
 
-// Template Factory
-// TODO: add get and set methods? for updating templates
-function TemplateFactory( type ) {
+/**
+ * Function: set
+ *
+ * Store a template
+ *
+ * @param name
+ * @param template
+ */
+TemplateFactory.prototype.set = function set( name, template ) {
 
-	var template = "";
+	this.templates[ name ] = template;
 
-	if ( type === "novelcontainer" ) {
-
-		template = [
-			"<div class='novel-container unSelectable'>",
-				"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
-				"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
-				"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
-				"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
-				"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
-				"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
-				"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
-				"<div id='{novelId}-images' style='display:none;'></div>",
-			"</div>"
-		];
-
-	}
-
-	if ( type === "startmenu" ) {
-
-		template = [
-			"<div id='{novelId}-novelTitleContainer' class='novelTitleContainer'>",
-				"<div id='{novelId}-novelTitleText' class='novelTitleText'>{novelTitle}</div>",
-				"<div id='{novelId}-novelSubtitleText' class='novelSubtitleText'>{novelSubtitle}</div>",
-			"</div>",
-			"<div id='{novelId}-startMenuButtonContainer' class='startMenuButtonContainer'>",
-				"<button id='{novelId}-startMenuButton' class='startMenuButton' >",
-				"START</button>",
-			"</div>"
-		];
-
-	}
-
-	if ( type === "say" ) {
-		
-		template = [
-			"<if={showDialogImage}><img id='{novelId}-dialog-dialogImage' src='{dialogImage}' style='{dialogImageStyle}' /></if>",
-			"<div id='{novelId}-dialog-dialogName' class='dialogName'>{name}</div>",
-			"<div id='{novelId}-dialog-dialogText' class='dialogText'>{dialogLine}</div>",
-			"<if={showButtonText}><button id='{novelId}-dialog-dialogButton' class='dialogButton'>{dialogButtonText}</button></if>",
-			// "<if={showButtonImage}><img id='{novelId}-dialog-dialogButton' class='dialogButton' src='{dialogButtonImage}' style='width:{dialogButtonImageWidth};height:{dialogButtonImageHeight};' /></if>"
-			"<if={showButtonImage}><img id='{novelId}-dialog-dialogButton' class='dialogButton' src='{dialogButtonImage}' style='{dialogButtonImageStyle}' /></if>"
-		];
-
-	}
-
-	if ( type === "userinput" ) {
-
-		template = [
-			"<div id='userInputContainer' class='userInputContainer'>",
-				"<div id='userInputMessage' class='userInputMessage'>{message}</div><hr/><br/>",
-				"<input id='{novelId}-userInputText' class='userInputText' type='text' /><br/><br/>",
-				"<input type='button' id='{novelId}-userInputButton' class='userInputButton' value='OK' />",
-			"</div>"
-		];
-
-	}
-
-	if ( type === "menuchoice" ) {
-
-		// For choice menu:
-		// 1. build choice buttons
-		// 2. build choice image
-		// 3. insert buttons and image to menu container
-
-		template = [
-			"<div id='{novelId}-dialogMenuChoiceContainer' class='dialogMenuChoiceContainer'>",
-				"<div id='{novelId}-dialogMenuChoiceButtonsContainer' class='dialogMenuChoiceButtonsContainer'>",
-					"<foreach={choice in choices}>",
-						"<button class='dialogMenuChoiceButton' id='{novelId}-dialogMenuChoiceButton{index}' >",
-							"{choice.label}",
-						"</button><br/>",
-					"</foreach>",
-				"</div>",
-				"<div id='{novelId}-dialogMenuChoiceImageContainer' class='dialogMenuChoiceImageContainer'>",
-					"<if={imgPath}><img src='{imgPath}' style='width:{imgWidth}px;height:{imgHeight}px;' /></if>",
-				"</div>",
-			"</div>"
-		];
-
-	}
-
-	return template.join( "" );
+	return this;
 
 };
 
@@ -3484,7 +3814,7 @@ function Effect( screenWidth, screenHeight ) {
 
 Effect.prototype.perform = function perform( effectType, sprite, spriteType, delay, data ) {
 
-	if ( sprite.timer == null ) {
+	if ( sprite.timer === null ) {
 		sprite.timer = {};
 	}
 
@@ -3537,7 +3867,7 @@ Effect.prototype.fade = function fade( sprite, delay, startOpacity, endOpacity, 
 
 		sprite.setOpacity( newOpacity / 100 );
 
-		sprite.timer[ "fade" ] = setTimeout( function() {
+		sprite.timer.fade = setTimeout( function() {
 
 			self.fade( sprite, delay, newOpacity, endOpacity, step );
 
@@ -3571,7 +3901,7 @@ Effect.prototype.move = function move( sprite, spriteType, delay, data ) {
 		z : z ? Math.abs( newPos.z - sprite.z ) : 0
 	};
 
-	if ( sprite.moveStep == null ) {
+	if ( sprite.moveStep === null ) {
 
 		var step = {
 			x : x ? sprite.x < newPos.x ? ( distance.x / 100 ) : ( -distance.x / 100 ) : 0,
@@ -3604,7 +3934,7 @@ Effect.prototype.move = function move( sprite, spriteType, delay, data ) {
 		
 		sprite.update();
 
-		sprite.timer[ "move" ] = setTimeout( function() {
+		sprite.timer.move = setTimeout( function() {
 
 			self.move( sprite, spriteType, delay, data );
 
@@ -3649,7 +3979,7 @@ Effect.prototype.rotate = function rotate( sprite, spriteType, delay, data ) {
 	if ( delay >= 0 ) {
 
 		// Rotate sprite after delay
-		sprite.timer[ "rotate" ] = setTimeout( function() {
+		sprite.timer.rotate = setTimeout( function() {
 
 			callRotateSprite();
 			spriteToRotate.update();
@@ -3659,7 +3989,7 @@ Effect.prototype.rotate = function rotate( sprite, spriteType, delay, data ) {
 	} else {
 		
 		// Rotate sprite continuously
-		sprite.timer[ "rotate" ] = setInterval( function() {
+		sprite.timer.rotate = setInterval( function() {
 			
 			callRotateSprite();
 			spriteToRotate.update();
@@ -3689,19 +4019,29 @@ Effect.prototype.rotate = function rotate( sprite, spriteType, delay, data ) {
 
 
 /**
- * Object : Sprite
+ * Function: Sprite
+ *
+ * Constructor for creating a sprite
+ *
  * States :
  *		1. sprite
  * Behaviors :
  *		1. Move
  *		2. Rotate
  *		3. Fade
+ *
+ * @param width = width of sprite
+ * @param height = height of sprite
+ * @parram position = x, y, z position of sprite
+ * @param transformOrigin = position of css transform
+ * @param rotate = rotation angles along x, y, z axis
  **/
 function Sprite( width, height, position, transformOrigin, rotate ) {
 
 	if ( this instanceof Sprite ) {
 
 		// Add states
+		this.sprite = null;
 
 		this.init( width, height, position, transformOrigin, rotate );
 
@@ -3715,6 +4055,17 @@ function Sprite( width, height, position, transformOrigin, rotate ) {
 
 }
 
+/**
+ * Function: init
+ *
+ * Initialize sprite using Sprite3D JS library
+ *
+ * @param width = width of sprite
+ * @param height = height of sprite
+ * @parram position = x, y, z position of sprite
+ * @param transformOrigin = position of css transform
+ * @param rotate = rotation angles along x, y, z axis
+ */
 Sprite.prototype.init = function init( width, height, position, transformOrigin, rotate ) {
 
 	var s = this.createSprite( width, height, position, transformOrigin, rotate );
@@ -3723,6 +4074,18 @@ Sprite.prototype.init = function init( width, height, position, transformOrigin,
 
 };
 
+/**
+ * Function: createSprite
+ *
+ * Return a Sprite3D instance
+ * Uses Sprite3D JS library
+ *
+ * @param width = width of sprite
+ * @param height = height of sprite
+ * @parram position = x, y, z position of sprite
+ * @param transformOrigin = position of css transform
+ * @param rotate = rotation angles along x, y, z axis
+ */
 Sprite.prototype.createSprite = function createSprite( width, height, position, transformOrigin, rotate ) {
 
 	var pos = position;
@@ -3749,17 +4112,37 @@ Sprite.prototype.createSprite = function createSprite( width, height, position, 
 
 };
 
+/**
+ * Function: setBackground
+ *
+ * Set background image or color of sprite
+ *
+ * @param width = width of background image
+ * @param height = height of background image
+ * @param image = path to image
+ * @param color = background color
+ */
 Sprite.prototype.setBackground = function setBackground( width, height, image, color ) {
 
 	var bgSize = width && height ? "background-size:" + width + "px " + height + "px;" : "";
 	var bgImage = image ? "background-image:url('" + image + "');" : "";
-	var bgColor = color ? "background-color:" + color : "";
+	var bgColor = color ? "background-color:" + color + ";" : "";
 	var preSemicolon = bgSize || bgImage || bgColor ? ";" : "";
 
 	this.sprite.style.cssText += preSemicolon + bgSize + bgImage + bgColor;
 
 };
 
+/**
+ * Function: move
+ *
+ * Move sprite to position x, y, z at speed
+ *
+ * @param x = x position
+ * @param y = y position
+ * @param z = z position
+ * @param speed = duration of move in milliseconds
+ */
 Sprite.prototype.move = function move( x, y, z, speed ) {
 
 	// TODO: when moving, update transform origin...
@@ -3776,49 +4159,35 @@ Sprite.prototype.move = function move( x, y, z, speed ) {
 	var newPosy = y ? y : spritey;
 	var newPosz = z ? z : spritez;
 		
-	if ( sprite.moveStep == null ) {
+	if ( typeof sprite.moveStep === "undefined" || sprite.moveStep === null ) {
 
 		// Although could be looped...but may affect performance...
-		if ( x ) {
+		var stepx = 0;
+		var stepy = 0;
+		var stepz = 0;
 
-			if ( spritex == newPosx ) {
-				var stepx = 0;
-			} else {
-				var distancex = Math.abs( newPosx - spritex ) / 100;
-				var stepx = spritex < newPosx ? distancex : -distancex;
-				stepx = Math.round( stepx );
-			}
-
+		if ( x && spritex !== newPosx ) {
+			var distancex = Math.abs( newPosx - spritex ) / 100;
+			stepx = spritex < newPosx ? distancex : -distancex;
+			stepx = Math.round( stepx );
 		}
 
-		if ( y ) {
-
-			if ( spritey == newPosy ) {
-				var stepy = 0;
-			} else {
-				var distancey = Math.abs( newPosy - spritey ) / 100;
-				var stepy = spritey < newPosy ? distancey : -distancey;
-				stepy = Math.round( stepy );
-			}
-			
+		if ( y && spritey !== newPosy ) {
+			var distancey = Math.abs( newPosy - spritey ) / 100;
+			stepy = spritey < newPosy ? distancey : -distancey;
+			stepy = Math.round( stepy );
 		}
-
-		if ( z ) {
-
-			if ( spritez == newPosz ) {
-				var stepz = 0;
-			} else {
-				var distancez = Math.abs( newPosz - spritez ) / 100;
-				var stepz = spritez < newPosz ? distancez : -distancez;
-				stepz = Math.round( stepz );
-			}
-			
+		
+		if ( z && spritez !== newPosz ) {
+			var distancez = Math.abs( newPosz - spritez ) / 100;
+			stepz = spritez < newPosz ? distancez : -distancez;
+			stepz = Math.round( stepz );
 		}
 
 		sprite.moveStep = {
-			x : stepx,
-			y : stepy,
-			z : stepz
+			"x" : stepx,
+			"y" : stepy,
+			"z" : stepz
 		};
 
 	}
@@ -3841,21 +4210,53 @@ Sprite.prototype.move = function move( x, y, z, speed ) {
 		
 		sprite.update();
 
-		sprite.timer[ "move" ] = setTimeout( function() {
+		sprite.timer.move = setTimeout( function() {
 
 			self.move( x, y, z, speed );
 
-		}, speed / 100 );
+		}, speed ? speed / 100 : 0 );
 
 	} else {
 
 		sprite.moveStep = null;
 
 	}
+
 };
 
 // TODO: moveTo
+/**
+ * Function: moveTo
+ *
+ * Move sprite to position x, y, z
+ *
+ * @param x = x position
+ * @param y = y position
+ * @param z = z position
+ */
+Sprite.prototype.moveTo = function moveTo( x, y, z, sprite ) {
 
+	var spriteToMove = sprite ? sprite : this.sprite;
+
+	spriteToMove.x = x;
+	spriteToMove.y = y;
+	spriteToMove.z = z;
+
+	spriteToMove.update();
+
+};
+
+/**
+ * Function: rotate
+ *
+ * Rotate sprite along axis at the given speed
+ *
+ * @param axis = axis to rotate sprite
+ * @param angle = angle to rotate sprite
+ * @param speed = delay between each 1 angle rotation
+ * @param loop = set to true to continuously rotate at given angle
+ * @param sprite = sprite to rotate ( optional )
+ */
 Sprite.prototype.rotate = function rotate( axis, angle, speed, loop, sprite ) {
 	
 	// type : container ( z )
@@ -3870,14 +4271,14 @@ Sprite.prototype.rotate = function rotate( axis, angle, speed, loop, sprite ) {
 
 		callRotateSprite = function() {
 			spriteToRotate[ "rotate" + axis.toUpperCase() ]( angle ).update();
-		}
+		};
 
 	}
 
 	if ( loop ) {
 		
 		// Rotate sprite continuously
-		spriteToRotate.timer[ "rotate" ] = setInterval( function() {
+		spriteToRotate.timer.rotate = setInterval( function() {
 			
 			callRotateSprite();
 		
@@ -3886,12 +4287,12 @@ Sprite.prototype.rotate = function rotate( axis, angle, speed, loop, sprite ) {
 	} else {
 
 		// Rotate sprite after delay
-		spriteToRotate.timer[ "rotate" ] = setTimeout( function() {
+		spriteToRotate.timer.rotate = setTimeout( function() {
 
 			callRotateSprite();
 
 		}, rotateDelay );
-
+		
 	}
 
 };
@@ -3916,7 +4317,7 @@ Sprite.prototype.rotateTo = function rotateTo( axis, angle, speed, sprite ) {
 				currentAngle + angleInc ).update();
 		};
 
-		spriteToRotate.timer[ "rotate" ] = setTimeout( function() {
+		spriteToRotate.timer.rotate = setTimeout( function() {
 
 				callRotateSprite();
 				self.rotateTo( axis, angle, speed, sprite );
@@ -3925,7 +4326,7 @@ Sprite.prototype.rotateTo = function rotateTo( axis, angle, speed, sprite ) {
 
 	} else {
 
-		spriteToRotate.timer[ "rotate" ] = null;
+		spriteToRotate.timer.rotate = null;
 
 	}
 
@@ -3947,7 +4348,7 @@ Sprite.prototype.fade = function fade( startOpacity, endOpacity, step, speed ) {
 
 		sprite.setOpacity( newOpacity / 100 );
 
-		sprite.timer[ "fade" ] = setTimeout( function() {
+		sprite.timer.fade = setTimeout( function() {
 
 			self.fade( newOpacity, endOpacity, step, speed );
 
@@ -4030,6 +4431,40 @@ Character.prototype = Object.create( Sprite.prototype );
 
 // Set the "constructor" property to refer to Character
 Character.prototype.constructor = Character;
+
+/**
+ * Function: setBackground
+ *
+ * Set background image or color of sprite
+ *
+ * @param width = width of background image
+ * @param height = height of background image
+ * @param image = path to image
+ * @param color = background color
+ */
+Character.prototype.setBackground = function setBackground( width, height, image, color ) {
+
+	var bgSize = "";
+	var bgImage = "";
+
+	if ( typeof image === "object" ) {
+
+		bgImage = image && image.src ? "background-image:url('" + image.src + "');" : "";
+		bgImage += bgImage && image.position ? "background-position:" + image.position + ";" : "";
+
+	} else {
+
+		bgSize = width && height ? "background-size:" + width + "px " + height + "px;" : "";
+		bgImage = image ? "background-image:url('" + image + "');" : bgImage;
+
+	}
+	
+	var bgColor = color ? "background-color:" + color + ";" : "";
+	var preSemicolon = bgSize || bgImage || bgColor ? ";" : "";
+
+	this.sprite.style.cssText += preSemicolon + bgSize + bgImage + bgColor;
+
+};
 
 
 
@@ -4147,5 +4582,14 @@ SceneObject.prototype.rotate = function rotate( axis, angle, speed, loop, sprite
 	var sceneObject = this.sprite.children[ 0 ];
 
 	Sprite.prototype.rotate.call( this, axis, angle, speed, loop, sceneObject );
+
+};
+
+SceneObject.prototype.rotateTo = function rotateTo( axis, angle, speed, sprite ) {
+
+	// this.sprite => sceneObjectContainer
+	var sceneObject = this.sprite.children[ 0 ];
+
+	Sprite.prototype.rotateTo.call( this, axis, angle, speed, sceneObject );
 
 };

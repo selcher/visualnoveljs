@@ -106,7 +106,7 @@ describe( 'Sprite class', function() {
 			expect( sprite.rotationX ).toEqual( 45 );
 			expect( sprite.rotationY ).toEqual( 45 );
 			expect( sprite.rotationZ ).toEqual( 45 );
-		} );
+		}, 0 );
 		
 	} );
 

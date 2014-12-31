@@ -27,9 +27,9 @@ describe( 'TemplateFactory class', function() {
 		],
 		'say' : [
 			"<if={showDialogImage}><img id='{novelId}-dialog-dialogImage' src='{dialogImage}' style='{dialogImageStyle}' /></if>",
-			"<div id='{novelId}-dialog-dialogName' class='dialogName'>{name}</div>",
+			"<div id='{novelId}-dialog-dialogName' class='dialogName' style='{dialogNameStyle}'>{name}</div>",
 			"<div id='{novelId}-dialog-dialogText' class='dialogText'>{dialogLine}</div>",
-			"<if={showButtonText}><button id='{novelId}-dialog-dialogButton' class='dialogButton'>{dialogButtonText}</button></if>",
+			"<if={showButtonText}><button id='{novelId}-dialog-dialogButton' class='dialogButton' >{dialogButtonText}</button></if>",
 			"<if={showButtonImage}><img id='{novelId}-dialog-dialogButton' class='dialogButton' src='{dialogButtonImage}' style='{dialogButtonImageStyle}' /></if>"
 		],
 		'userinput' : [

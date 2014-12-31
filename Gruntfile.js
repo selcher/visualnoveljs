@@ -4,7 +4,6 @@ module.exports = function( grunt ) {
 	grunt.initConfig( {
 		pkg : grunt.file.readJSON( 'package.json' ),
 		srcFiles : 'src/*.js',
-		revFile : 'src/visual-novel2.js',
 		buildFile : 'build/<%= pkg.name %>-<%= pkg.version %>.min.js',
 		testFiles : 'spec/*.js',
 		domtestFiles : 'spec/dom/*.html',
@@ -19,10 +18,10 @@ module.exports = function( grunt ) {
 			}
 		},
 		jshint : {
-			all: [ 'Gruntfile.js', '<%= revFile %>' ]
+			all: [ 'Gruntfile.js', '<%= srcFiles %>' ]
 		},
 		watch : {
-			files: [ '<%= revFile %>', 'Gruntfile.js' ],
+			files: [ '<%= srcFiles %>', 'Gruntfile.js' ],
 			tasks: [ 'jasmine', 'qunit', 'jshint' ]
 		},
 		notify : {
@@ -35,7 +34,7 @@ module.exports = function( grunt ) {
 		},
 		jasmine : {
 			test : {
-				src : '<%= revFile %>',
+				src : '<%= srcFiles %>',
 				options : {
 					specs : '<%= testFiles %>',
 					vendor : [ '<%= vendorFiles %>' ],
