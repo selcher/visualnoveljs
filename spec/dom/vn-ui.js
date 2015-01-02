@@ -25,7 +25,24 @@ QUnit.test( 'initObjects', function( assert ) {
 
 QUnit.test( 'buildNovelContainerContent', function( assert ) {
 
-	var vn = {};
+	var vn = {
+		templates : {
+
+			'novelcontainer' : [
+				"<div class='novel-container unSelectable'>",
+					"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
+					"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
+					"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
+					"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
+					"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
+					"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
+					"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
+					"<div id='{novelId}-images' style='display:none;'></div>",
+				"</div>"
+			]
+			
+		}
+	};
 	VisualNovel.prototype.initObjects.call( vn );
 
 	var content = VisualNovel.prototype.buildNovelContainerContent.call( vn, novelId );

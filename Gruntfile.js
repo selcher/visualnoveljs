@@ -10,7 +10,11 @@ module.exports = function( grunt ) {
 		vendorFiles : 'dependencies/*.js',
 		uglify : {
 			options : {
-				banner : '/*! <%= pkg.name %> v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+				banner : '/**\n' +
+  						' * <%= pkg.name %> - v<%= pkg.version %> - build <%= grunt.template.today("yyyy-mm-dd HH:mm:ss") %>\n' +
+  						' * Copyright (c) 2014-2015 Selcher;\n' +
+  						' * Distributed under the terms of the MIT license.\n' +
+						' */\n'
 			},
 			build : {
 				src : '<%= srcFiles %>',

@@ -1,6 +1,5 @@
 describe( 'TemplateFactory class', function() {
 
-	var templateFactory = TemplateFactory();
 	var templates = {
 
 		'novelcontainer' : [
@@ -60,6 +59,7 @@ describe( 'TemplateFactory class', function() {
 		]
 
 	};
+	var templateFactory = TemplateFactory( templates );
 
 	it( 'init', function() {
 
