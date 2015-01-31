@@ -3070,9 +3070,6 @@ EventTracker.prototype.startEvent = function startEvent() {
 
 	var self = this;
 
-	// TODO: implement deferred w/o jquery
-	var deferred = $.Deferred();
-
 	// Get event
 	var eventsInProgress = this.eventsInProgress;
 	var currentEventName = eventsInProgress[ eventsInProgress.length - 1 ];
@@ -3089,15 +3086,11 @@ EventTracker.prototype.startEvent = function startEvent() {
 	// Perform event
 	evt.event();
 
-	this.delayCallback( delay, function() {
-		deferred.resolve();
-	} );
-
 	// Event types: wait / nowait
 	// Perform the next event if type:
 	//	1. nowait
-	deferred.done( function() {
-
+	this.delayCallback( delay, function() {
+		
 		if ( type == "nowait" ) {
 			self.nextEvent( );
 		}
