@@ -62,7 +62,6 @@ function VisualNovel( id, width, height, imgPath ) {
 		this.screenCharacterId = null;
 		this.screenSceneId = null;
 		this.screenBgId = null;
-		this.preLoadedImagesId = null;
 
 		// TODO: place default values here...
 		this.defaultVal = {};
@@ -141,7 +140,6 @@ function VisualNovel( id, width, height, imgPath ) {
 					"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
 					"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
 					"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
-					"<div id='{novelId}-images' style='display:none;'></div>",
 				"</div>"
 			],
 			'startmenu' : [
@@ -667,8 +665,7 @@ VisualNovel.prototype.updateStartMenuReference = function updateStartMenuReferen
 	this.novelSubtitleTextId = doc.getElementById( novelId + "-novelSubtitleText" );
 	this.screenStartMenuButtonContainerId = doc.getElementById( novelId + "-startMenuButtonContainer" );
 	this.screenStartMenuStartButtonId = doc.getElementById( novelId + "-startMenuButton" );
-	this.preLoadedImagesId = doc.getElementById( novelId + "-images" );
-
+	
 };
 
 VisualNovel.prototype.showStartScreen = function showStartScreen( show ) {
@@ -684,9 +681,6 @@ VisualNovel.prototype.setStartScreenBgImage = function setStartScreenBgImage( im
 	var image = this.imgPath + imgPath;
 	var newStyle = ";background-image:url('" + image + "');" +
 		"background-size:" + width + "px " + height + "px;";
-
-	// store image
-	this.storeImage( image );
 
 	this.screenStartId.style.cssText += newStyle;
 
@@ -2900,38 +2894,6 @@ VisualNovel.prototype.resetLoops = function resetLoops() {
 		}
 
 	}
-
-};
-
-
-
-
-
-
-
-
-
-
-/**
- * Function: storeImage
- *
- * Store image for preloading in images
- *
- * @param img = image url
- */
-VisualNovel.prototype.storeImage = function storeImage( img ) {
-
-	this.images.push( img );
-
-};
-
-/**
- * Function: preLoadImages
- *
- * Preload stored images by adding them in a hidden div
- * inside the novel container
- */
-VisualNovel.prototype.preLoadImages = function preLoadImages() {
 
 };
 
