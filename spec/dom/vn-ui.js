@@ -1,20 +1,21 @@
 var novelId = 'test';
 
-// QUnit.test( 'Visual Novel Constructor', function( assert ) {
+QUnit.test( 'Visual Novel Constructor', function( assert ) {
 
-// 	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
 
-// 	assert.equal( vn.novelId, novelId, 'novelId set to "test"' );
-// 	assert.equal( vn.screenWidth, 800, 'screenWidth set to 800' );
-// 	assert.equal( vn.screenHeight, 600, 'screenHeight set to 600' );
-// 	assert.equal( vn.imgPath, '../../examples/img/' );
+	assert.equal( vn.novelId, novelId, 'novelId set to "test"' );
+	assert.equal( vn.screenWidth, 800, 'screenWidth set to 800' );
+	assert.equal( vn.screenHeight, 600, 'screenHeight set to 600' );
+	assert.equal( vn.imgPath, '../../examples/img/' );
 
-// } );
+} );
 
 QUnit.test( 'initObjects', function( assert ) {
 
-	var vn = {};
-	VisualNovel.prototype.initObjects.call( vn );
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+	
+	vn.initObjects();
 
 	assert.ok( vn.util instanceof Util, 'util instance of Util' );
 	assert.ok( vn.parser instanceof Parser, 'parser instance of Parser' );
@@ -23,29 +24,89 @@ QUnit.test( 'initObjects', function( assert ) {
 
 } );
 
+QUnit.test( 'initContainers', function( assert ) {
+
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+	var initNovelContainer = false;
+	var initSceneContainer = false;
+	var initDialogMenuContainer = false;
+	var initNovelModeContainer = false;
+	var initDialogModeContainer = false;
+	var initCharacterContainer = false;
+	var initBGContainer = false;
+
+	vn.initNovelContainer = function( id ) {
+		initNovelContainer = id ? true : false;
+	};
+	vn.initSceneContainer = function() {
+		initSceneContainer = true;
+	};
+	vn.initDialogMenuContainer = function() {
+		initDialogMenuContainer = true;
+	};
+	vn.initNovelModeContainer = function() {
+		initNovelModeContainer = true;
+	};
+	vn.initDialogModeContainer = function() {
+		initDialogModeContainer = true;
+	};
+	vn.initCharacterContainer = function() {
+		initCharacterContainer = true;
+	};
+	vn.initBGContainer = function() {
+		initBGContainer = true;
+	};
+	vn.initContainers( novelId );
+
+	assert.ok( initNovelContainer, 'initNovelContainer called' );
+	assert.ok( initSceneContainer, 'initSceneContainer called' );
+	assert.ok( initDialogMenuContainer, 'initDialogMenuContainer called' );
+	assert.ok( initNovelModeContainer, 'initNovelModeContainer called' );
+	assert.ok( initDialogModeContainer, 'initDialogModeContainer called' );
+	assert.ok( initCharacterContainer, 'initCharacterContainer called' );
+	assert.ok( initBGContainer, 'initBGContainer called' );
+
+} );
+
+QUnit.test( 'resetNovel', function( assert ) {
+
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+
+	vn.initObjects();
+	vn.resetNovel();
+
+	assert.deepEqual( vn.eventTracker.eventsInProgress, [ 'main' ], 'events in progress reset' );
+	assert.ok( vn.eventTracker.eventId.main === 0, 'event id set to 0 for main event' );
+	assert.deepEqual( vn.menuChoices, {}, 'menu choices reset' );
+	assert.deepEqual( vn.menuChoicesTaken, {}, 'menu choices taken reset' );
+	assert.ok( vn.characters.length === 0, 'characters reset' );
+	assert.ok( vn.scenes.text.length === 0, 'texts on scene reset' );
+	assert.ok( vn.scenes.object.length === 0, 'objects on scene reset' );
+
+} );
+
+QUnit.test( 'setNovelTitle', function( assert ) {
+
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+	vn.novelTitleTextId = { "innerHTML": ""	};
+	vn.novelSubtitleTextId = { "innerHTML": "" };
+
+	vn.setNovelTitle( 'Hello world', 'visual novel' );
+
+	assert.deepEqual( vn.novelTitle, 'Hello world', 'novel title set' );
+	assert.deepEqual( vn.novelSubtitle, 'visual novel', 'novel subtitle set' );
+	assert.deepEqual( vn.novelTitleTextId.innerHTML, 'Hello world', 'novel title html set' );
+	assert.deepEqual( vn.novelSubtitleTextId.innerHTML, 'visual novel', 'novel subtitle html set' );
+
+} );
+
 QUnit.test( 'buildNovelContainerContent', function( assert ) {
 
-	var vn = {
-		templates : {
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+	vn.initObjects();
 
-			'novelcontainer' : [
-				"<div class='novel-container unSelectable'>",
-					"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
-					"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
-					"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
-					"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
-					"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
-					"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
-					"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
-					"<div id='{novelId}-images' style='display:none;'></div>",
-				"</div>"
-			]
-			
-		}
-	};
-	VisualNovel.prototype.initObjects.call( vn );
+	var content = vn.buildNovelContainerContent( novelId );
 
-	var content = VisualNovel.prototype.buildNovelContainerContent.call( vn, novelId );
 	var result = [
 		"<div class='novel-container unSelectable'>",
 			"<div id='test-screen-start' class='novel screen-start'></div>",
@@ -55,7 +116,6 @@ QUnit.test( 'buildNovelContainerContent', function( assert ) {
 			"<div id='test-screen-character' class='novel screen-character'></div>",
 			"<div id='test-screen-scene' class='novel screen-scene'></div>",
 			"<div id='test-screen-bg' class='novel screen-bg'></div>",
-			"<div id='test-images' style='display:none;'></div>",
 		"</div>"
 	].join( '' );
 

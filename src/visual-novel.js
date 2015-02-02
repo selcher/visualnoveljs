@@ -50,6 +50,9 @@ function VisualNovel( id, width, height, imgPath ) {
 
 		// div elements
 		this.novelContainerId = null;
+		this.novelTitleContainerId = null;
+		this.novelTitleTextId = null;
+		this.novelSubtitleTextId = null;
 		this.screenStartId = null;
 		this.screenStartMenuButtonContainerId = null;
 		this.screenStartMenuStartButtonId = null;
@@ -188,8 +191,6 @@ function VisualNovel( id, width, height, imgPath ) {
 
 		};
 
-		// this.init( id );
-
 		return this;
 
 	} else {
@@ -206,17 +207,14 @@ function VisualNovel( id, width, height, imgPath ) {
  * Initialize visualize novel
  * when creating a new VisualNovel instance
  *
- * @param novelId = id of visual novel div
  */
-VisualNovel.prototype.init = function init( novelId ) {
-
-	var id = typeof novelId === 'undefined' ? this.novelId : novelId;
+VisualNovel.prototype.init = function init() {
 
 	this.initObjects();
 
-	this.initContainers( id );
+	this.initContainers( this.novelId );
 
-	this.initScreenStart( id );
+	this.initScreenStart( this.novelId );
 
 };
 
@@ -805,7 +803,7 @@ VisualNovel.prototype.moveScene = function moveScene( x, y, z, speed ) {
 
 VisualNovel.prototype.resetScenes = function resetScenes() {
 
-	var scenes = this.sceneContainer.children;
+	var scenes = this.sceneContainer ? this.sceneContainer.children : [];
 	var totalScenes = scenes.length;
 
 	// Don't include 0 since it is the scene floor
@@ -2055,7 +2053,7 @@ VisualNovel.prototype.removeAllCharacter = function removeAllCharacter( delay ) 
 
 VisualNovel.prototype.resetCharacters = function resetCharacters() {
 
-	var characters = this.characterContainer.children;
+	var characters = this.characterContainer ? this.characterContainer.children : [];
 	var totalCharacters = characters.length;
 
 	for( var i = totalCharacters - 1; i >= 1; i-- ) {
@@ -2142,8 +2140,6 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 	// build list of [ line, delay, includePrevLinesFlag ]
 	util.foreach( line, function( l, i ) {
 
-		temp = [];
-
 		if ( typeof l === "string" ) {
 			
 			temp.push( l );
@@ -2164,10 +2160,10 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 
 			lines.push( temp );
 		}
+
+		temp = [];
 	
 	} );
-
-	temp = [];
 
 	util.foreach( lines, function( l, i ) {
 
@@ -2220,6 +2216,8 @@ VisualNovel.prototype.say = function say( character, line, delay ) {
 	var isCharStr = typeof character === "string";
 	var isCharObjStr = isCharObj || isCharStr;
 
+	// say( "me", "hello" )
+	// say( charObj, "hello" )
 	if ( isCharObjStr && typeof line === "string" ) {
 		
 		this.dialogCharacter = character;
@@ -2227,6 +2225,7 @@ VisualNovel.prototype.say = function say( character, line, delay ) {
 	
 	}
 
+	// say( charObj, [ "hello", "world" ] )
 	if ( isCharObjStr && this.util.isArray( line ) ) {
 
 		this.dialogCharacter = character;
@@ -2234,6 +2233,8 @@ VisualNovel.prototype.say = function say( character, line, delay ) {
 
 	}
 
+	// say( "hello" )
+	// say( "hello", 1000 )
 	if ( isCharStr && ( length === 1 || 
 		( length === 2  && typeof line === "number" ) ) ) {
 
@@ -2255,9 +2256,6 @@ VisualNovel.prototype.buildSayDialog = function buildSayDialog( character, line,
 };
 
 VisualNovel.prototype.getSayTemplate = function getSayTemplate( character, line, delay ) {
-
-	// TODO: refactor getting total img path??
-	// e.g. this.imgPath + character.dialogImage => this.getImgPath( character.dialogImage )
 
 	// variables to replace in template
 	var templateVariables = this.getSayTemplateVariables( character, line, delay );
@@ -2298,6 +2296,9 @@ VisualNovel.prototype.getSayTemplateVariables = function getSayTemplateVariables
 	var dialogButtonImageHeight = "";
 
 	if ( dialogSettings ) {
+
+		// TODO: refactor getting total img path??
+		// e.g. this.imgPath + character.dialogImage => this.getImgPath( character.dialogImage )
 
 		dialogImage = characterDialogSettings.image ?
 			this.imgPath + characterDialogSettings.image : "";
