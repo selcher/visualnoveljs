@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			.smallTxt {
+				font-size: 12px;
+			}
+
+			#programming-vn-novelTitleContainer {
+				background-color: transparent;
+			}
+
+			#programming-vn-novelTitleText {
+				color: rgba(255,255,100,1);
+				text-shadow: 0px 0px 20px rgba( 255, 255, 100, 1 );
+			}
+
+			#programming-vn-novelSubtitleText {
+				color: rgba(0,255,255,1);
+				text-shadow: 0px 0px 20px rgba( 0, 255, 255, 1 );
+			}
+
+			#programming-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#programming-vn-startMenuButton {
+				color: white;
+			}
+
+			#programming-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: rgba(255,255,100,1);
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+		<script src="js/preloadjs-0.4.1.min.js" type="text/javascript"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="programming-vn"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					preload();
+					
+				}
+
+			);
+
+			function preload() {
+
+				var queue = new createjs.LoadQueue( true );
+				var path = 'img/python/';
+
+				queue.loadManifest( [
+					{
+						id : 'bg',
+						src : path + 'bg/bg.jpg'
+					},
+					{
+						id : 'logo',
+						src : path + 'bg/logo.png'
+					},
+					{
+						id : 'python',
+						src : path + 'bg/python.jpg'
+					},
+					{
+						id : 'normal1',
+						src : path + 'character/nao-normal1.png'
+					},
+					{
+						id : 'normal2',
+						src : path + 'character/nao-normal2.png'
+					},
+					{
+						id : 'shy1',
+						src : path + 'character/nao-shy1.png'
+					},
+					{
+						id : 'shy2',
+						src : path + 'character/nao-shy2.png'
+					},
+					{
+						id : 'play1',
+						src : path + 'icon/play1.png'
+					},
+					{
+						id : 'play2',
+						src : path + 'icon/play2.png'
+					}
+				] );
+
+				queue.load();
+
+			}
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "Python Guide", "a visual novel", 300, 100 );
+				// novel.setStartScreenBgColor( "black" );
+				novel.setStartScreenBgImage( "bg/logo.png", 800, 600 );
+				novel.setStartScreenMenuPos( 310, 500 );
+				// novel.setBgColor( "black" );
+				novel.setBgImage( "bg/python.jpg", 800, 600 );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				// novel.setDialogBgImage( "bg/bg.jpg", 680, 150 );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+				novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "white", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "py", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "py" );
+				}
+			
+				novel.setBgImage( "bg/bg.jpg", 800, 600 );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "py",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 500
+				);
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "py", "Python Guide<br/>a visual novel",
+					textSetting, 500
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+				novel.setBgImage( "bg/python.jpg", 800, 600 );
+				novel.setBgSize( 800, 600 );
+				novel.fadeBg( "in", 1000 );
+
+			}
+
+			function start( novel ) {
+
+				// define character
+				var nao = {
+					name: "Naoto Shirogane",
+					width: 600,
+					height: 600,
+					image: {
+						"default" : "character/nao-normal1.png",
+						"happy" : "character/nao-normal1.png",
+						"happy2" : "character/nao-normal2.png",
+						"shy1" : "character/nao-shy1.png",
+						"shy2" : "character/nao-shy2.png"
+					},
+					pos: {
+						x : 1.0,
+						y : 0.007
+					},
+					dialog: {
+						image: "character/na1_pe_000.png",
+						nextImage: "character/na1_pe_010.png",
+						imageDelay: 5000,
+						height: 40,
+						location: "left",
+						button: {
+							text: "...",
+							image: "icon/play1.png",
+							imageHover: "icon/play2.png",
+							bgColor: "transparent",
+							bgColorHover: "white",
+							width: 20,
+							height: 20
+						}
+					}
+				};
+
+				// display character
+				novel.addCharacter( nao, 1000, "fade" );
+
+				novel.moveCharacter( nao, 0.2, 0, 500 );
+				novel.fadeCharacter( nao, "in", 500 );
+				novel.pause( 1000 );
+
+				novel.loop( "nao", true, function() {
+
+					novel.setCharacterImage( nao, "happy2" );
+
+					setTimeout( function() {
+						novel.setCharacterImage( nao, "happy" );
+					}, 200 );
+
+				}, 4000 );
+
+				novel.say( nao, "Hi there! This is a short introduction to Python so be sure to check the references for more details." );
+				novel.showSayDialog( false );
+
+				novel.moveCharacter( nao, 0.4, 0, 200 );
+
+				var progTopics = [
+					{
+						label : "Zen of Python",
+						action : function() {
+
+							pythonZen( novel, nao );
+							novel.showSayDialog( false );
+							novel.repeatEvent();
+
+						}
+					},
+					{
+						label : "Idioms",
+						action : function() {
+
+							pythonIdioms( novel, nao );
+							novel.showSayDialog( false );
+							novel.repeatEvent();
+						}
+					},
+					{
+						label : "Concepts",
+						action : function() {
+
+							pythonConcepts( novel, nao );
+							novel.showSayDialog( false );
+							novel.repeatEvent();
+						}
+					},
+					{
+						label : "Conventions",
+						action : function() {
+
+							pythonConventions( novel, nao );
+							novel.showSayDialog( false );
+							novel.repeatEvent();
+						}
+					},
+					{
+						label : "References",
+						action : function() {
+
+							references( novel, nao );
+							novel.showSayDialog( false );
+							novel.repeatEvent();
+						}
+					},
+					{
+						label : "Done",
+						action : function() {
+
+						}
+					}
+				];
+				
+				novel.choice(
+					"progTopics",
+					progTopics,
+					{ x : 0.1,  y : 0.3 },
+					{ image : "character/na1_pe_000.png", width : 100, height : 100 }
+				);
+
+				novel.clearLoop( "nao" );
+				novel.changeCharacterImage( nao, "shy1" );
+				novel.say( nao, "Thank you for reading ~", 2000 );
+				novel.changeCharacterImage( nao, "shy2" );
+				novel.showSayDialog( false );
+
+				// remove character
+				novel.moveCharacter( nao, 1.0, 0, 500 );
+				novel.fadeCharacter( nao, "out", 500 );
+
+				// fade out bg
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "programming-vn", 800, 600, "img/python/" );
+
+				vn.init();
+
+				config( vn );
+
+				intro( vn );
+
+				start( vn );
+				
+				vn.reset();
+
+			}
+
+			function pythonZen( novel, char ) {
+
+				novel.say( char, [
+					"Beautiful is better than ugly", 2000,
+					"Explicit is better than implicit", 2000,
+					"Simple is better than complex", 2000,
+					"Complex is better than complicated", 2000,
+					"Flat is better than nested", 2000,
+					"Sparse is better than dense", 2000,
+					"Readability counts", 2000,
+					"Special cases aren't special enough to break rules", 2000,
+					"Although practicality beats purity", 2000,
+					"Errors should never pass silently", 2000,
+					"Unless explicitly silenced", 2000,
+					"In the face of ambiguity, refuse the temptation to guess", 2000,
+					"There should be one -- and preferably only one -- obvious way to do it", 2000,
+					"Although that way may not be obvious at first unless you're a Dutch", 2000,
+					"Now is better than ever", 2000,
+					"Although never is often better than right now", 2000,
+					"If the implementation is hard to explain, it's a bad idea", 2000,
+					"If the implementation is easy to explain, it may be a good idea", 2000,
+					"Namespaces are one honking great idea -- let's do more of those", 2000 
+					] );
+
+			}
+
+			function pythonIdioms( novel, char ) {
+
+				novel.say( char, [
+					"Python Idioms<br/>-- a way to write code that is readable to Python beginners",
+					"<div class='smallTxt'>1. Unpacking<br/><pre>for index, item in enumerate(some_list):\n    print(index, item)</pre></div>",
+					"<div class='smallTxt'>2. Create an ignored variable<br/><br/>Use __ to assign something that will not be needed</div>",
+					"<div class='smallTxt'>3. Create a length-N list of the same thing<br/><pre>four_nones = list(None) * 4</pre></div>",
+					"<div class='smallTxt'>4. Create a length-N list of lists<br/><pre>four_lists = list( list() for __ in xrange(4) )</pre></div>",
+					"<div class='smallTxt'>5. Chain comparison operators<pre>if 4 > 3 > 2:\n    print('pass')</pre></div>",
+					"<div class='smallTxt'>6. Dict comprehensions<pre>words = ['hello', 'world'];\ndict = {key: value for key, value in enumerate(words)}</pre></div>"
+					] );
+
+			}
+
+			function pythonConcepts( novel, char ) {
+
+				novel.say( char, [
+					"Pythonic<br/>-- express the intent in what is considered the best (most readable) way",
+					"<div class='smallTxt'>1. Explicit code<br/><br/>The most explicit and straightforward manner is preferred</div>",
+					"<div class='smallTxt'>2. One statement per line<br/><br/>It is bad practice to have two disjoint statements on the same line of code</div>",
+					"<div class='smallTxt'>3. Function arguments<br/><br/>Positional, Keyword, Argument, Keyword Argument</div>",
+					"<div class='smallTxt'>4. Avoid the magical wand<br/><br/>Like a kung fu master, a Pythonista knows how to kill with a single finger, and never to actually do it</div>",
+					"<div class='smallTxt'>5. We are all consenting adults<br/><br/>Prefix all private properties and implementation details with underscore(__)</div>",
+					"<div class='smallTxt'>6. Returning values<br/><br/>Keep a single exit point. Multiple exit points indicate that refactoring is needed.</div>"
+					] );
+
+			}
+
+			function pythonConventions( novel, char ) {
+
+				novel.say( char, [
+					"Python writing style conventions:<br/><br/>--Conventions to make your code easier to read",
+					"<div class='smallTxt'>1. Check if variable equals a constant<br/><br/>Check for truthiness instead</div>",
+					"<div class='smallTxt'>2. Access a dictionary element<br/><br/>Use x in d syntax</div>",
+					"<div class='smallTxt'>3. Short ways to manipulate lists<pre>list(i for i in a if i > 4) or filter(lambda x: x > 4, a)\nlist(i + 3 for i in a) or map(lambda i: i + 3, a)\nfor i, item in enumerate(a)</pre></div>",
+					"<div class='smallTxt'>4. Read from a file<pre>with open('file.txt') as f:\n    for line in f:\n        print line</pre></div>",
+					"<div class='smallTxt'>5. Line continuation<br/><br/>A preferred solution is to use parentheses around your elements</div>"
+					] );
+
+			}
+
+			function references( novel, char ) {
+
+				novel.say( char, "<div class='smallTxt'>" +
+					"References:<br/>" +
+					"<a href='https://www.python.org/dev/peps/pep-0008/'>PEP 8 - Style Guide for Python</a><br/>" +
+					"<a href='http://docs.python-guide.org/en/latest/writing/style/'>Hitchiker's Guide to Python</a><br/>" +
+					"<a href='http://prooffreaderplus.blogspot.ca/2014/11/top-10-python-idioms-i-wished-id.html'>Top 10 Python idioms</a>" +
+					"</div>"
+					);
+
+			}
+
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			#recettear-vn-novelTitleContainer {
+				background-color: transparent;
+				color: darkred;
+			}
+
+			#recettear-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#recettear-vn-startMenuButton {
+				color: darkred;
+			}
+
+			#recettear-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: black;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="recettear-vn"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					
+				}
+
+			);
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "Recettear", "an item shop's tale", 300, 100 );
+				// vn.setStartScreenBgColor( "black" );
+				novel.setStartScreenBgImage( "bg/market.jpg", 800, 600 );
+				novel.setStartScreenMenuPos( 330, 500 );
+				// vn.setBgColor( "black" );
+				novel.setBgImage( "bg/market.jpg", 800, 600 );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "white", 0, "10px 60px" );
+				novel.setNovelMode( "dialog", 760, 150, 10, 20 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "white", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "rec", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "rec" );
+				}
+			
+				novel.setBgImage( "", 800, 600 );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "rec",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 500
+				);
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "rec", "Recettear<br/>an item shop's tale",
+					textSetting, 500
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+				novel.setBgImage( "bg/market.jpg", 800, 600, "no-repeat", 800, 600 );
+				novel.fadeBg( "in", 1000 );
+
+			}
+
+			function start( vn ) {
+
+				// define character
+				var rec = {
+					name: "Recette",
+					nameStyle: "color:darkred;",
+					width: 220,
+					height: 400,
+					image: "character/rec_recette.png",
+					pos: {
+						x : -0.3,
+						y : 0.007
+					},
+					dialog: {
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var arma = {
+					name: "Arma",
+					nameStyle: "color:darkgreen;",
+					width: 446,
+					height: 441,
+					image: "character/rec_arma2.png",
+					pos: {
+						x : 1.0,
+						y : 0.007
+					},
+					dialog: {
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var griff = {
+					name: "Griff",
+					nameStyle: "color:purple;",
+					width: 330,
+					height: 485,
+					// image : "character/rec_griff.png",
+					image: {
+						"default" : {
+							"src" : "character/51937.png",
+							"position" : "-1124px 990px"
+						},
+						"normal" : {
+							"src" : "character/51937.png",
+							"position" : "-1124px 990px"
+						},
+						"sad" : {
+							"src" : "character/51937.png",
+							"position" : "-100px 990px"
+						},
+						"angry" : {
+							"src" : "character/51937.png",
+							"position" : "-612px 990px"
+						},
+						"close" : {
+							"src" : "character/51937.png",
+							"position" : "-100px 478px"
+						}
+					},
+					pos: {
+						x : 1.0,
+						y : 0.007
+					},
+					dialog: {
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				// display character
+				vn.addCharacter( rec, 1000, "fade" );
+				vn.addCharacter( arma, 1000, "fade" );
+				vn.addCharacter( griff, 1000, "fade" );
+
+				vn.moveCharacter( rec, 0.4, 0, 500 );
+				vn.fadeCharacter( rec, "in", 500 );
+				vn.pause( 1000 );
+
+				vn.say( rec, [ "Welcome to Recettear!!",
+					"My name is Recette, ", 1000,
+					"the proud owner of this item shop", 2000, true ] );
+				vn.moveCharacter( rec, 0.1, 0, 200 );
+
+				vn.showSayDialog( false );
+
+				var progTopics = [
+					{
+						label : "Recette and Arma",
+						action : function() {
+
+							ArmaScene1( vn, rec, arma );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Recette and Griff 1",
+						action : function() {
+
+							GriffScene1( vn, rec, griff );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Recette and Griff 2",
+						action : function() {
+
+							GriffScene2( vn, rec, griff );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Recette and Griff 3",
+						action : function() {
+
+							GriffScene3( vn, rec, griff );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Done",
+						action : function() {
+
+						}
+					}
+				];
+				
+				vn.choice(
+					"progTopics",
+					progTopics,
+					{ x : 0.4,  y : 0.3 }
+				);
+
+				vn.say( rec, "Please come again!" );
+				vn.showSayDialog( false );
+
+				// remove character
+				vn.moveCharacter( rec, -0.3, 0, 500 );
+				vn.fadeCharacter( rec, "out", 500 );
+
+				// fade out bg
+				vn.fadeBg( "out", 1000 );
+				vn.pause( 1000 );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "recettear-vn", 800, 600, "img/recettear/" );
+
+				vn.init();
+
+				config( vn );
+
+				intro( vn );
+
+				start( vn );
+				
+				vn.reset();
+
+			}
+
+			function ArmaScene1( vn, rec, arma ) {
+
+				// rec and arma
+
+				function fadeToBlack() {
+					vn.showSayDialog( false );
+					vn.fadeCharacter( rec, "out", 100 );
+					vn.fadeCharacter( arma, "out", 100 );
+				
+					vn.fadeBg( "out", 100 );
+					vn.pause( 1000 );
+					vn.fadeBg( "in", 100 );
+
+					vn.fadeCharacter( rec, "in", 100 );
+					vn.fadeCharacter( arma, "in", 100 );
+					vn.showSayDialog( true );
+				}
+
+				vn.moveCharacter( rec, -0.03, 0, 0 );
+				vn.moveCharacter( arma, 1.0, 0, 0 );
+				vn.pause( 2000 );
+				vn.say( "Scene:", "One day, Arma visits Recettear to visit Recette" );
+				vn.showSayDialog( false );
+
+				vn.moveCharacter( arma, 0.6, 0, 1000 );
+				vn.pause( 2000 );
+
+				vn.say( rec, [ "Oh!", 500, 
+					" Hi Arma!", true ] );
+				vn.showSayDialog( false );
+
+				vn.moveCharacter( arma, 0.25, 0, 1500 );
+				vn.pause( 2000 );
+
+				vn.say( rec, "Did you come to visit?" );
+				vn.say( arma, "nods..." );
+				vn.say( rec, [ "That's great!", 1000, 
+					" A lot of new items came in so pick any item you like", true ] );
+				vn.say( arma, "nods..." );
+				vn.showSayDialog( false );
+
+				vn.flipCharacter( arma );
+				vn.moveCharacter( arma, 0.3, 0, 500 );
+				vn.pause( 2000 );
+				vn.moveCharacter( arma, 0.4, 0, 500 );
+				vn.pause( 2000 );
+				vn.flipCharacter( arma );
+				vn.pause( 1000 );
+				vn.moveCharacter( arma, 0.3, 0, 500 );
+
+				vn.say( "", [ "Arma notices a familiar item on a shelf", 2000,
+					"... and decides to take it with her", true
+				] );
+				vn.showSayDialog( false );
+
+				vn.flipCharacter( arma );
+				vn.pause( 1000 );
+
+				vn.moveCharacter( arma, 0.5, 0, 1000 );
+				vn.pause( 1000 );
+
+				vn.moveCharacter( rec, 0.1, 0, 500 );
+				vn.say( rec, "W-wait!" );
+
+				vn.flipCharacter( arma );
+				vn.pause( 1000 );
+
+				vn.say( rec, "You need to pay me some money y'know!" );
+				vn.say( arma, ['"Money" Term undefined.', 2000,
+					'...', 1000, true,
+					' Elaborate.', true ] );
+				vn.say( rec, [ "I need to explain money?", 2000,
+					" Yikes...", 1000, true,
+					" I'd better start all over, then.", true,
+					"So, uh, how do I explain what money is?",
+					'Well, the money we use is referred to as "pix"' ] );
+
+				fadeToBlack();
+				
+				vn.say( rec, "... So that's why different items cost different amounts, see?" );
+
+				fadeToBlack();
+
+				vn.say( rec, '.. And that\'s when the hero yelled, "this is the end of my journey!" ...' );
+
+				fadeToBlack();
+
+				vn.say( rec, "... and that's why you need to pay for items in places like this!" );
+
+				vn.moveCharacter( arma, 1.0, 0, 0 );
+
+			}
+
+			function GriffScene1( vn, rec, griff ) {
+
+				// rec and griff
+
+				vn.moveCharacter( griff, 0.5, 0, 1000 );
+
+				vn.say( "Scene:", "In a certain dungeon, Recette and Griff meet" );
+
+				vn.say( rec, [
+					"A Lord of Darkness in this day and age?", 2000,
+					"Please tell me you're not actually serious!" ] );
+
+				vn.changeCharacterImage( griff, "sad" );
+				vn.moveCharacter( griff, 0.6, 0, 100 );
+				vn.say( griff, "Ghkt! What is ..." );
+				vn.changeCharacterImage( griff, "normal" );
+				vn.moveCharacter( griff, 0.5, 0, 500 );
+
+				vn.say( griff, [ 
+					"Is there something WRONG with being a a Lord of Darkness?", 3000,
+					"... Obvious objections aside, that is!" ] );
+				vn.say( rec, [
+					"Well, it's good to have a big dream and aim high,", 2000,
+					" and conquering the world and covering it in darkness", 3000,
+					" and a lack of candy is definitely a big dream!",
+					"But still .", 500,
+					".", 500, true,
+					".", 2000, true,
+					"A darkly handsome demonic overlord who wants only pain ", 2000,
+					"and suffering, and uses and ancient, sealed evil to achieve his ends?",
+					"Nowadays? Are you serious? People will just laugh at you!",
+					"I'm kind of embarassed just listening to all this!",
+					'Oh yeah, the "everybody kills everybody forever" stuff is dumb too.',
+					'But the "Lord of Darkness" stuff is just', 1000,
+					' .', 500, true,
+					'.', 500, true,
+					'.', 2000, true,
+					' man!', true ] );
+
+				vn.changeCharacterImage( griff, "sad" );
+				vn.say( griff, [
+					"Well .", 500,
+					".", 500, true,
+					".", 2000, true,
+					" having it put like that is certainly", 1000, true,
+					" .", 500, true,
+					".", 500, true,
+					".", 2000, true,
+					" hmm", true ] );
+
+				vn.changeCharacterImage( griff, "normal" );
+				vn.moveCharacter( griff, 1.0, 0, 0 );
+
+			}
+
+			function GriffScene2( vn, rec, griff ) {
+
+				// rec and griff
+
+				vn.moveCharacter( griff, 0.6, 0, 1000 );
+
+				vn.say( "Scene:", "In the town square at night, Recette and Griff meet" );
+
+				vn.say( rec, "Heeey, could it be that you melt if the sun touches your skin?" );
+				vn.say( griff, [
+					'Your "logic" is breathtaking in its stupidity.', 1000,
+					' Again.', true ] );
+				vn.say( rec, "Well, then why do we never see you out during the day?" );
+
+				vn.changeCharacterImage( griff, "angry" );
+				vn.say( griff, "... Mmph ..." );
+
+				vn.changeCharacterImage( griff, "normal" );
+				vn.say( griff, [
+					"The sun is too bright during the day and ", 1000,
+					".", 500, true,
+					".", 500, true,
+					".", 1000, true ] );
+
+				vn.changeCharacterImage( griff, "sad" );
+				vn.say( griff, " I don't do well with it." );
+
+				vn.say( rec, [ "Oh, I see.",
+					"But despite that, you've got an awesome tan!" ] );
+
+				vn.changeCharacterImage( griff, "normal" );
+				vn.say( griff, [
+					'You ', 500,
+					'.', 500, true,
+					'.', 500, true,
+					'.', 1000, true,
+					' realize this is not a "tan",', 1000, true,
+					' correct?', true ] );
+
+				vn.moveCharacter( griff, 1.0, 0, 0 );
+
+			}
+
+			function GriffScene3( vn, rec, griff ) {
+
+				// rec and griff
+
+				vn.moveCharacter( griff, 0.6, 0, 1000 );
+
+				vn.say( "Scene:", "At the town square, Recette and Griff meet" );
+
+				vn.changeCharacterImage( griff, "sad" );
+				vn.say( rec, "Let me guess: youuuuu have a crush on Tear, don'cha?" );
+
+				vn.say( griff, [
+					"... What.", 1000,
+					" Is.", 1000, true,
+					" This.", true ] );
+
+				vn.changeCharacterImage( griff, "normal" );
+				vn.say( griff, [
+					" That idea is so disconnected from reality that I cannot tell whether you are mocking me or are trying to be profound.",
+					"And ... failing.", 1000,
+					" Badly.", 1000, true,
+					" Speak plainly.", true ] );
+
+				vn.say( rec, [
+					"Yeeeah, I bet I'm right!",
+					"Some guys show their affection by teasing ...",
+					"But too bad mister!",
+					" 'Cause Tear is my ...", 1000,
+					" Wait.", 1000, true,
+					" This is it, isn't it?!", 1000, true,
+					" The moment I've been dreading!", true,
+					"You're going to ask for Tear's hand in marriage, aren't you?!" ] );
+
+				vn.changeCharacterImage( griff, "angry" );
+				vn.say( griff, [ 
+					"...Misunderstanding as profound as hers leads to religions.", 2000,
+					" BAD ones.", true ] );
+
+				vn.changeCharacterImage( griff, "normal" );
+				vn.moveCharacter( griff, 1.0, 0, 0 );
+
+			}
+
+		</script>
+
+	</body>
+
+</html>

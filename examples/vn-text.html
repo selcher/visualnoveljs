@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			#text-vn-novelTitleContainer {
+				background-color: transparent;
+				color: darkred;
+			}
+
+			#text-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#text-vn-startMenuButton {
+				color: darkred;
+			}
+
+			#text-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: black;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+		<script src="js/preloadjs-0.4.1.min.js" type="text/javascript"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="text-vn"></div>
+			<div id="preload"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					preload();
+					
+				}
+
+			);
+
+			function preload() {
+
+				var queue = new createjs.LoadQueue( true );
+
+				queue.on( 'fileprogress', handleFileProgress, this );
+				queue.on( 'fileload', handleFileLoad, this );
+				queue.on( 'complete', handleComplete, this );
+
+				// add file to load one at a time
+				// queue.loadFile( 'img/persona/tarot/personas.PNG' );
+
+				// add multiple files to load
+				queue.loadManifest( [
+					{
+						id : 'bridge',
+						src : 'img/text/bg/bridge.jpg'
+					},
+					{
+						id : 'landscape1',
+						src : 'img/text/bg/landscape1.jpg'
+					},
+					{
+						id : 'landscape2',
+						src : 'img/text/bg/landscape2.jpg'
+					},
+					{
+						id : 'school1',
+						src : 'img/text/bg/school1.jpg'
+					},
+					{
+						id : 'school2',
+						src : 'img/text/bg/school2.jpg'
+					},
+					{
+						id : 'school3',
+						src : 'img/text/bg/school3.jpg'
+					},
+					{
+						id : 'sky1',
+						src : 'img/text/bg/sky1.jpg'
+					},
+					{
+						id : 'sky2',
+						src : 'img/text/bg/sky2.jpg'
+					},
+					{
+						id : 'snow',
+						src : 'img/text/bg/snow.jpg'
+					},
+					{
+						id : 'street1',
+						src : 'img/text/bg/street1.jpg'
+					},
+					{
+						id : 'street2',
+						src : 'img/text/bg/street2.jpg'
+					},
+					{
+						id : 'street3',
+						src : 'img/text/bg/street3.jpg'
+					},
+					{
+						id : 'street4',
+						src : 'img/text/bg/street4.jpg'
+					},
+					{
+						id : 'street5',
+						src : 'img/text/bg/street5.jpg'
+					},
+					{
+						id : 'train',
+						src : 'img/text/bg/train.jpg'
+					},
+					{
+						id : 'note',
+						src : 'img/text/icon/note.png'
+					}
+				] );
+
+				queue.load();
+
+				function handleFileProgress( event ) {
+					var item = event.item;
+					var progress = event.progress * 100;
+					console.log( 'file progress:', item.src, progress );
+				}
+
+				function handleFileLoad( event ) {
+					var item = event.item;
+					var type = event.type;
+					console.log( 'load', type, item );
+
+					if ( type == createjs.LoadQueue.IMAGE ) {
+						document.getElementById( 'preload' ).innerHTML = 'loaded ' + item.src;
+					}
+				}
+
+				function handleComplete( event ) {
+					console.log( 'complete', event );
+					document.getElementById( 'preload' ).innerHTML = 'complete';
+
+					// var train = queue.getResult( 'train' );
+					// document.getElementById( 'preload' ).appendChild( train );
+				}
+
+			}
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "Text Demo", "a visual novel", 300, 100 );
+				novel.setStartScreenBgColor( "white" );
+				// novel.setStartScreenBgImage( "bg/market.jpg", 800, 600 );
+				novel.setStartScreenMenuPos( 330, 500 );
+				novel.setBgColor( "white" );
+				// novel.setBgImage( "bg/market.jpg", 800, 600 );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "white", 0, "10px 60px" );
+				novel.setNovelMode( "dialog", 760, 150, 10, 20 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "black", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function flickerText() {
+					novel.fadeSceneText( "txt", "out", 0 );
+					novel.pause( 100 );
+					novel.fadeSceneText( "txt", "in", 0 );
+					novel.pause( 50 );
+					novel.fadeSceneText( "txt", "out", 0 );
+					novel.pause( 50 );
+					novel.fadeSceneText( "txt", "in", 0 );
+				}
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "txt", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "txt" );
+				}
+			
+				novel.setBgImage( "", 800, 600 );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "txt",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 500
+				);
+				flickerText();
+				novel.pause( 1000 );
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "txt", "The Days - Avicii<br/>lyrics presentation",
+					textSetting, 500
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+
+			}
+
+			function start( vn ) {
+
+				var clone = function( o ) {
+					// return JSON.parse( JSON.stringify( o ) );
+					return $.extend( true, {}, o );
+				};
+
+				var addTexts = function() {
+
+					var texts = [].slice.call( arguments );
+
+					texts.forEach( function( t ) {
+						var setting = clone( blackText );
+						setting = $.extend( true, setting, t.setting );
+						vn.addTextToScene( t.name, t.text, setting, t.fade );
+						vn.pause( t.delay );
+					} );
+
+				};
+
+				var moveTexts = function() {
+
+					var texts = [].slice.call( arguments );
+
+					texts.forEach( function( t ) {
+						vn.moveSceneText( t.name, t.x, t.y, t.z, t.speed, t.delay );
+					} );
+				};
+
+				var removeTexts = function() {
+
+					var texts = [].slice.call( arguments );
+					
+					texts.forEach( function( t ) {
+						vn.removeSceneText( t );
+					} );
+
+				};
+
+				vn.setBgColor( "white" );
+				// vn.setBgImage( "bg/market.jpg", 800, 600, "no-repeat", 800, 600 );
+				vn.fadeBg( "in", 1000 );
+				vn.pause( 1000 );
+
+				vn.addObjectToScene( "n",
+					{ width: 10, height: 10, path: "icon/note.png" },
+					{ x: 0.5, y: 0.3, z: 0 }, 0
+				);
+
+				vn.loop( 'note', true, function() {
+
+					vn.setSceneObjectRotation( "n", 'z', 10, 10, false );
+
+					setTimeout( function() {
+						vn.setSceneObjectRotation( "n", 'z', -60, 10, false );
+					}, 1000 );
+
+				}, 2000 );
+
+				vn.pause( 2000 );
+
+				var blackText = { x: 0.55, y: 0, z: 0.2, 
+					width : 300, height : 50,
+					color: "black", size : 10,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				// // under the tree
+				// // where the grass
+				// // dont grow
+				// addTexts(
+				// 	{ name : 't1', text : 'Under the tree', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't2', text : 'where the grass', setting : { y : 10 }, fade: 0, delay : 1000 },
+				// 	{ name : 't3', text : "don't grow", setting : { y : 20 }, fade: 0, delay : 3000 }
+				// );
+
+				// vn.rotateSceneText( 't1', 'z', 60, 0, false );
+				// vn.rotateSceneText( 't2', 'z', 60, 0, false );
+				// vn.rotateSceneText( 't3', 'z', 60, 0, false );
+				// moveTexts(
+				// 	{ name : 't1', x : 50, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't2', x : 50, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't3', x : 50, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // we made a promise
+				// // to never get old
+				// addTexts(
+				// 	{ name : 't4', text : 'We made a promise', setting : { y : 0 }, fade: 0, delay : 1000 },
+				// 	{ name : 't5', text : 'to never get old', setting : { y : 10 }, fade: 0, delay : 3000 }
+				// );
+
+				// vn.rotateSceneText( 't4', 'z', 60, 0, false );
+				// vn.rotateSceneText( 't5', 'z', 60, 0, false );
+				// vn.moveSceneText( 't4', 0, 0, 30, 0 );
+				// vn.moveSceneText( 't5', 0, 0, 40, 0 );
+				// moveTexts(
+				// 	{ name : 't4', x : 50, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't5', x : 50, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // you had a chance
+				// // and you took it on me
+				// addTexts(
+				// 	{ name : 't6', text : 'you had a chance', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't7', text : 'and you took it on me', setting : { y : 10 }, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't6', 't7' );
+				// vn.rotateSceneText( 't6', 'z', -60, 0, false );
+				// vn.rotateSceneText( 't7', 'z', -60, 0, false );
+				// vn.moveSceneText( 't6', 230, 0, -160, 0 );
+				// vn.moveSceneText( 't7', 230, 0, -150, 0 );
+				// moveTexts(
+				// 	{ name : 't6', x : 150, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't7', x : 150, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // and i made a promise
+				// // that i couldnt keep
+				// addTexts(
+				// 	{ name : 't8', text : 'and I made a promise', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't9', text : "that I couldn't keep", setting : { y : 10 }, fade: 0, delay : 1000 }
+				// );
+
+				// vn.rotateSceneText( 't8', 'z', 90, 0, false );
+				// vn.rotateSceneText( 't9', 'z', 90, 0, false );
+				// moveTexts(
+				// 	{ name : 't8', x : 70, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't9', x : 70, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // Heartache, Heartbreaks
+				// // all over town
+				// addTexts(
+				// 	{ name : 't10', text : 'Heartache, Heartbreaks', setting : { x : 500, y : 0 }, fade: 0, delay : 2000 },
+				// 	{ name : 't11', text : 'all over town', setting : { x : 500, y : 10 }, fade: 0, delay : 1000 }
+				// );
+
+				// // removeTexts( 't10', 't11' );
+				// vn.rotateSceneText( 't10', 'z', -45, 0, false );
+				// vn.rotateSceneText( 't11', 'z', -45, 0, false );
+				// vn.moveSceneText( 't10', 0, 0, -190, 0 );
+				// vn.moveSceneText( 't11', 0, 0, -200, 0 );
+				// moveTexts(
+				// 	{ name : 't10', x : 330, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't11', x : 330, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // But something flipped
+				// // like a switch
+				// // when you came around
+				// addTexts(
+				// 	{ name : 't12', text : 'But something flipped', setting : { x : 500 }, fade: 0, delay : 1000 },
+				// 	{ name : 't13', text : 'like a switch', setting : { x : 500, y : 10 }, fade: 0, delay : 1000 },
+				// 	{ name : 't14', text : 'when you came around', setting : { x : 500, y : 20 }, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't12', 't13', 't14' );
+				// vn.rotateSceneText( 't12', 'z', 45, 0, false );
+				// vn.rotateSceneText( 't13', 'z', 45, 0, false );
+				// vn.rotateSceneText( 't14', 'z', -45, 0, false );
+				// vn.moveSceneText( 't12', 0, 0, 0, 0 );
+				// vn.moveSceneText( 't13', 0, 0, 0, 0 );
+				// vn.moveSceneText( 't14', 540, 0, -70, 0 );
+				// moveTexts(
+				// 	{ name : 't12', x : 250, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't13', x : 250, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't14', x : 350, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // And I'm in pieces
+				// // pick me up
+				// // and put me together
+				// addTexts(
+				// 	{ name : 't15', text : "And I'm in pieces", setting : { x : 500 }, fade: 0, delay : 1000 },
+				// 	{ name : 't16', text : 'pick me up', setting : { x : 500, y : 10 }, fade: 0, delay : 1000 },
+				// 	{ name : 't17', text : 'and put me together', setting : { x : 500, y : 20 }, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't15', 't16', 't17' );
+				// vn.rotateSceneText( 't15', 'z', 90, 0, false );
+				// vn.rotateSceneText( 't17', 'z', 90, 0, false );
+				// vn.moveSceneText( 't15', 500, 0, 50, 0 );
+				// vn.moveSceneText( 't16', 500, 0, -5, 0 );
+				// vn.moveSceneText( 't17', 540, 0, 0, 0 );
+				// moveTexts(
+				// 	{ name : 't15', x : 350, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't16', x : 500, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't17', x : 350, y : 600, z : 0, speed : 500, delay : 1000 }
+				// );
+
+				// // ooooohh
+				// addTexts(
+				// 	{ name : 't18', text : 'ooooohh', setting : {}, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't18' );
+				// vn.moveSceneText( 't18', 500, 600, 40, 500 );
+
+				// // These are the days
+				// // we've been waiting for
+				// addTexts(
+				// 	{ name : 't19', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't20', text : "we've been waiting for", setting : { y : 10 }, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't19', 't20' );
+				// vn.rotateSceneText( 't19', 'z', -60, 0, false );
+				// vn.rotateSceneText( 't20', 'z', -60, 0, false );
+				// moveTexts(
+				// 	{ name : 't19', x : 550, y : 600, z : -150, speed : 500, delay : 100 },
+				// 	{ name : 't20', x : 550, y : 600, z : -100, speed : 500, delay : 100 }
+				// );
+
+				// // On days like these
+				// // who could ask for more
+				// addTexts(
+				// 	{ name : 't21', text : 'On days like these', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't22', text : 'who could ask for more', setting : { y : 10 }, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't21', 't22' );
+				// vn.rotateSceneText( 't21', 'z', 60, 0, false );
+				// vn.rotateSceneText( 't22', 'z', 60, 0, false );
+				// moveTexts(
+				// 	{ name : 't21', x : 540, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't22', x : 540, y : 600, z : 0, speed : 500, delay : 100 }
+				// );
+
+				// // Keep them coming
+				// // cause were not done yet
+				// addTexts(
+				// 	{ name : 't23', text : 'Keep them coming', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't24', text : "cause we're not done yet", setting : { y : 10 }, fade: 0, delay : 2000 }
+				// );
+
+				// // removeTexts( 't23', 't24' );
+				// vn.rotateSceneText( 't23', 'z', 90, 0, false );
+				// vn.rotateSceneText( 't24', 'z', 90, 0, false );
+				// moveTexts(
+				// 	{ name : 't23', x : 550, y : 600, z : 0, speed : 500, delay : 100 },
+				// 	{ name : 't24', x : 550, y : 600, z : 0, speed : 500, delay : 100 }
+				// );
+
+				// // These are the days
+				// // that we won't regret
+				// addTexts(
+				// 	{ name : 't25', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+				// 	{ name : 't26', text : "that we won't regret", setting : { y : 10 }, fade: 0, delay : 1000 }
+				// );
+
+				// removeTexts( 't25', 't26' );
+				vn.rotateSceneText( 't25', 'z', 90, 0, false );
+				vn.rotateSceneText( 't26', 'z', 90, 0, false );
+				vn.moveSceneText( 't25', 500, 0, 200, 0 );
+				vn.moveSceneText( 't26', 500, 0, 200, 0 );
+				moveTexts(
+					{ name : 't25', x : 50, y : 600, z : 0, speed : 500, delay : 100 },
+					{ name : 't26', x : 50, y : 600, z : 0, speed : 500, delay : 100 }
+				);
+				vn.say( '', 'test' );
+
+				// These are the days
+				// that we won't forget
+				addTexts(
+					{ name : 't26', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't27', text : "that we won't forget", setting : { y : -0.1 }, fade: 0, delay : 3000 }
+				);
+
+				// removeTexts( 't26', 't27' );
+
+				// These are the days
+				// we've been waiting for
+				addTexts(
+					{ name : 't28', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't29', text : "we've been waiting for", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't28', 't29' );
+
+				// Rattle the cage
+				// and slam that door
+				addTexts(
+					{ name : 't30', text : 'Rattle the cage', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't31', text : "and slam that door", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't30', 't31' );
+
+				// And the world
+				// is calling us
+				// but not just yet
+				addTexts(
+					{ name : 't32', text : "And the world", setting : {}, fade: 0, delay : 1000 },
+					{ name : 't33', text : 'is calling us', setting : { y : -0.1 }, fade: 0, delay : 1000 },
+					{ name : 't34', text : 'but not just yet', setting : { y : -0.2 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't32', 't33', 't34' );
+
+				// These are the days
+				// that we won't regret
+				addTexts(
+					{ name : 't35', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't36', text : "that we won't regret", setting : { y : -0.1 }, fade: 0, delay : 1000 }
+				);
+
+				// removeTexts( 't35', 't36' );
+
+				// These are the days
+				// that we won't forget
+				addTexts(
+					{ name : 't37', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't38', text : "that we won't forget", setting : { y : -0.1 }, fade: 0, delay : 3000 }
+				);
+
+				// removeTexts( 't37', 't38' );
+
+				// Out on the midnight
+				// the wild ones howl
+				addTexts(
+					{ name : 't39', text : 'Out on the midnight', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't40', text : "the wild ones howl", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't39', 't40' );
+
+				// Last of the lost boys
+				// have thrown in the towel
+				addTexts(
+					{ name : 't41', text : 'Last of the lost boys', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't42', text : "have thrown in the towel", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't41', 't42' );
+
+				// We used to believe
+				// we were stars aligned
+				addTexts(
+					{ name : 't43', text : 'We used to believe', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't44', text : "we were stars aligned", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't43', 't44' );
+
+				// You made a wish
+				// and I fell out of time
+				addTexts(
+					{ name : 't45', text : 'You made a wish', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't46', text : "and I fell out of time", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				removeTexts( 't45', 't46' );
+
+				// Time flew,
+				// cut through
+				// all over town
+				addTexts(
+					{ name : 't47', text : "Time flew", setting : {}, fade: 0, delay : 1000 },
+					{ name : 't48', text : 'cut through', setting : { y : -0.1 }, fade: 0, delay : 1000 },
+					{ name : 't49', text : 'all over town', setting : { y : -0.2 }, fade: 0, delay : 1000 }
+				);
+
+				// removeTexts( 't47', 't48', 't49' );
+
+				// You made me bleed
+				// when I look up and
+				// you're not around
+				addTexts(
+					{ name : 't50', text : "You made me bleed", setting : {}, fade: 0, delay : 1000 },
+					{ name : 't51', text : 'when I look up and', setting : { y : -0.1 }, fade: 0, delay : 1000 },
+					{ name : 't52', text : "you're not around", setting : { y : -0.2 }, fade: 0, delay : 1000 }
+				);
+
+				// removeTexts( 't51', 't52', 't53' );
+
+				// And I'm in pieces
+				// pick me up
+				// and put me together,
+				addTexts(
+					{ name : 't54', text : "And I'm in pieces", setting : {}, fade: 0, delay : 1000 },
+					{ name : 't55', text : 'pick me up', setting : { y : -0.1 }, fade: 0, delay : 1000 },
+					{ name : 't56', text : 'and put me together', setting : { y : -0.2 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't54', 't55', 't56' );
+
+				// ooooohh
+				addTexts(
+					{ name : 't57', text : "ooooohh", setting : {}, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't57' );
+
+				// These are the days
+				// we've been waiting for
+				addTexts(
+					{ name : 't58', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't59', text : "we've been waiting for", setting : { y : -0.1 }, fade: 0, delay : 1000 }
+				);
+
+				// removeTexts( 't58', 't59' );
+
+				// Neither of us
+				// knows what's in store
+				addTexts(
+					{ name : 't60', text : 'Neither of us', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't61', text : "knows what's in store", setting : { y : -0.1 }, fade: 0, delay : 1000 }
+				);
+
+				// removeTexts( 't60', 't61' );
+
+				// You just roll
+				// your window down and
+				// place your bets
+				addTexts(
+					{ name : 't62', text : "You just roll", setting : {}, fade: 0, delay : 1000 },
+					{ name : 't63', text : 'your window down and', setting : { y : -0.1 }, fade: 0, delay : 1000 },
+					{ name : 't64', text : 'place your bets', setting : { y : -0.2 }, fade: 0, delay : 1000 }
+				);
+
+				// removeTexts( 't62', 't63', 't64' );
+
+				// These are the days
+				// that we won't regret
+				addTexts(
+					{ name : 't65', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't66', text : "that we won't regret", setting : { y : -0.1 }, fade: 0, delay : 2000 }
+				);
+
+				// removeTexts( 't65', 't66' );
+
+				// These are the days
+				// we will never forget
+				addTexts(
+					{ name : 't67', text : 'These are the days', setting : {}, fade: 0, delay : 1000 },
+					{ name : 't68', text : "we will never forget", setting : { y : -0.1 }, fade: 0, delay : 3000 }
+				);
+
+				removeTexts( 't67', 't68' );
+
+				vn.removeSceneObject( 'n' );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "text-vn", 800, 600, "img/text/" );
+
+				vn.init();
+
+				config( vn );
+
+				// intro( vn );
+
+				start( vn );
+				
+				vn.reset();
+
+			}
+
+
+		</script>
+
+	</body>
+
+</html>

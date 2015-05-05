@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				background-color: black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			#jp-vn-novelTitleContainer {
+				background-color: transparent;
+				color: darkred;
+			}
+
+			#jp-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#jp-vn-startMenuButton {
+				color: darkred;
+			}
+
+			#jp-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: black;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+		<script type="text/javascript" src="js/preloadjs-0.4.1.min.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="jp-vn"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					preload();
+					
+				}
+
+			);
+
+			function preload() {
+
+				var queue = new createjs.LoadQueue( true );
+				var path = 'img/jp/';
+
+				queue.loadManifest( [
+					{
+						id : 'bg',
+						src : path + 'bg/jpbg.png'
+					},
+					{
+						id : 'stare',
+						src : path + 'bg/stare.jpg',
+					},
+					{
+						id : 'happy',
+						src : path + 'character/happy.png'
+					},
+					{
+						id : 'sad',
+						src : path + 'character/sad.png'
+					},
+					{
+						id : 'sleep',
+						src : path + 'character/sleep.png'
+					},
+					{
+						id : 'think',
+						src : path + 'character/think.png'
+					},
+					{
+						id : 'angry',
+						src : path + 'character/angry.png'
+					}
+				] );
+
+				queue.load();
+
+			}
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "JP Guide", "a visual novel", 300, 100 );
+				novel.setNovelTitlePosition( 35, 70 );
+				// vn.setStartScreenBgColor( "black" );
+				novel.setStartScreenBgImage( "bg/jpbg.png", 800, 600 );
+				novel.setStartScreenMenuPos( 42, 500 );
+				// vn.setBgColor( "black" );
+				novel.setBgImage( "bg/stare.jpg", 800, 600 );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "darkred", "1px 10px", "0px 60px" );
+				novel.setNovelMode( "dialog", 760, 150, 10, 20 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "white", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "jp", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "jp" );
+				}
+			
+				novel.setBgImage( "", 800, 600 );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "jp",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 500
+				);
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "jp", "JP Guide<br/>a visual novel",
+					textSetting, 500
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+				novel.setBgImage( "bg/stare.jpg", 800, 600 );
+				novel.fadeBg( "in", 1000 );
+
+			}
+
+			function start( vn ) {
+
+				var engChars = [
+					[ "a", "i", "u", "e", "o" ],
+					[ "ka", "ki", "ku", "ke", "ko" ],
+					[ "sa", "shi", "su", "se", "so" ],
+					[ "ta", "chi", "tsu", "te", "to" ],
+					[ "na", "ni", "nu", "ne", "no" ],
+					[ "ha", "hi", "fu", "he", "ho" ],
+					[ "ma", "mi", "mu", "me", "mo" ],
+					[ "ya", "yu", "yo" ],
+					[ "ra", "ri", "ru", "re", "ro" ],
+					[ "wa", "wo" ]
+				];
+
+				//ひらがな
+				var hiraganaChars = [
+					[ "あ", "い", "う", "え", "お" ],
+					[ "か", "き", "く", "け", "こ" ],
+					[ "さ", "し", "す", "せ", "そ" ],
+					[ "た", "ち", "つ", "て", "と" ],
+					[ "な", "に", "ぬ", "ね", "の" ],
+					[ "は", "ひ", "ふ", "へ", "ほ" ],
+					[ "ま", "み", "む", "め", "も" ],
+					[ "や", "ゆ", "よ" ],
+					[ "ら", "り", "る", "れ", "ろ" ],
+					[ "わ", "を" ]
+				];
+
+				//カタカナ
+				var katakanaChars = [
+					[ "ア", "イ", "ウ", "エ", "オ" ],
+					[ "カ", "キ", "ク", "ケ", "コ" ],
+					[ "サ", "シ", "ス", "セ", "ソ" ],
+					[ "タ", "チ", "ツ", "テ", "ト" ],
+					[ "ナ", "ニ", "ヌ", "ネ", "ノ" ],
+					[ "ハ", "ヒ", "フ", "ヘ", "ホ" ],
+					[ "マ", "ミ", "ム", "メ", "モ" ],
+					[ "ヤ", "ユ", "ヨ" ],
+					[ "ラ", "リ", "ル", "レ", "ロ" ],
+					[ "ワ", "ヲ" ]
+				];
+
+				var wordsList = [
+					{
+						"eng" : "Good Morning",
+						"jp" : "Ohayou Gozaimasu"
+					},
+					{
+						"eng" : "Good Evening",
+						"jp" : "Konbanwa"
+					},
+					{
+						"eng" : "Welcome",
+						"jp" : "Youkoso irashai mashita"
+					},
+					{
+						"eng" : "How are you?",
+						"jp" : "Ogenki desu ka?"
+					},
+					{
+						"eng" : "I'm fine, thanks!",
+						"jp" : "Watashi wa genki desu. Arigatou!"
+					},
+					{
+						"eng" : "You're welcome",
+						"jp" : "Dou itashi mashite"
+					},
+					{
+						"eng" : "what's new?",
+						"jp" : "Saikin dou desuka?"
+					},
+					{
+						"eng" : "Nothing much",
+						"jp" : "Kawari nai desu"
+					},
+					{
+						"eng" : "Good night",
+						"jp" : "Oyasumi nasai"
+					},
+					{
+						"eng" : "See you later!",
+						"jp" : "Mata atode aimashou!"
+					},
+					{
+						"eng" : "Good bye",
+						"jp" : "Sayonara"
+					},
+					{
+						"eng" : "I'm lost",
+						"jp" : "Mayotte shimai mashita"
+					},
+					{
+						"eng" : "Can I help you?",
+						"jp" : "Otetsudai shimashouka?"
+					},
+					{
+						"eng" : "Can you help me?",
+						"jp" : "Tetsudatte kuremasuka?"
+					},
+					{
+						"eng" : "Where is the bathroom?",
+						"jp" : "Toire wa doko desu ka?"
+					},
+					{
+						"eng" : "Go Straight. Then turn left/right",
+						"jp" : "Masugu itte kudasai. Soshite hidari/migi ni magatte kudasai"
+					},
+					{
+						"eng" : "I'm looking for _",
+						"jp" : "_ wa sagashite imasu"
+					},
+					{
+						"eng" : "One moment please",
+						"jp" : "Chotto matte kudasai"
+					},
+					{
+						"eng" : "How much is this?",
+						"jp" : "Kore wa ikura desu ka?"
+					},
+					{
+						"eng" : "Excuse me",
+						"jp" : "Sumimasen"
+					},
+					{
+						"eng" : "Come with me!",
+						"jp" : "Watashi to issho ni kite kudasai"
+					},
+					{
+						"eng" : "Do you speak english?",
+						"jp" : "Anata wa eigo wo hanashimasu ka?"
+					},
+					{
+						"eng" : "Just a little",
+						"jp" : "Sukoshi dake"
+					},
+					{
+						"eng" : "What's your name?",
+						"jp" : "Namae wa nandesu ka?"
+					},
+					{
+						"eng" : "My name is _",
+						"jp" : "Watashi no namae wa _"
+					},
+					{
+						"eng" : "Nice to meet you",
+						"jp" : "Hajimemashite"
+					},
+					{
+						"eng" : "You're very kind",
+						"jp" : "Anata wa totemo shinshetsu desu"
+					},
+					{
+						"eng" : "Where are you from?",
+						"jp" : "Doko no shusshin desu ka?"
+					},
+					{
+						"eng" : "I'm from Japan",
+						"jp" : "Nihon kara desu"
+					},
+					{
+						"eng" : "Where do you live?",
+						"jp" : "Doko ni sunde imasu ka?"
+					},
+					{
+						"eng" : "I live in Japan",
+						"jp" : "Watashi wa Nihon ni sunde imasu"
+					},
+					{
+						"eng" : "Do you like it here?",
+						"jp" : "Koko wa suki ni narimashita ka?"
+					},
+					{
+						"eng" : "This is a wonderful country",
+						"jp" : "Kore wa subarashi kuni desu"
+					},
+					{
+						"eng" : "What do you do for a living?",
+						"jp" : "Oshigoto wa nandesu ka?"
+					},
+					{
+						"eng" : "Oh! That's good",
+						"jp" : "Sore wa ii desu ne"
+					},
+					{
+						"eng" : "How old are you?",
+						"jp" : "Toshi wa ikutsu desu ka?"
+					},
+					{
+						"eng" : "I'm 20 years old",
+						"jp" : "Watashi wa niju sai desu"
+					},
+					{
+						"eng" : "I have to go",
+						"jp" : "Ikanakutewa narimasen"
+					},
+					{
+						"eng" : "I'll be right back",
+						"jp" : "Sugo modori masu"
+					},
+					{
+						"eng" : "Good luck",
+						"jp" : "Ganbatte ne"
+					},
+					{
+						"eng" : "Happy Birthday",
+						"jp" : "Tanjyoubi omedetou gozaimasu"
+					},
+					{
+						"eng" : "Happy New Year",
+						"jp" : "Akemashite omedetou gozaimasu"
+					},
+					{
+						"eng" : "Congratulations",
+						"jp" : "Omedetou"
+					},
+					{
+						"eng" : "I'd like to visit _ one day",
+						"jp" : "Ituka _ otozure tai"
+					},
+					{
+						"eng" : "Say hi to _ for me",
+						"jp" : "_ ni yoroshiku tsutaete kudasai"
+					},
+					{
+						"eng" : "Bless you (sneeze)",
+						"jp" : "Odaiji ni"
+					},
+					{
+						"eng" : "Good night",
+						"jp" : "Oyasumi nasai"
+					},
+					{
+						"eng" : "Sorry",
+						"jp" : "Gomenasai"
+					},
+					{
+						"eng" : "No problem",
+						"jp" : "Daijyoubu desu"
+					},
+					{
+						"eng" : "Can you say it again?",
+						"jp" : "Mou ichido itte kuremasuka?"
+					},
+					{
+						"eng" : "Can you speak slowly?",
+						"jp" : "Yukkuri shabette kuremasuka?"
+					},
+					{
+						"eng" : "Write it down please",
+						"jp" : "Kaite kudasai"
+					},
+					{
+						"eng" : "I don't understand",
+						"jp" : "Wakarimasen"
+					},
+					{
+						"eng" : "I don't know",
+						"jp" : "Shirimasen"
+					},
+					{
+						"eng" : "What's that called in Japanese?",
+						"jp" : "Are wa nihongo de nanto iimasu ka?"
+					},
+					{
+						"eng" : "What is this?",
+						"jp" : "Kore wa nandesu ka?"
+					},
+					{
+						"eng" : "My Japanese is bad",
+						"jp" : "Watashi no nihongo wa heta desu"
+					},
+					{
+						"eng" : "Don't worry",
+						"jp" : "Goshinpai naku"
+					},
+					{
+						"eng" : "Good/bad/so-so",
+						"jp" : "You/warui/maa-maa"
+					},
+					{
+						"eng" : "Big/small",
+						"jp" : "Ooki/chiisai"
+					},
+					{
+						"eng" : "Today/now",
+						"jp" : "Kyou/ima"
+					},
+					{
+						"eng" : "Tomorrow/yesterday",
+						"jp" : "Ashita/kinou"
+					},
+					{
+						"eng" : "Yes/no",
+						"jp" : "Hai/iie"
+					},
+					{
+						"eng" : "Here you go",
+						"jp" : "Hai, douzo"
+					},
+					{
+						"eng" : "Do you like it?",
+						"jp" : "Suki desu ka?"
+					},
+					{
+						"eng" : "I really like it",
+						"jp" : "Honto ni suki desu"
+					},
+					{
+						"eng" : "I'm hungry/thirsty",
+						"jp" : "Onaka ga suki mashita/Nodo ga kawaki mashita"
+					},
+					{
+						"eng" : "In the morning/evening/at night",
+						"jp" : "Asa ni/yuugata ni/yoru ni"
+					},
+					{
+						"eng" : "This/That/Here/There",
+						"jp" : "Kore/Are/Koko/Asoko"
+					},
+					{
+						"eng" : "Me/You/Him/Her",
+						"jp" : "Watashi/Anata/Kare/Kanojo"
+					},
+					{
+						"eng" : "Really",
+						"jp" : "Honto"
+					},
+					{ 
+						"eng" : "Look",
+						"jp" : "Mite"
+					},
+					{
+						"eng" : "Hurry up",
+						"jp" : "Isoide/Hayaku"
+					},
+					{
+						"eng" : "What? Where?",
+						"jp" : "Nani? Doko?"
+					},
+					{
+						"eng" : "What time is it?",
+						"jp" : "Nanji desu ka?"
+					},
+					{
+						"eng" : "I love you",
+						"jp" : "Daisuki desu/Anata wo aishite imasu"
+					},
+					{
+						"eng" : "I feel sick",
+						"jp" : "Choshi ga warui desu"
+					},
+					{
+						"eng" : "1, 2, 3",
+						"jp" : "Ichi, ni, san"
+					},
+					{
+						"eng" : "4, 5, 6",
+						"jp" : "yon, go, roku"
+					},
+					{
+						"eng" : "7, 8, 9, 10",
+						"jp" : "nana, hachi, kyuu, ju"
+					},
+					{
+						"eng" : "World",
+						"jp" : "Sekai"
+					}
+				];
+
+				// define character
+				var lin = {
+					name: "Lin",
+					width: 310,
+					height: 380,
+					image: {
+						"default" : "character/happy.png",
+						"happy" : "character/happy.png",
+						"sad" : "character/sad.png",
+						"sleep" : "character/sleep.png",
+						"think" : "character/think.png",
+						"angry" : "character/angry.png"
+					},
+					pos: {
+						x : -0.4,
+						y : 0.007
+					},
+					dialog: {
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				function charAnimation() {
+
+					vn.loop( "lin", true, function() {
+						vn.setCharacterImage( lin, "sleep" );
+						setTimeout( function() {
+							vn.setCharacterImage( lin, "happy" );
+						}, 200 );
+					}, 5000 );
+
+				}
+
+				// display character
+				vn.addCharacter( lin, 1000, "fade" );
+				vn.changeCharacterImage( lin, "sleep" );
+
+				vn.moveCharacter( lin, 0.3, 0, 500 );
+				vn.fadeCharacter( lin, "in", 500 );
+				vn.pause( 1000 );
+				vn.changeCharacterImage( lin, "happy" );
+
+				// use loop to animate character
+				charAnimation();
+
+				vn.say( lin, "Let's learn Hiragana, Katakana, and some Nippongo words" );
+				vn.showSayDialog( false );
+
+				vn.moveCharacter( lin, 0.1, 0, 200 );
+
+				var progTopics = [
+					{
+						label : "Hiragana",
+						action : function() {
+
+							vn.clearLoop( "lin" );
+							vn.changeCharacterImage( lin, "think" );
+							vn.moveCharacter( lin, 0.6, 0, 500 );
+							hiragana( vn, lin, engChars, hiraganaChars );
+							vn.showSayDialog( false );
+							vn.changeCharacterImage( lin, "happy" );
+							vn.moveCharacter( lin, 0.1, 0, 500 );
+							charAnimation();
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Katakana",
+						action : function() {
+
+							vn.clearLoop( "lin" );
+							vn.changeCharacterImage( lin, "think" );
+							vn.moveCharacter( lin, 0.6, 0, 500 );
+							katakana( vn, lin, engChars, katakanaChars );
+							vn.showSayDialog( false );
+							vn.changeCharacterImage( lin, "happy" );
+							vn.moveCharacter( lin, 0.1, 0, 500 );
+							charAnimation();
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Words",
+						action : function() {
+
+							vn.clearLoop( "lin" );
+							vn.changeCharacterImage( lin, "think" );
+							vn.moveCharacter( lin, 0.6, 0, 500 );
+							words( vn, lin, wordsList );
+							vn.showSayDialog( false );
+							vn.changeCharacterImage( lin, "happy" );
+							vn.moveCharacter( lin, 0.1, 0, 500 );
+							charAnimation();
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "References",
+						action : function() {
+
+							vn.say( lin, "References:<br/>" +
+								"<a href='http://www.linguanaut.com/english_japanese.htm'" +
+								"target='_blank' >Japanese phrases and common sentences</a>" );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Done",
+						action : function() {
+							
+						}
+					}
+				];
+				
+				vn.choice(
+					"progTopics",
+					progTopics,
+					{ x : 0.6,  y : 0.3 }
+				);
+
+				vn.changeCharacterImage( lin, "sleep" );
+
+				// remove character
+				vn.moveCharacter( lin, -0.4, 0, 500 );
+				vn.fadeCharacter( lin, "out", 500 );
+
+				// fade out bg
+				vn.fadeBg( "out", 1000 );
+				vn.pause( 1000 );
+
+			}
+
+			function credit( novel ) {
+
+				novel.pause( 1000 );
+				novel.addTextToScene( "thanks",
+					"Thank You For Playing",
+					{
+						x : 0.7, y : 0, z : 0.4,
+						width : 500, height : 50,
+						size : 20,
+						color : "white",
+						fade: 500
+					}, 500 );
+				novel.pause( 2000 );
+
+				novel.fadeSceneText( "thanks", "out", 500 );
+				novel.pause( 1000 );
+
+				novel.removeSceneText( "thanks" );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "jp-vn", 800, 600, "img/jp/" );
+
+				vn.init();
+
+				config( vn );
+
+				intro( vn );
+
+				start( vn );
+
+				credit( vn );
+				
+				vn.reset();
+
+			}
+
+			function shuffle( list ) {
+
+				for ( var len = list.length, i = len, randIndex, temp; i--; ) {
+
+					randIndex = Math.floor( Math.random() * len );
+
+					temp = list[ i ];
+					list[ i ] = list[ randIndex ];
+					list[ randIndex ] = temp;
+
+				}
+
+				return list;
+
+			}
+
+			function buildCharTable( eng, jp ) {
+				
+				var totalRows = eng.length;
+				var row = null;
+				var col = null;
+				var cols = null;
+				var colsLength = null;
+				var table = "<table>";
+
+				for ( row = 0; row < totalRows; row++ ) {
+
+					table += "<tr>";
+
+					if ( row === 0 ) {
+
+						cols = eng[ row ].slice();
+						table += "<td></td>";
+
+						colsLength = cols.length;
+
+						for ( col = 0; col < colsLength; col++ ) {
+							table += "<td>" + cols[ col ] + "</td>";
+						}
+
+						table += "</tr><tr>";
+
+					}
+					
+					cols = jp[ row ].slice();
+					table += "<td>" + eng[ row ][ 0 ][ 0 ] + "</td>";
+
+					colsLength = cols.length;
+
+					for ( col = 0; col < colsLength; col++ ) {
+						table += "<td>" + cols[ col ] + "</td>";
+					}
+
+					table += "</tr>";
+
+				}
+
+				table += "</table>";
+
+				return table;
+
+			}
+
+			function buildQuizChoices( vn, engChars, jpChars ) {
+
+				var randRow = Math.floor( Math.random() * engChars.length );
+				var row = engChars[ randRow ];
+				var rowLength = row.length;
+				var col = Math.floor( Math.random() * rowLength );
+				var cols = [];
+				var randCol = null;
+				
+				while ( cols.length < 3 ) {
+					
+					randCol = Math.floor( Math.random() * rowLength );
+
+					if ( randCol !== col ) {
+						cols.push( row[ randCol ] );
+					}
+				}
+
+				var choices = [
+					{
+						label : row[ col ],
+						action : function() {
+							vn.setValue( "answer", "true" );
+						}
+					},
+					{
+						label : cols[ 0 ],
+						action : function() {
+							vn.setValue( "answer", "false" );
+						}
+					},
+					{
+						label : cols[ 1 ],
+						action : function() {
+							vn.setValue( "answer", "false" );
+						}
+					}
+				];
+
+				choices = shuffle( choices );
+
+				return {
+					"question" : jpChars[ randRow ][ col ],
+					"choices" : choices
+				};
+
+			}
+
+			function jpReview( vn, char, title, engChars, jpChars ) {
+
+				vn.setNovelMode( "dialog", 340, 430, 0.1, 0.1 );
+
+				vn.say( char,
+						title + "<br/><br/>" +
+						buildCharTable( engChars, jpChars )
+					);
+
+				vn.setNovelMode( "dialog", 760, 150, 10, 20 );
+
+			}
+
+			function jpQuiz( vn, char, quizName, engChars, jpChars ) {
+
+				var quiz = null;
+				var question = null;
+
+				vn.setValue( "score", 0 );
+
+				for ( question = 1; question < 6; question++ ) {
+
+					quiz = buildQuizChoices( vn, engChars, jpChars );
+
+					vn.say( char, "What is the english of " + quiz.question, 100 );
+
+					vn.choice( 
+						quizName,
+						quiz.choices,
+						{ x : 0.3, y : 0.4 }
+					);
+
+					vn.addCondition( "answer", "=", "true",
+						function success() {
+							vn.say( char, "That's right!", 1000 );
+							var score = vn.getValue( "score" );
+							vn.setValue( "score", ++score );
+						},
+						function fail() {
+							vn.say( char, "Too bad!", 1000 );
+						}
+					);
+
+				}
+
+				vn.say( char, "Score: {score}/5" );
+
+				vn.addCondition( "score", "<", 3,
+					function success() {
+						vn.changeCharacterImage( char, "sad" );
+						vn.say( char, "Try reviewing to get a better score ~" );
+						vn.changeCharacterImage( char, "think" );
+					}, function fail() {
+						vn.changeCharacterImage( char, "happy" );
+						vn.say( char, "Well done!")
+						vn.changeCharacterImage( char, "think" );
+					}
+				);
+
+			}
+
+			function hiragana( vn, char, engChars, hiraganaChars ) {
+
+				var hiraganaMenu = [
+					{
+						label : "Review Hiragana Characters",
+						action : function() {
+							jpReview( vn, char, "Hiragana characters:", engChars, hiraganaChars );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Take Hiragana Quiz",
+						action : function() {
+							jpQuiz( vn, char, "hiraganaQuiz", engChars, hiraganaChars );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Done",
+						action : function() {}
+					}
+				];
+
+				vn.choice(
+						"hiraganaMenu",
+						hiraganaMenu,
+						{ x : 0.2, y : 0.3 }
+					);
+
+			}
+
+			function katakana( vn, char, engChars, katakanaChars ) {
+
+				var katakanaMenu = [
+					{
+						label : "Review Katakana Characters",
+						action : function() {
+							jpReview( vn, char, "Katakana characters:", engChars, katakanaChars );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Take Katakana Quiz",
+						action : function() {
+							jpQuiz( vn, char, "katakanaQuiz", engChars, katakanaChars );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Done",
+						action : function() {}
+					}
+				];
+
+				vn.choice(
+						"katakanaMenu",
+						katakanaMenu,
+						{ x : 0.2, y : 0.3 }
+					);
+
+			}
+
+			function buildWordsToDisplay( wordsList ) {
+
+				var len = wordsList.length;
+				var wordList = [];
+				var currentWords = "";
+				var currentWordsCount = 0;
+				var i = 0;
+
+				// build list of words for each menu choice
+				for ( i = 0; i < len; i++ ) {
+
+					currentWords += "<div style='padding:5px 0px;font-size:14px;'>" +
+						"EN: " + wordsList[ i ].jp + "<br/>" +
+						"JP: " + wordsList[ i ].eng + "</div>";
+					currentWordsCount++;
+
+					if ( currentWordsCount >= 10 ) {
+
+						wordList.push( currentWords );
+						currentWords = "";
+						currentWordsCount = 0;
+					
+					}
+
+				}
+
+				if ( currentWords ) {
+
+					wordList.push( currentWords );
+					currentWords = null;
+					currentWordsCount = null;
+				
+				}
+
+				return wordList;
+
+			}
+
+			function buildWordsMenuChoices( vn, char, wordList ) {
+
+				var wordsChoices = [];
+
+				var wordsChoice = null;
+				var len = 0;
+
+				// build list of menu choices
+				for ( i = 0, len = wordList.length; i < len; i++ ) {
+
+					wordsChoice = ( function() {
+						
+						var label = i;
+						var wordsToDisplay = wordList[ i ];
+
+						return {
+							label : label,
+							action : function() {
+
+								console.log( label, wordsToDisplay );
+								
+								vn.setNovelMode( "dialog", 340, 530, 0.1, 0.1 );
+								vn.say( char, wordsToDisplay );
+								vn.setNovelMode( "dialog", 760, 150, 10, 20 );
+								vn.showSayDialog( false );
+								vn.repeatEvent();
+							
+							}
+						};
+
+					} )();
+
+					wordsChoices.push( wordsChoice );
+
+				}
+
+				wordsChoices.push( {
+						label : "Done",
+						action : function() {}
+					} );
+
+				return wordsChoices;
+
+			}
+
+			function buildWordQuizChoices( vn, wordsList ) {
+
+				var totalWords = wordsList.length;
+				var row = Math.floor( Math.random() * totalWords );
+				var rows = [];
+				var randRow = null;
+				
+				while ( rows.length < 3 ) {
+					
+					randRow = Math.floor( Math.random() * totalWords );
+
+					if ( randRow !== row ) {
+						rows.push( randRow );
+					}
+				}
+
+				var choices = [
+					{
+						label : wordsList[ row ].eng,
+						action : function() {
+							vn.setValue( "answer", "true" );
+						}
+					},
+					{
+						label : wordsList[ rows[ 0 ] ].eng,
+						action : function() {
+							vn.setValue( "answer", "false" );
+						}
+					},
+					{
+						label : wordsList[ rows[ 1 ] ].eng,
+						action : function() {
+							vn.setValue( "answer", "false" );
+						}
+					}
+				];
+
+				choices = shuffle( choices );
+
+				return {
+					"question" : wordsList[ row ].jp,
+					"choices" : choices
+				};
+
+			}
+
+			function wordQuiz( vn, char, quizName, wordsList ) {
+
+				var quiz = null;
+				var question = null;
+
+				vn.setValue( "score", 0 );
+
+				for ( question = 1; question < 6; question++ ) {
+
+					quiz = buildWordQuizChoices( vn, wordsList );
+
+					vn.say( char, "What is the english of " + quiz.question, 100 );
+
+					vn.choice( 
+						quizName,
+						quiz.choices,
+						{ x : 0.1, y : 0.4 }
+					);
+
+					vn.addCondition( "answer", "=", "true",
+						function success() {
+							vn.say( char, "That's right!", 1000 );
+							var score = vn.getValue( "score" );
+							vn.setValue( "score", ++score );
+						},
+						function fail() {
+							vn.say( char, "Too bad!", 1000 );
+						}
+					);
+
+				}
+
+				vn.say( char, "Score: {score}/5" );
+
+			}
+
+			function words( vn, char, wordsList ) {
+
+				var wordsMenu = [
+					{
+						label : "Review words",
+						action : function() {
+
+							var wordList = buildWordsToDisplay( wordsList );
+							var wordsChoices = buildWordsMenuChoices( vn, char, wordList );
+
+							vn.choice(
+									"wordsList",
+									wordsChoices,
+									{ x : 0.2, y : 0.3 }
+								);
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Take words quiz",
+						action : function() {
+
+							wordQuiz( vn, char, "wordQuiz", wordsList );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Done",
+						action : function() {}
+					}
+				];
+
+				vn.choice(
+						"wordsMenu",
+						wordsMenu,
+						{ x : 0.2, y : 0.3 }
+					);
+
+			}
+
+		</script>
+
+	</body>
+
+</html>
