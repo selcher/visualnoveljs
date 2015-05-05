@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			#text-turnbattle-novelTitleContainer {
+				background-color: transparent;
+				color: darkred;
+			}
+
+			#text-turnbattle-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#text-turnbattle-startMenuButton {
+				color: darkred;
+			}
+
+			#text-turnbattle-startMenuButton:hover {
+				background-color: transparent;
+				color: black;
+			}
+
+			#tbb {
+				position: relative;
+				z-index: 7;
+				width: 800px;
+				height: 600px;
+				background-color: white;
+				background-image: url('img/turnbattle/bg/bg.jpg');
+				color: black;
+			}
+
+			.player-status {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				padding: 10px;
+				background-color: rgba( 255, 255, 255, 0.8 );
+				border-radius: 8px;
+			}
+
+			.enemy-status {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				padding: 10px;
+				background-color: rgba( 255, 255, 255, 0.8 );
+				border-radius: 8px;
+			}
+
+			#player-action {
+				position: absolute;
+				top: 200px;
+				left: 350px;
+				z-index: 8;
+				padding: 20px;
+				background-color: white;
+				border-radius: 8px;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+		<script src="../examples/js/preloadjs-0.4.1.min.js" type="text/javascript"></script>
+		<script src="../examples/js/vn-turn-battle.js" type="text/javascript"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="text-turnbattle"></div>
+			<div id="preload"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					preload();
+					state();
+					
+				}
+
+			);
+
+			function state() {
+
+				function Player( status ) {
+					this.position = {
+						current : {
+							x : 0,
+							y : 0
+						},
+						next : {
+							x : 0,
+							y : 0
+						}
+					};
+					this.hp = status.hp;
+					this.mp = status.mp;
+					this.atk = status.atk;
+					this.def = status.def;
+					this.stateHandler = new HeroState();
+				}
+
+				Player.prototype.handleInput = function( input ) {
+					this.stateHandler.state.handleInput( this, input );
+					this.stateHandler.state.enter( this );
+				};
+
+				Player.prototype.update = function() {
+					this.stateHandler.state.update( this );
+				};
+
+				Player.prototype.move = function move() {
+					// update position to next position
+					var currentPos = this.position.current;
+					var finalPos = this.position.next;
+
+					if ( currentPos.x !== finalPos.x ) {
+						currentPos.x = currentPos.x + ( finalPos.x > currentPos.x ? 1 : -1 );
+					}
+
+					if ( currentPos.y !== finalPos.y ) {
+						currentPos.y = currentPos.y + ( finalPos.y > currentPos.y ? 1 : -1 );
+					}
+
+					console.log( 'moving to ' + currentPos.x + ',' + currentPos.y );
+
+					if ( currentPos.x === finalPos.x && currentPos.y === finalPos.y ) {
+						// set state from walk -> stand on final position
+						this.stateHandler.state = new this.stateHandler.standingState();
+					}
+				};
+
+				Player.prototype.setNextPosition = function setNextPosition( position ) {
+					// update hero position to new position
+					this.position.next = position;
+				};
+
+				Player.prototype.attack = function attack() {
+					// update enemy hp
+					this.enemy.hp -= this.atk;
+
+					console.log( 'attacked enemy: ' + this.enemy.hp );
+
+					if ( this.enemy.hp <= 0 ) {
+						// destroy enemy;
+						this.setEnemy( null );
+
+						// set state from attack -> stand after enemy dies
+						this.stateHandler.state = new this.stateHandler.standingState();
+					}
+				};
+
+				Player.prototype.setEnemy = function setEnemy( enemy ) {
+					this.enemy = enemy;
+				};
+
+				Player.prototype.attacked = function attacked() {
+					// update hero hp
+					this.hp -= this.enemy.atk;
+
+					console.log( 'hero attacked: ' + this.hp );
+
+					if ( this.hp <= 0 ) {
+						// set attacked -> stand/previous state? after enemy attack
+						this.stateHandler.state = new this.stateHandler.attackedState();
+					}
+				};
+
+				Player.prototype.isAlive = function isAlive() {
+					return this.hp > 0;
+				};
+
+				function HeroState() {
+					this.standingState = StandingState;
+					this.walkingState = WalkingState;
+					this.attackingState = AttackingState;
+					this.attackedState = AttackedState;
+					
+					this.state = new StandingState();
+				};
+
+				function StandingState() {
+					this.enter = function( hero ) { 
+						/* handle render */ 
+						console.log( 'stand: enter' );
+					};
+					this.handleInput = function( hero, input ) {
+						console.log( 'stand: handle input' );
+
+						// stand -> walk
+						if ( input.type === 'walk' ) {
+							hero.stateHandler.state = new hero.stateHandler.walkingState();
+						}
+						// stand -> attack
+						if ( input.type === 'attack' ) {
+							hero.stateHandler.state = new hero.stateHandler.attackingState();
+						}
+						// stand -> attacked
+						if ( input.type === 'attacked' ) {
+							hero.stateHandler.state = new hero.stateHandler.attackedState();
+						}
+
+						hero.stateHandler.state.handleInput( hero, input );
+					};
+					this.update = function( hero ) {
+						console.log( 'stand: update' );
+					};
+				}
+
+				function WalkingState() {
+					this.enter = function( hero ) { 
+						/* handle render */ 
+						console.log( 'walk: enter' );
+					};
+					this.handleInput = function( hero, input ) {
+						console.log( 'walk: handle input' );
+
+						// set position to walk to
+						hero.setNextPosition( input.position );
+					};
+					this.update = function( hero ) {
+						console.log( 'walk: update' );
+
+						// move hero
+						hero.move();
+					};
+				}
+
+				function AttackingState() {
+					this.enter = function( hero ) { 
+						/* handle render */ 
+						console.log( 'attack: enter' );
+					};
+					this.handleInput = function( hero, input ) {
+						console.log( 'attack: handle input' );
+
+						// set enemy to attack
+						hero.setEnemy( input.enemy );
+					};
+					this.update = function( hero ) {
+						console.log( 'attack: update' );
+
+						// set hero to attack enemy
+						hero.attack();
+					};
+				}
+
+				function AttackedState() {
+					this.enter = function( hero ) { 
+						/* handle render */ 
+						console.log( 'attacked: enter' );
+					};
+					this.handleInput = function( hero, input ) {
+						console.log( 'attacked: handle input' );
+
+						// set enemy that attacked hero
+						hero.setEnemy( input.enemy );
+					};
+					this.update = function( hero ) {
+						console.log( 'attacked: update' );
+
+						// update hero hp
+						hero.attacked();
+					};
+				}
+
+				var surk = new Player( {
+					name : "Surk",
+					hp : 100,
+					mp : 50,
+					atk : 5,
+					def : 1
+				} );
+
+				// surk.handleInput( { type : 'walk', position : { x : 10, y : 5 } } );
+				// surk.handleInput( { type : 'attack', enemy : { hp : 100 } } );
+				// surk.handleInput( { type : 'attacked', enemy : { atk : 5 } } );
+
+				// var gameLoop = setInterval( function() {
+				// 	surk.update();
+				// 	if ( !surk.isAlive() ) {
+				// 		console.log( 'end' );
+				// 		clearInterval( gameLoop );
+				// 	}
+				// }, 1000 );
+
+			}
+
+			function preload() {
+
+				var queue = new createjs.LoadQueue( true );
+
+				// queue.on( 'fileprogress', handleFileProgress, this );
+				// queue.on( 'fileload', handleFileLoad, this );
+				// queue.on( 'complete', handleComplete, this );
+
+				// add file to load one at a time
+				// queue.loadFile( 'img/persona/tarot/personas.PNG' );
+
+				// add multiple files to load
+				queue.loadManifest( [
+					{
+						id : 'bridge',
+						src : 'img/text/bg/bridge.jpg'
+					},
+					{
+						id : 'landscape1',
+						src : 'img/text/bg/landscape1.jpg'
+					},
+					{
+						id : 'landscape2',
+						src : 'img/text/bg/landscape2.jpg'
+					},
+					{
+						id : 'school1',
+						src : 'img/text/bg/school1.jpg'
+					},
+					{
+						id : 'school2',
+						src : 'img/text/bg/school2.jpg'
+					},
+					{
+						id : 'school3',
+						src : 'img/text/bg/school3.jpg'
+					},
+					{
+						id : 'sky1',
+						src : 'img/text/bg/sky1.jpg'
+					},
+					{
+						id : 'sky2',
+						src : 'img/text/bg/sky2.jpg'
+					},
+					{
+						id : 'snow',
+						src : 'img/text/bg/snow.jpg'
+					},
+					{
+						id : 'street1',
+						src : 'img/text/bg/street1.jpg'
+					},
+					{
+						id : 'street2',
+						src : 'img/text/bg/street2.jpg'
+					},
+					{
+						id : 'street3',
+						src : 'img/text/bg/street3.jpg'
+					},
+					{
+						id : 'street4',
+						src : 'img/text/bg/street4.jpg'
+					},
+					{
+						id : 'street5',
+						src : 'img/text/bg/street5.jpg'
+					},
+					{
+						id : 'train',
+						src : 'img/text/bg/train.jpg'
+					},
+					{
+						id : 'note',
+						src : 'img/text/icon/note.png'
+					}
+				] );
+
+				queue.load();
+
+				function handleFileProgress( event ) {
+					var item = event.item;
+					var progress = event.progress * 100;
+					console.log( 'file progress:', item.src, progress );
+				}
+
+				function handleFileLoad( event ) {
+					var item = event.item;
+					var type = event.type;
+					console.log( 'load', type, item );
+
+					if ( type == createjs.LoadQueue.IMAGE ) {
+						document.getElementById( 'preload' ).innerHTML = 'loaded ' + item.src;
+					}
+				}
+
+				function handleComplete( event ) {
+					console.log( 'complete', event );
+					document.getElementById( 'preload' ).innerHTML = 'complete';
+
+					// var train = queue.getResult( 'train' );
+					// document.getElementById( 'preload' ).appendChild( train );
+				}
+
+			}
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "Turn Based Battle", "demo", 300, 100 );
+				novel.setStartScreenBgColor( "white" );
+				// novel.setStartScreenBgImage( "bg/market.jpg", 800, 600 );
+				novel.setStartScreenMenuPos( 330, 500 );
+				novel.setBgColor( "white" );
+				// novel.setBgImage( "bg/market.jpg", 800, 600 );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "white", 0, "10px 60px" );
+				novel.setNovelMode( "dialog", 760, 150, 10, 20 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "black", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "txt", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "txt" );
+				}
+			
+				novel.setBgImage( "", 800, 600 );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "txt",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 2000
+				);
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "txt", "Turn Based Battle Demo",
+					textSetting, 1000
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+
+			}
+
+			function start( vn ) {
+
+				vn.setBgColor( "white" );
+				vn.setBgImage( "bg/bg.jpg", 800, 600, "no-repeat", 800, 600 );
+				vn.fadeBg( "in", 1000 );
+				vn.pause( 1000 );
+
+				// Battle
+				var player = {
+					name : "Surk",
+					level : 1,
+					class : "Hero",
+					hp : 100,
+					mp : 50,
+					atk : 5,
+					def : 1,
+					image : "img/turnbattle/character/nao-normal1.png",
+					imageStyle : "width:500px;height:500px;position:absolute;left:-50px;bottom:0;"
+				};
+
+				var enemy = {
+					name : "Slime",
+					level : 1,
+					class : "Monster",
+					hp : 20,
+					mp : 0,
+					atk : 2,
+					def : 0,
+					image : "img/turnbattle/character/nao-normal1.png",
+					imageStyle : "width:500px;height:500px;position:absolute;right:-120px;bottom:0;"
+				};
+
+				vn.eventTracker.addEvent( 'wait', function() {
+					$( '#tbb' ).show();
+					TurnBattle( player, enemy );
+				} );
+
+				vn.say( 'battle', 'Winner: {winner}' );
+
+				vn.addCondition( 'winner', '=', 'player',
+					function() {
+						vn.say( 'Battle', 'victory' );
+					}, function() {
+						vn.say( 'Battle', 'defeat' );
+					} );
+
+				vn.showSayDialog( false );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "text-turnbattle", 800, 600, "img/turnbattle/" );
+
+				vn.templates[ 'novelcontainer' ] = [
+					"<div class='novel-container unSelectable'>",
+						"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
+						"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
+						"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
+						"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
+						"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
+						"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
+						"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
+						"<div id='{novelId}-images' style='display:none;'></div>",
+						"<div id='tbb' style='display:none;'></div>",
+					"</div>"
+				];
+
+				document.addEventListener( 'end', function( e ) {
+					// battle end
+					$( '#tbb' ).hide();
+					vn.setInput( 'winner', e.winner );
+					vn.eventTracker.nextEvent();
+				}, false );
+
+				vn.init();
+
+				config( vn );
+
+				intro( vn );
+
+				start( vn );
+				
+				vn.reset();
+
+			}
+
+
+		</script>
+
+	</body>
+
+</html>

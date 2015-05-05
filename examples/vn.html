@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			.button {
+				width: 100px;
+				padding: 10px;
+				display: inline-block;
+				border: none;
+				background-color: black;
+				color: gray;
+				text-align: center;
+				font-weight: bold;
+				font-family: arial;
+				font-size: 12px;
+			}
+
+			.button:hover, .selected-button {
+				cursor: pointer;
+				background-color: rgba(255,255,255,0.1);
+				color: white;
+			}
+
+			.showDisplay {
+				display: block;
+			}
+
+			.hideDisplay {
+				display: none;
+			}
+
+			.container {
+				margin: 10px 20px;
+				padding: 10px;
+				background-color: black;
+				color: gray;
+			}
+
+			.codeContainer {
+				border-left: 5px solid maroon;
+			}
+
+			.linkContainer {
+				border-left: 5px solid gray;
+			}
+
+			.tabLinkContainer {
+				float: left;
+			}
+
+			.tabContentContainer {
+				float: left;
+			}
+
+			.docTabLinkContainer {
+				width: 125px;
+			}
+
+			.docTabContent {
+				width: 530px;
+				padding: 20px;
+				background-color: rgba(255,255,255,0.1);
+			}
+
+			.docCodeContainer {
+				border-left: 5px solid darkblue;
+				overflow-x:auto;
+			}
+
+			.fileLink {
+				color: darkred;
+				text-decoration: none;
+			}
+
+			.fileLink:hover {
+				text-decoration: underline;
+			}
+
+			#info,
+			#getting-started,
+			#examples,
+			#releases {
+				padding: 50px;
+				background-color: rgba(255,255,255,0.1);
+				color: gray;
+				font-family: arial;
+			}
+
+			#docs {
+				padding: 0px 50px;
+				color: gray;
+				font-family: arial;
+			}
+
+			#getting-started-vn {
+				margin-left: -50px;
+				border-top: 5px solid white;
+				border-bottom: 5px solid white;
+			}
+
+
+
+			.cf:before,
+			.cf:after {
+			    content: " "; /* 1 */
+			    display: table; /* 2 */
+			}
+
+			.cf:after {
+			    clear: both;
+			}
+
+			.clear-float {
+				clear: both;
+			}
+
+			.no-list-style {
+				list-style: none;
+			}
+
+			.grid-item {
+				width: 100px;
+				margin: 10px;
+				padding: 5px;
+				float: left;
+				list-style: none;
+				background-color: black;
+			}
+
+			.grid-item img {
+				width: 100px;
+				height: 100px;
+			}
+
+			.grid-item p {
+				color: white;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script type="text/javascript" src="../dependencies/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="../dependencies/Sprite3D.js"></script>
+
+		<script type="text/javascript" src="../build/visual-novel.min.js"></script>
+		<script type="text/javascript" src="js/gettingstarted.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="showInfo" class="menuLink button selected-button">Visual Novel</div>
+			<div id="showGettingStarted" class="menuLink button">Getting Started</div>
+			<div id="showDocs" class="menuLink button">Docs</div>
+			<div id="showExamples" class="menuLink button">Examples</div>
+
+			<div id="info" class="showDisplay">
+
+				<p>
+					<b>A Visual Novel JS Library</b>
+					<ul>
+						<li>to simplify the process of making visual novels on a webpage</li>
+						<li>has dependencies on other libraries ( jQuery and sprite3D )
+					</ul>
+
+					Download: <a href="../src/visual-novel.js">visual-novel</a>
+				</p>
+
+				<p>
+					Current version : alpha
+				</p>
+
+				<p>
+					<b>Features:</b><br/>
+					<ul>
+						<li>character dialogs</li>
+						<li>user input</li>
+						<li>menu choices</li>
+						<li>conditions</li>
+						<li>basic animations ( fade, move )</li>
+					</ul>
+				</p>
+
+				<p>
+					Next version: beta
+				</p>
+
+				<p>
+					<b>Proposed features:</b><br/>
+					<ul>
+						<li>save / load state</li>
+						<li>character portrait on dialog</li>
+						<li>custom menus</li>
+						<li>text animations</li>
+					</ul>
+				</p>
+
+			</div>
+
+			<div id="getting-started" class="hideDisplay">
+
+				<b>Getting Started:</b><br/><br/>
+
+				1. Download the VisualNovelJS files<br/>
+					<div class="container linkContainer">
+						<a class="fileLink" rel="nofollow" target="_blank"
+							href="../src/visual-novel.js">
+							visual-novel.js
+						</a><br/>
+						<a class="fileLink" rel="nofollow" target="_blank"
+							href="../src/layout.css">
+							layout.css
+						</a><br/>
+						<a class="fileLink" rel="nofollow" target="_blank"
+							href="../src/order.css">
+							order.css
+						</a>
+					</div>
+
+				2. Get the required javascript libraries<br/>
+					<div class="container linkContainer">
+						<a class="fileLink" rel="nofollow" target="_blank"
+							href="http://jquery.com/">
+							jQuery
+						</a> ( version 1.5+ )<br/>
+						<a class="fileLink" rel="nofollow" target="_blank"
+							href="https://github.com/boblemarin/Sprite3D.js">
+							Sprite3D
+						</a>
+					</div>
+
+				3. Add the files to your webpage
+					<div class="container codeContainer">
+						&lt;link rel="stylesheet" type="text/css" href="order.css" />
+						<br/>
+						&lt;link rel="stylesheet" type="text/css" href="layout.css" />
+						<br/><br/>
+
+						&lt;script src="jquery.min.js" type="text/javascript"></script>
+						<br/>
+						&lt;script src="Sprite3D.js" type="text/javascript"></script>
+						<br/><br/>
+
+						&lt;script src="visual-novel.js" type="text/javascript"></script>
+					</div>
+
+				4. Create a javascript file and add it to your webpage
+					<div class="container codeContainer">
+						&lt;script src="myVisualNovel.js" type="text/javascript"></script>
+					</div>
+
+				5. Open the javascript file and create your visual novel
+					<div class="container codeContainer">
+						// getting-started-vn = div id<br/>
+						// 800 = width<br/>
+						// 600 = height<br/>
+						// img/ = path to your images<br/>
+						var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );<br/><br/>
+						
+						vn.init();<br/><br/>
+						
+						vn.setNovelTitle( "Visual Novel JS", "getting started" );<br/>
+						vn.setStartScreenBgColor( "black" );<br/>
+						vn.setStartScreenMenuPos( 400, 400 );<br/>
+						vn.setBgColor( "black" );<br/>
+						vn.setDialogBgColor( "white" );<br/>
+						vn.setDialogTextColor( "black" );<br/><br/>
+
+						vn.say( "Me", "Hello World" );<br/>
+						vn.say( "World", "Hi Me" );<br/><br/>
+
+						vn.reset();
+					</div>
+
+				6. Add the div for your novel on the webpage
+					<div class="container codeContainer">
+						&lt;div id="getting-started-vn"&gt;&lt;/div&gt;
+					</div>
+
+				<br/>
+				That's it! To learn more, view the examples or read the docs<br/><br/>
+
+				<div id="getting-started-vn"></div>
+
+			</div>
+
+			<div id="docs" class="hideDisplay">
+				
+				<div class="tabLinkContainer docTabLinkContainer">
+					<div id="showDocsConfig" class="docsLink button selected-button">Config</div>
+					<div id="showDocsCharacter" class="docsLink button">Character</div>
+					<div id="showDocsSay" class="docsLink button">Say</div>
+					<div id="showDocsMenu" class="docsLink button">Menu</div>
+					<div id="showDocsCondition" class="docsLink button">Condition</div>
+					<div id="showDocsLoop" class="docsLink button">Loop</div>
+					<div id="showDocsScene" class="docsLink button">Scene</div>
+					<div id="showDocsSceneText" class="docsLink button">Scene Text</div>
+					<div id="showDocsSceneObject" class="docsLink button">Scene Object</div>
+				</div>
+
+				<div class="tabContentContainer">
+
+				<div id="docs-config" class="docTabContent showDisplay">
+					Create a visual novel instance:
+					<div class="container docCodeContainer">
+						var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );
+					</div>
+					<br/><br/>
+							
+					Set the novel title:
+					<div class="container docCodeContainer">
+						vn.setNovelTitle( "Visual Novel JS", "getting started" );
+					</div>
+					<br/><br/>
+					
+					Set the start screen background color / image:
+					<div class="container docCodeContainer">
+						vn.setStartScreenBgColor( "black" );<br/>
+						vn.setStartScreenBgImage( "bg/market.jpg", 800, 600 );
+					</div>
+					<br/><br/>
+
+					Set the start screen menu position:
+					<div class="container docCodeContainer">
+						vn.setStartScreenMenuPos( 400, 400 );
+					</div>
+					<br/><br/>
+
+					Set the novel background color / image:
+					<div class="container docCodeContainer">
+						vn.setBgColor( "black" );<br/>
+						vn.setBgImage( "bg/market.jpg", 800, 600, "no-repeat", 800, 600 );
+					</div>
+					<br/><br/>
+
+					Set the dialog background color:
+					<div class="container docCodeContainer">
+						vn.setDialogBgColor( "white" );
+					</div>
+					<br/><br/>
+
+					Set the dialog text color:
+					<div class="container docCodeContainer">
+						vn.setDialogTextColor( "black" );
+					</div>
+					<br/><br/>
+				</div>
+
+				<div id="docs-character" class="docTabContent hideDisplay">
+
+					Define a Character:
+					<div class="container docCodeContainer">
+						<pre>
+var nao = {
+	name: "Naoto Shirogane",
+	nameStyle: "color: darkblue;",
+	width: 600,
+	height: 600,
+	image: {
+		"default" : "character/na0_base0.png",
+		"happy" : "character/na1_base0.png",
+		"sad" : {
+			"src" : "character/na0.png",
+			"position" : "-100px 990px"
+		}
+	},
+	pos: {
+		x : 1.0,
+		y : 0.007
+	},
+	dialog: {
+		image: "character/na1_pe_000.png",
+		nextImage: "character/na1_pe_010.png",
+		imageDelay: 5000,
+		height: 100,
+		location: "left",
+		button: {
+			text: "...",
+			image: "icon/play1.png",
+			imageHover: "icon/play2.png",
+			bgColor: "transparent",
+			bgColorHover: "white",
+			width: 20,
+			height: 20
+		}
+	}
+};
+						</pre>
+					</div>
+
+					Required:
+					<div class="container docCodeContainer">
+						
+						<ul>
+							<li>
+								name ( string )
+							</li>
+							<li>
+								width ( int )
+							</li>
+							<li>
+								height ( int )
+							</li>
+							<li>
+								image ( string / object )
+							</li>
+							<li>
+								pos ( object )
+							</li>
+						</ul>
+
+					</div>
+
+					Optional:
+					<div class="container docCodeContainer">
+
+						<ul>
+							<li>
+								nameStyle ( string )
+							</li>
+							<li>
+								dialog ( object )
+							</li>
+						</ul>
+
+					</div>
+
+				</div>
+
+				<div id="docs-say" class="docTabContent hideDisplay">
+
+				Say line/s:
+				<div class="container docCodeContainer">
+					<pre>
+-----------------------------------------------------
+ say line,
+ and show button ( to go to next line )
+-----------------------------------------------------
+vn.say( "Me", "Hello World" );
+
+
+-----------------------------------------------------
+ say line,
+ and add delay before saying next line
+-----------------------------------------------------
+vn.say( "Me", "Hello World", 1000 );
+
+
+-----------------------------------------------------
+ say multiple lines, 
+ show button for each line
+-----------------------------------------------------
+vn.say( "Me", [ 
+	"Hello",
+	"World" 
+] );
+
+
+-----------------------------------------------------
+ say multiple lines, 
+ add delay before saying 2nd line
+ show button on 2nd line
+-----------------------------------------------------
+vn.say( "Me", [
+	"Hello", 1000,
+	"World"
+] );
+
+
+-----------------------------------------------------
+ say multiple lines, 
+ add delay before saying 2nd line
+ include previous line when showing 2nd line
+ show button on 2nd line
+-----------------------------------------------------
+vn.say( "Me", [
+	"Hello", 1000,
+	"World", true
+] );
+					</pre>
+				</div>
+				<br/><br/>
+
+				</div>
+
+				<div id="docs-menu" class="docTabContent hideDisplay">
+
+				Menu:
+				<div class="container docCodeContainer">
+					<pre>
+var choices = [
+	{
+		label : "Choice 1",
+		action : function() {
+			...
+		}
+	},
+	...
+];
+
+vn.choice( 
+	"menuName", 
+	choices, 
+	{ x : 0.5, y : 0.5 },
+	{ image : "character/lin.png", width : 100, height : 100 }
+);
+					</pre>
+				</div>
+				<br/><br/>
+
+				</div>
+
+				<div id="docs-condition" class="docTabContent hideDisplay">
+
+				Add a condition ( =, >, <, != ):
+				<div class="container docCodeContainer">
+					<pre>
+vn.setValue( "answer", "true" );
+
+vn.addCondition( "answer", "=", "true",
+	function success() {
+
+		vn.say( char, "That's right!" );
+
+	},
+	function fail() {
+
+		vn.say( char, "Too bad!" );
+
+	}
+);
+					</pre>
+				</div>
+				<br/><br/>
+
+				</div>
+
+				<div id="docs-loop" class="docTabContent hideDisplay">
+
+				Add loop:
+				<div class="container docCodeContainer">
+					<pre>
+-----------------------------------------------------
+Character animation
+-----------------------------------------------------
+vn.loop( "lin", true, function() {
+
+	vn.setCharacterImage( lin, "sleep" );
+
+	setTimeout( function() {
+		vn.setCharacterImage( lin, "happy" );
+	}, 200 );
+
+}, 5000 );
+
+-----------------------------------------------------
+Scene object animation
+-----------------------------------------------------
+vn.addObjectToScene( "s1",
+	{ width: 10, height: 10, color: "blue" },
+	{ x: 0.5, y: 0.2, z: 0 }, 0
+);
+
+vn.loop( "object1", true, function() {
+
+	vn.setSceneObjectPosition( "s1", 0, 0.1, 0, 3000 );
+	vn.setSceneObjectFade( "s1", "out", 3000 );
+	vn.setSceneObjectRotation( "s1", 'y', 45, 10, false );
+
+	setTimeout( function() {
+		vn.setSceneObjectPosition( "s1", 0, -0.1, 0, 3000 );
+		vn.setSceneObjectFade( "s1", "in", 3000 );
+		vn.setSceneObjectRotation( "s1", 'y', -45, 10, false );
+	}, 5000 );
+
+}, 10000 );
+					</pre>
+				</div>
+				<br/><br/>
+
+				Clear loop:
+				<div class="container docCodeContainer">
+					<pre>
+vn.clearLoop( "lin" );
+					</pre>
+				</div>
+				<br/><br/>
+
+				</div>
+
+				<div id="docs-scene" class="docTabContent hideDisplay">
+
+					Move Scene:
+					<div class="container docCodeContainer">
+						<pre>
+// x, y, z, duration
+vn.moveScene( 0, 0, 100, 1000 );
+						</pre>
+					</div>
+
+					Rotate Scene:
+					<div class="container docCodeContainer">
+						<pre>
+// axis, angle, speed, loop rotation
+vn.rotateScene( 'z', 45, 100, false );
+						</pre>
+					</div>
+
+				</div>
+
+				<div id="docs-scene-text" class="docTabContent hideDisplay">
+
+				Add scene text:
+				<div class="container docCodeContainer">
+					<pre>
+vn.addTextToScene( "thanks",
+	"Thanks for watching",
+	{
+		x : 0.5, y : 0, z : 0.4,
+		width : 300, height : 50,
+		size : 50,
+		color : "black",
+		fade : 500
+	}, 500 );
+					</pre>
+				</div>
+				<br/><br/>
+
+				Fade in/out scene text:
+				<div class="container docCodeContainer">
+					<pre>
+vn.fadeSceneText( "thanks", "in", 500 );
+
+vn.fadeSceneText( "thanks", "out", 500 );
+					</pre>
+				</div>
+				<br/><br/>
+
+				Remove scene text:
+				<div class="container docCodeContainer">
+					<pre>
+vn.removeSceneText( "thanks" );
+					</pre>
+				</div>
+				<br/><br/>
+
+				</div>
+
+				<div id="docs-scene-object" class="docTabContent hideDisplay">
+
+				Add scene object:
+				<div class="container docCodeContainer">
+					<pre>
+// name, imageInfo, position, delay, fade, fadeSpeed
+vn.addObjectToScene( "fool",
+	{ width: 100, height: 200, path: "tarot/fool.png" },
+	{ x: 0.5, y: 0, z: 0.15 }, 500, true, 500
+);
+					</pre>
+				</div>
+				<br/><br/>
+
+				Fade in/out scene object:
+				<div class="container docCodeContainer">
+					<pre>
+vn.fadeSceneObject( "fool", "in", 500 );
+
+vn.fadeSceneObject( "fool", "out", 500 );
+					</pre>
+				</div>
+				<br/><br/>
+
+				Move scene object:
+				<div class="container docCodeContainer">
+					<pre>
+// object name, x, y, z, move duration, delay before next event
+vn.moveSceneObject( "fool", 0.5, 0.1, 0, 1000, 0 );
+					</pre>
+				</div>
+				<br/><br/>
+
+				Rotate scene object:
+				<div class="container docCodeContainer">
+					<pre>
+// object name, axis, angle, rotation delay, rotate continuously
+vn.rotateSceneObject( "fool", "y", 1, 20, true );
+
+// clear object rotation if set to rotate continuously
+vn.resetSceneObject( "fool", "rotate" );
+					</pre>
+				</div>
+				<br/><br/>
+
+				Remove scene object:
+				<div class="container docCodeContainer">
+					<pre>
+vn.removeSceneObject( "fool" );
+					</pre>
+				</div>
+				<br/><br/>
+
+				</div>
+
+				</div>
+
+			</div>
+
+			<div id="examples" class="hideDisplay cf">
+			
+				<p>Examples:</p>
+
+				<p>
+					<ul>
+						<li class="grid-item">
+							<a href="vn-js.html" target="blank">
+								<img src="img/js.jpg" />
+								<p>JS</p>
+							</a>
+						</li>
+						<li class="grid-item">
+							<a href="vn-python.html" target="blank">
+								<img src="img/python.jpg" />
+								<p>Python</p>
+							</a>
+						</li>
+						<li class="grid-item">
+							<a href="vn-jp.html" target="blank">
+								<img src="img/jp.jpg" />
+								<p>Quiz</p>
+							</a>
+						</li>
+						<li class="grid-item">
+							<a href="vn-persona.html" target="blank">
+								<img src="img/persona.jpg" />
+								<p>Persona</p>
+							</a>
+						</li>
+					</ul>
+				</p>
+
+				<p class="clear-float">
+					Resources:<br/>
+					<ul class="no-list-style">
+						<li>
+							<a href="http://www.spriters-resource.com/" target="blank">
+								Spriters Resource
+							</a>
+						</li>
+					</ul>
+				</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>

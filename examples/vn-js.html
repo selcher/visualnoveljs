@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			.smallTxt {
+				font-size: 12px;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			#js-vn-novelTitleContainer {
+				background-color: transparent;
+				color: rgba(0,0,0,0.8);
+			}
+
+			#js-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#js-vn-startMenuButton:hover {
+				background-color: transparent;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+		<script src="../examples/js/preloadjs-0.4.1.min.js" type="text/javascript"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="js-vn"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					preload();
+					
+				}
+
+			);
+
+			function preload() {
+
+				var queue = new createjs.LoadQueue( true );
+				var path = '../examples/img/js/';
+
+				queue.loadManifest( [
+					{
+						id : 'js',
+						src : path + 'bg/js.jpg'
+					},
+					{
+						id : 'uniform',
+						src : path + 'character/yu0_base0.png'
+					},
+					{
+						id : 'dress',
+						src : path + 'character/yu1_base0.png'
+					},
+					{
+						id : 'kimono',
+						src : path + 'character/yu2_base0.png'
+					}
+				] );
+
+				queue.load();
+
+			}
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "JS Guide", "a visual novel", 300, 100 );
+				// vn.setStartScreenBgColor( "black" );
+				novel.setStartScreenBgImage( "bg/js.jpg", 800, 600 );
+				novel.setStartScreenMenuPos( 30, 500 );
+				novel.setBgColor( "white" );
+				// novel.setBgImage( "bg/stare.jpg", 800, 600 );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "darkblue", "1px 10px", "0px 60px" );
+				novel.setNovelMode( "dialog", 300, 250, 20, 20 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "white", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "js", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "js" );
+				}
+			
+				// novel.setBgImage( "", 800, 600 );
+				novel.setBgColor( "black" );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "js",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 500
+				);
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "js", "JS Guide<br/>a visual novel",
+					textSetting, 500
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+				novel.setBgColor( "white" );
+				// novel.setBgImage( "bg/stare.jpg", 800, 600 );
+				novel.fadeBg( "in", 1000 );
+
+			}
+
+			function start( vn ) {
+
+				// define character
+				var yu = {
+					name: "Yuuko",
+					width: 600,
+					height: 600,
+					image: {
+						"default" : "character/yu0_base0.png",
+						"school" : "character/yu0_base0.png",
+						"dress" : "character/yu1_base0.png",
+						"kimono" : "character/yu2_base0.png"
+					},
+					pos: {
+						x : -0.5,
+						y : 0.007
+					},
+					dialog: {
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				// display character
+				vn.addCharacter( yu, 1000, "fade" );
+
+				vn.moveCharacter( yu, 0.3, 0, 500 );
+				vn.fadeCharacter( yu, "in", 500 );
+				vn.pause( 1000 );
+
+				vn.say( yu, "This guide will walk you through some of the basic and advanced topics about the JavaScript language" );
+				vn.showSayDialog( false );
+
+				vn.moveCharacter( yu, 0.1, 0, 200 );
+
+				// update dialog size
+				vn.setNovelMode( "dialog", 350, 300, 20, 20 );
+
+				var progTopics = [
+					{
+						label : "Basic",
+						action : function() {
+
+							vn.moveCharacter( yu, 0.4, 0, 500 );
+							basicjs( vn, yu );
+							vn.moveCharacter( yu, 0.1, 0, 500 );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Advanced",
+						action : function() {
+
+							vn.changeCharacterImage( yu, "dress" );
+							vn.moveCharacter( yu, 0.4, 0, 500 );
+							advancedjs( vn, yu );
+							vn.changeCharacterImage( yu, "school" );
+							vn.moveCharacter( yu, 0.1, 0, 500 );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "References",
+						action : function() {
+
+							vn.changeCharacterImage( yu, "kimono" );
+							vn.moveCharacter( yu, 0.4, 0, 500 );
+							references( vn, yu );
+							vn.changeCharacterImage( yu, "school" );
+							vn.moveCharacter( yu, 0.1, 0, 500 );
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Done",
+						action : function() {
+							vn.moveCharacter( yu, 0.4, 0, 500 );
+						}
+					}
+				];
+				
+				vn.choice(
+					"progTopics",
+					progTopics,
+					{ x : 0.6,  y : 0.3 }
+				);
+
+				// update dialog size
+				vn.setNovelMode( "dialog", 300, 150, 20, 20 );
+
+				vn.say( yu, "Thank you for reading ~" );
+				vn.showSayDialog( false );
+
+				// remove character
+				vn.moveCharacter( yu, 1.0, 0, 500 );
+				vn.fadeCharacter( yu, "out", 500 );
+
+				// fade out bg
+				vn.fadeBg( "out", 1000 );
+				vn.pause( 1000 );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "js-vn", 800, 600, "img/js/" );
+
+				vn.init();
+
+				config( vn );
+
+				intro( vn );
+
+				start( vn );
+				
+				vn.reset();
+
+			}
+
+			function basicjs( vn, char ) {
+
+				vn.showSayDialog( false );
+
+				var progTopics = [
+					{
+						label : "Variables, and Literals",
+						action : function() {
+
+							vn.say( char, [
+									'Variable:<br/><ul><li>a container for a value</li><li>operations between variables mostly depend on the data type of the value</li></ul>',
+									'Primitive data types:<br/><ol><li>Numbers</li><li>Boolean</li><li>Strings</li><li>null</li><li>undefined</li></ol>',
+									'Number variables:<br/><br/>var number1 = 1;<br/>var number2 = 2;',
+									'Boolean variables:<br/><br/>var isTrue = true;<br/> var isFalse = false;',
+									'String variables:<br/><br/>var greeting = "hello";<br/>var name = "world"',
+									'Null variables:<br/><ul><li>usually assigned to variables to give it an initial or empty value</li><li>also used to indicate that the variable is ready for garbage collection</li></ul>var name = null;',
+									'Undefined variables:<br/><ul><li>these are variables that have not been defined or created</li><li>using undefined variables can cause errors so always define a variable before using it</li></ul>',
+									'Conversion:<br/><ul><li>convert a string to a number</li><li>var number = parseInt("1");</li></ul>',
+									'Variables:<br/><ul><li>create a variable using var</li><li>var number1 = 1;</li></ul>',
+									'Constants:<br/><ul><li>create using const</li><li>the value of constants stay the same throughout the application</li><li>const number = 1;</li></ul>',
+									'Array:<ul><li>list of values</li></ul>var a = [ "hello", "world" ];',
+									'Object:<ul><li>has properties and methods</li></ul><pre>var a = {<br/>    greet: "hello",<br/>    name: "world"<br/>};</pre>'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Expressions, and Operators",
+						action : function() {
+
+							vn.say( char, [
+									'Expressions:<ol><li>Arithmetic</li><li>String</li><li>Logical</li><li>Object</li></ol>',
+									'Arithmetic Expression:<br/><br/>var number1 = 1;<br/>var number2 = 2;<br/>var sum = number1 + number2;',
+									'String Expression:<br/><br/>var greeting = "Hello";<br/>var name = "World";<br/>var fullGreeting = greeting + name;',
+									'Logical Expression:<br/><br/>var isTrue = 2 > 1;',
+									'Object Expression:<br/><br/>var car = new Car();',
+									'Operators:<ol><li>Assignment</li><li>Comparison</li><li>Arithmetic</li><li>Bitwise</li><li>Logical</li><li>String</li><li>Special</li></ol>',
+									'Assignment Operator:<br/><ul><li>var number1 = 5;</li><li>number1 += 1;</li><li>number1 -= 1;</li><li>number1 *= 2;</li><li>number1 /= 2;</li></ul>',
+									'Comparison Operator:<br/><ul><li>var equal = 1 === 1;</li><li>var notEqual = 1 !== "1";</li><li>var greater = 2 > 1;</li><li>var lesser = 1 < 2;</li></ul>',
+									'Bitwise Operator:<br/><ul><li>var result = 4 | 1 ; // 0</li><li>var result = 4 | 1; // 5</li><li>var result = 4 ^ 1; // 5</li><li>var result = ~4; // -5</li></ul>',
+									'Logical Operator:<br/><ul><li>var isTrue = true && true;</li><li>var isAlsoTrue = true || false;</li></ul>',
+									'String Operator:<br/><ul><li>var greeting = "hello " + "world";</li></ul>',
+									'Special Operators:<ul><li>conditional ( .. ? val1 : val2 )</li><li>comma</li><li>delete</li><li>in</li></ul>',
+									'More Special Operators:<ul><li>instanceof</li><li>new</li><li>this</li><li>typeof</li><li>void (expression to be evaluated w/o returning a value)</li></ul>'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Control Flow",
+						action : function() {
+
+							vn.say( char, [ 
+									'Conditional statements:<br/><ol><li>if (condition) { ... } else { ... }</li><li>switch</li></ol>',
+									'Loop statements:<br/><ol><li>for( var i = 0; i < len; i++ ) { ... }</li><li>do ... while (condition)</li><li>while (condition) ...</li><li>label</li><li>break</li><li>continue</li></ol>',
+									'Object manipulation statements:<br/><ol><li>for ( var i in object ) { ... }</li><li>for each ( var i in obj ) { ... }</li></ol>',
+									'Comments:<br/><ol><li>Single line (//)</li><li>Multiple lines(/* */)</li></ol>',
+									'Exception Handling:<br/><ol><li>throw</li><li>try { ... } catch ( e ) { ... }</li></ol>'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+						}
+					},
+					{
+						label : "Functions",
+						action : function() {
+							
+							vn.say( char, [
+									'Defining a function:<br/><br/>function hello() { ... }',
+									'Calling a function:<br/><br/>hello();',
+									'Function scope:<br/><ul><li>variables inside a function cannot be accessed outside the function</li></ul>',
+									'Call itself:<br/><ol><li>function\'s name</li><li>arguments.callee</li><li>in-scope variable</li></ol>var foo = function bar() { ... };<br/>1. bar();<br/>2. arguments.callee();<br/>3. foo();',
+									'Closure:<br/><ul><li>nest a function within a function</li><li>the inner function is private to the outer function</li></ul>',
+									'Scope chaining:<br/><ul><li>function A contains function B containing function C</li><li>B can access A, and C can access both B and A</li></ul>',
+									'Arguments:<br/><ul><li>arguments in a function are maintained in an array like object</li></ul>',
+									'Event Handlers:<br/><ul><li>functions that are passed an event object</li><li>onclick, onfocus, ...</li></ul>',
+									'Predefined functions:<br/><ol><li>eval</li><li>isFinite</li><li>isNan</li><li>parseInt and parseFloat</li><li>Number and String</li></ol>'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Objects",
+						action : function() {
+							
+							vn.say( char, [
+									'Object<br/><ul><li>a standalone entity with properties and type</li></ul>',
+									'var myCar = {};<br/><br/>myCar.make = "Ford";<br/>myCar.model = "Mustang";<br/>myCar.year = "1969";',
+									'Enumerating Properties of an object:<br/><ol><li>for ( var i in obj ) { ... }</li><li>Object.keys( obj )</li><li>Object.getOwnPropertyNames( obj )</li></ol>',
+									'Creating an object:<br/><br/>1. object initializer<br/><pre>var car = {<br/>    make : "Ford",<br/>    model : "Mustang"<br/>};',
+									'2. constructor function<br/><pre>function Car( make, model ) {<br/>    this.make = make;<br/>    this.model = model;<br/>}<br/><br/>var car = new Car( "Ford",<br/>    "Mustang" );</pre>',
+									'3. Object.create<br/><br/>var car = { ... };<br/>var car2 = Object.create( car );',
+									'Inheritance:<br/><ol><li>all objects inherit from at least one other object</li><li>object being inherited is known as prototype</li></ol>',
+									'Method:<br/><ul><li>property of an object that is a function</li></ul><pre>var car = {<br/>    method1 : function() { ... }<br/> };</pre>',
+									'this:<br/><ul><li>a special keyword within a method that refers to the current object</li></ul>',
+									'Getter:<br/><ul><li>method that gets the value of a specific property</li></ul>Setter:<br/><ul><li>method that sets the value of a specific property</li></ul>',
+									'Object.defineProperty:<br/><br/>var car = {};<br/><pre>Object.defineProperty( car,<br/>  "make", {<br/>    get : function() { ... },<br/>    set : function() { ... } <br/>  }<br/>);',
+									'Deleting properties:<br/><br/>var car = { make : "Ford" };<br/><br/>delete car.make;'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Arrays",
+						action : function() {
+							
+							vn.say( char, [
+									'Arrays:<br/><ul><li>ordered set of values</li></ul><br/>var food = [ "apple", "orange", "melon" ];',
+									'Array methods:<br/>1. concat<br/>2. join<br/>3. push<br/>4. pop<br/>5. shift',
+									'Array methods:<br/>6. unshift<br/>7. slice<br/>8. splice<br/>9. reverse<br/>10. sort',
+									'Array methods:<br/>11. indexOf<br/>12. lastIndexOf<br/>13. forEach<br/>14. map<br/>15. filter',
+									'Array methods:<br/>16. every<br/>17. some<br/>18. reduce<br/>19. reduceRight',
+									'Array comprehension:<br/><br/>var num = [ 1, 2, 3, 4 ];<br/><br/>var double = [ i * 2 for ( i of num ) ];'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Date",
+						action : function() {
+							
+							vn.say( char, [
+									'Date:<br/><br/>var today = new Date();',
+									'Methods:<br/><ol><li>get</li><li>set</li><li>to</li></ol>',
+									'<div style="font-size:12px;">var today = new Date();<br/>var endYear = new Date(2011,11,31,23,59,59,999);<br/><br/>endYear.setFullYear(today.getFullYear());<br/>var msPerDay = 24 * 60 * 60 * 1000;<br/>var daysLeft = (endYear.getTime() - today.getTime) / msPerDay;<br/>daysLeft = Math.round( daysLeft );</div>'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "String",
+						action : function() {
+							
+							vn.say( char, [
+									'String<br/><br/>var greeting = "Hello World!";',
+									'String Methods:<br/><ul><li>charAt / charCodeAt</li><li>indexOf / lastIndexOf</li><li>concat</li><li>split</li><li>splice</li></ul>',
+									'String Methods:<br/><ul><li>substr</li><li>match / replace / search</li><li>toLowerCase / toUpperCase</li></ul>'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Done",
+						action : function() {
+							
+						}
+					}
+				];
+				
+				vn.choice(
+					"basicjsTopics",
+					progTopics,
+					{ x : 0.1,  y : 0.3 }
+				);
+
+			}
+
+			function advancedjs( vn, char ) {
+
+				vn.showSayDialog( false );
+
+				var progTopics = [
+					{
+						label : "Function",
+						action : function() {
+
+							vn.say( char, [
+									'Named function:<br/><br/> var car = Car() { ... };<br/><br/>console.log( typeof car ); // function<br/><br/>console.log( typeof Car ); // undefined',
+									'Context:<br/><br/> var obj = {};<br/> function fn() { return this; }<br/><br/> console.log( fn() == this );<br/> // context is global object<br/><br/> console.log( fn.call( obj ) == obj );<br/> // context is obj object',
+									'Applying context:<br/><br/> function add() { ... }<br/><br/> add.call( this, 1, 2 );<br/> add.apply( this, [ 1, 2 ] );',
+									'new Operator:<br/><br/> function Car() { this.model = "Ford"; }<br/><br/> var car1 = Car();<br/> console.log( car1 ); // undefined<br/><br/> var car2 = new Car();<br/> console.log( car2.name ); // Ford',
+									'Flexible arguments:<br/><br/> function smallest() { return Math.min.apply( Math, arguments ); }<br/><br/> function largest() { return Math.max.apply( Math, arguments ); }',
+									'Arguments to array:<br/><br/> function makeArray() {<br/>    return Array().slice.call( Array );<br/> }',
+									'Closures:<br/>- functions defined in a function ( closure ) remembers the environment in which it was created<br/><br/> function makeAdder(x) {<br/>    return function(y) { return x + y; }<br/> }',
+									'Practical Closures:<br/><br/>- when using an object with only a single method<br/><br/>- emulate private methods',
+									'lexical scoping:<br/><br/>- scope of a variable is defined by its location within the source code<br/><br/>- nested functions have access to variables declared in their outer scope',
+									'Variable Scope:<br/>1. local (using var inside a function)<br/>2. global (without var, whether inside or outside a function)'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Events",
+						action : function() {
+							vn.say( char, [
+									"<div class='smallTxt'>// Create the event.<br/><br/>var event = document.createEvent('Event');<br/><br/>// Define that the event name is 'build'.<br/><br/>event.initEvent('build', true, true);</div>",
+									"<div class='smallTxt'>// Listen for the event.<br/><br/>document.addEventListener('build', function (e) {<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;// e.target matches document from above<br/><br/>}, false);</div>",
+									"<div class='smallTxt'>// Call the event<br/>// target can be any Element or other EventTarget.<br/><br/>document.dispatchEvent(event);</div>"
+								] );
+						}
+					},
+					{
+						label : "OOP",
+						action : function() {
+
+							vn.say( char, [
+									'Namespace<br/>- container to bundle all functionality under a unique name<br/><br/>Class<br/>- defines the characteristics of an object',
+									'Object<br/>- instance of a class<br/><br/>Property<br/>- object characteristic<br/>Method<br/>- object capability',
+									'Constructor<br/>- called to instantiate an object<br/><br/>Inheritance<br/>- class can inherit characteristics from another class<br/>',
+									'Encapsultation<br/>- method of bundling data and methods together<br/><br/>Polymorphism<br/>- different class may define the same properties and methods',
+									'Abstraction<br/><br/>- generalization of methods and properties of an object ( abstract class )<br/><br/>- other classes inherit the properties and methods (concrete class)',
+									'Namespace:<br/><br/> var app = app || {}; // global<br/><br/> var app.event = {}; // sub',
+									'Class/Constructor:<br/><br/> function Car() {}<br/><br/>Object:<br/><br/> var car = new Car();',
+									'Property:<br/> function Car() {<br/> this.run = function() { ... }<br/> }<br/><br/>Method:<br/> function Car() {<br/> this.model = "Ford";<br/> }',
+									'Inheritance:<br/><br/> function Vehicle() { ... }<br/><br/> function Car() { Vehicle.call( this ); ... }<br/> Car.prototype = Object.create( Vehicle.prototype );<br/> Car.prototype.constructor = Vehicle;'
+								] );
+
+							vn.showSayDialog( false );
+							vn.repeatEvent();
+
+						}
+					},
+					{
+						label : "Done",
+						action : function() {
+
+						}
+					}
+				];
+
+				vn.choice(
+					'advancedjsTopics',
+					progTopics,
+					{ x : 0.1, y : 0.3 }
+				);
+
+			}
+
+			function references( vn, char ) {
+
+				vn.say( char, [
+						'References used in this guide:<br/><br/>' +
+						'<ul>' +
+						'<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">JavaScript Mozilla Developer Network</a></li>' +
+						'<li><a href="http://ejohn.org/apps/learn/" target="_blank">John Resig: Learning Advanced JS</a></li>' +
+						'</ul>'
+					] );
+
+			}
+
+		</script>
+
+	</body>
+
+</html>

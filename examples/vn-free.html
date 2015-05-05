@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			.button {
+				width: 100px;
+				padding: 10px;
+				display: inline-block;
+				border: none;
+				background-color: black;
+				color: gray;
+				text-align: center;
+				font-weight: bold;
+				font-family: arial;
+				font-size: 12px;
+			}
+
+			.button:hover {
+				cursor: pointer;
+				background-color: rgba(255,255,255,0.1);
+				color: white;
+			}
+
+			.showDisplay {
+				display: block;
+			}
+
+			.hideDisplay {
+				display: none;
+			}
+
+			.container {
+				margin: 10px 20px;
+				padding: 10px;
+				background-color: black;
+				color: gray;
+			}
+
+			.codeContainer {
+				border-left: 5px solid maroon;
+			}
+
+			.linkContainer {
+				border-left: 5px solid gray;
+			}
+
+			.fileLink {
+				color: darkred;
+				text-decoration: none;
+			}
+
+			.fileLink:hover {
+				text-decoration: underline;
+			}
+
+			#info,
+			#getting-started,
+			#docs,
+			#releases {
+				padding: 50px;
+				background-color: rgba(255,255,255,0.1);
+				color: gray;
+				font-family: arial;
+			}
+
+			#getting-started-vn {
+				margin-left: -50px;
+				border-top: 5px solid white;
+				border-bottom: 5px solid white;
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
+		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
+
+		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="programming-vn"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					initVN();
+					
+				}
+
+			);
+
+			function config( novel ) {
+
+				novel.setNovelTitle( "Free!", "a visual novel", 300, 100 );
+				// novel.setStartScreenBgColor( "black" );
+				novel.setStartScreenBgImage( "scene/free_anime.png", 800, 600 );
+				novel.setStartScreenMenuPos( 330, 500 );
+				novel.setBgColor( "black" );
+				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+				novel.setDialogTextColor( "black" );
+				novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+				novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+			}
+
+			function intro( novel ) {
+
+				var textSetting = { x: 0.55, y: 0, z: 0.4, 
+					width : 300, height : 50,
+					color: "white", size : 30,
+					bgColor : "transparent", bgImage : "",
+					fade: 500 };
+
+				function removeText() {
+					novel.pause( 2000 );
+					novel.fadeSceneText( "py", "out", 500 );
+					novel.pause( 1000 );
+					novel.removeSceneText( "py" );
+				}
+			
+				novel.setBgImage( "scene/pool.png", 800, 600 );
+				novel.setBgSize( 800, 600 );
+
+				novel.fadeBg( "in", 1000 );
+				novel.pause( 1000 );
+
+				novel.addTextToScene( "py",
+					"Visual Novel JS<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;presents",
+					textSetting, 500
+				);
+				removeText();
+
+				textSetting.x = 0.58;
+				novel.addTextToScene( "py", "Free!<br/>a visual novel",
+					textSetting, 500
+				);
+				removeText();
+
+				novel.fadeBg( "out", 1000 );
+				novel.pause( 1000 );
+
+			}
+
+			function start( vn ) {
+
+				var haruka = {
+					name : "Haruka",
+					dialog : {
+						image : "char/haruka.png",
+						height : 100,
+						location : "left",
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var rei = {
+					name : "Rei",
+					dialog : {
+						image : "char/rei.png",
+						height : 100,
+						location : "left",
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var nagisa = {
+					name : "Nagisa",
+					dialog : {
+						image : "char/nagisa.png",
+						height : 100,
+						location : "left",
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var makoto = {
+					name : "Makoto",
+					dialog : {
+						image : "char/makoto.png",
+						height : 100,
+						location : "left",
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var rin = {
+					name : "Rin",
+					dialog : {
+						image : "char/rin.png",
+						height : 100,
+						location : "left",
+						button: {
+							text: "..."
+						}
+					}
+				};
+
+				var sky = "scene/sky.jpg";
+				var pool = "scene/pool.png";
+				var water = "scene/water.png";
+				var end = "scene/end.png";
+
+				var past1 = "scene/past-1.png";
+				var past2 = "scene/past-2.png";
+				var past3 = "scene/past-3.png";
+				var past4 = "scene/past-4.png";
+				var past5 = "scene/past-5.png";
+				var past6 = "scene/past-6.png";
+				var past7 = "scene/past-7.png";
+				var past8 = "scene/past-8.png";
+				var past9 = "scene/past-9.png";
+				var past10 = "scene/past-10.png";
+				var past11 = "scene/past-11.png";
+
+				var fb1 = "scene/fb-1.png";
+				var fb2 = "scene/fb-2.png";
+				var fb3 = "scene/fb-3.png";
+				var fb4 = "scene/fb-4.png";
+				var fb5 = "scene/fb-5.png";
+
+				var school1 = "scene/school-1.png";
+				var school2 = "scene/school-2.png";
+				var school3 = "scene/school-3.png";
+
+				var meet1 = "scene/meet-1.png";
+				var meet2 = "scene/meet-2.png";
+				var meet3 = "scene/meet-3.png";
+				var meet4 = "scene/meet-4.png";
+				var meet5 = "scene/meet-5.png";
+				var meet6 = "scene/meet-6.png";
+				var meet7 = "scene/meet-7.png";
+				var meet8 = "scene/meet-8.png";
+				var meet9 = "scene/meet-9.png";
+				var meet10 = "scene/meet-10.png";
+				var meet11 = "scene/meet-11.png";
+				var meet12 = "scene/meet-12.png";
+
+				var relay1 = "scene/relay-1.png";
+				var relay2 = "scene/relay-2.png";
+				var relay3 = "scene/relay-3.png";
+				var relay4 = "scene/relay-4.png";
+				var relay5 = "scene/relay-5.png";
+				var relay6 = "scene/relay-6.png";
+				var relay7 = "scene/relay-7.png";
+
+				var after1 = "scene/after-1.png";
+				var after2 = "scene/after-2.png";
+				var after3 = "scene/after-3.png";
+				var after4 = "scene/after-4.png";
+				var after5 = "scene/after-5.png";
+				var after6 = "scene/after-6.png";
+				var after7 = "scene/after-7.png";
+
+				function changeScene( scene ) {
+
+					vn.showSayDialog( false );
+					vn.fadeBg( "out", 200 );
+					vn.pause( 500 );
+					vn.setBgImage( scene, 800, 600 );
+					vn.fadeBg( "in", 1000 );
+					vn.pause( 1000 );
+					vn.showSayDialog( true );
+				}
+
+				vn.setBgImage( pool, 800, 600 );
+				vn.fadeBg( "in", 1000 );
+				vn.pause( 1000 );
+
+				vn.say( "", [ "The water is alive.", 3000,
+					" Once you dive in, it will bare its fangs and attack", 4000, true,
+					"But there's nothing to fear.", 3000,
+					" Don't resist the water", 3000, true,
+					"Thrust your fingers into the surface and carve out an opening", 4000,
+					"Then slide your body through that opening.", 3000,
+					" Your arms, your head, your chest...", 4000, true ] );
+
+				changeScene( past1 );
+
+				vn.say( makoto, "He always makes swimming looks so good" );
+				vn.say( nagisa, [ "Yeah! Like a dolphin!", 1000,
+					" Ah...", 1000, true,
+					" Who's that?", true ] );
+
+				changeScene( past2 );
+
+				vn.say( makoto, [ "Matsuoka Rin, ", 1000,
+					"he Transferred into our class last week", true ] );
+
+				changeScene( past3 );
+				changeScene( past4 );
+				changeScene( past5 );
+
+				vn.say( makoto, "Nobody can beat you in the water, Haruka-chan" );
+				vn.say( haruka, "Don't use 'chan' for me please" );
+
+				changeScene( past6 );
+
+				vn.say( nagisa, [ "That was so cool, Haruka-kun!",
+					"I wanna swim like you!" ] );
+
+				changeScene( past7 );
+
+				vn.say( rin, [ "They were right when they said you were fast!",
+					"What was your time?" ] );
+				vn.say( haruka, "I don't care about my time" );
+				vn.say( rin, [ "Hahaha!", 1000,
+					" That's what they said too", true,
+					"Hey Haruka,", 1000,
+					" wanna enter a relay with me at the next tournament?", true ] );
+
+				changeScene( past8 );
+
+				vn.say( haruka, "I only do freestyle" );
+				vn.say( "", [ "Yeah, I don't care about times or being the fastest", 3000,
+					"All I want is to feel the water ", 2000,
+					" with my skin, my eyes, my soul...", 3000, true,
+					"I never want to doubt what it makes me feel. ", 2000,
+					" I want to believe in myself", 3000, true,
+					"I don't resist the water. ", 2000,
+					" I welcome it.", 2000,
+					" We accept each other.", 3000, true ] );
+
+				changeScene( past9 );
+
+				vn.say( haruka, [ "Yeah.", 1000,
+					" There was some funky stuff going through my head back then", true ] );
+
+				changeScene( past10 );
+
+				vn.say( haruka, [ "There's an old saying that my late grandma taught me",
+					"At ten, you're a prodigy.", 2000,
+					" At fifteen, you're a genius.", 2000, true,
+					" Once you're twenty, you're ordinary.", true ] );
+
+				changeScene( past11 );
+
+				vn.say( haruka, [ "I have about three years until I'm ordinary.",
+					"Man...", 1000,
+					" I can't wait to be ordinary.", true ] );
+				vn.say( "", "It had already been years since the event happened..." );
+
+				changeScene( fb2 );
+
+				vn.say( makoto, "Huh? What do you mean, Rin?" );
+				vn.say( rin, "I'm going to Australia." );
+				vn.say( makoto, "You're going to a different country?" );
+				vn.say( rin, "Yep, I'm going to a school just for swimming" );
+
+				changeScene( fb1 );
+
+				vn.say( haruka, "What are you trying to do?" );
+
+				changeScene( fb2 );
+
+				vn.say( rin, "I'm going to be an olympic swimmer." );
+				vn.say( makoto, [ "Why didn't you tell us?", 2000,
+					" What about the relay?", true ] );
+
+				changeScene( fb3 );
+
+				vn.say( rin, [ "I'll swim in the relay.", 2000,
+					" I'm leaving the day after the tournament.", 2000, true,
+					" So that'll be the last time we swim together.", true ] );
+
+				changeScene( fb4 );
+
+				vn.say( haruka, "I only swim freestyle" );
+
+				changeScene( fb5 );
+
+				vn.say( rin, [ "But you have to do the relay.", 2000,
+					" This is our last chance.", 2000, true,
+					" Let's swim together.", true,
+					"If we swim together,", 2000,
+					" I'll show you a sight you've never seen before.", true ] );
+
+				changeScene( pool );
+
+				vn.say( "", [ "We won the relay, and Rin moved to Australia the following day.",
+					"Nagisa went to a different school, while Makoto and I studied at the same school.",
+					"In middle school, we met up again with Nagisa at school.",
+					"After hearing that the old school we went to was going to be demolished,", 1000,
+					" we decided to go there to get the thropy that we buried there.", true ] );
+
+				changeScene( school1 );
+
+				vn.say( "", "Yo" );
+
+				changeScene( school3 );
+
+				vn.say( makoto, "Who's that?" );
+				vn.say( nagisa, "I don't know" );
+				vn.say( "", "I didn't think I'd run into you guys here." );
+				vn.say( makoto, "Rin-chan!" );
+				vn.say( nagisa, [ "Rin-chan!", 1000,
+					" You're back from Australia!", true ] );
+				vn.say( makoto, "What are you doing here, though?" );
+				vn.say( nagisa, "This must be fate!" );
+
+				changeScene( school1 );
+
+				vn.say( rin, [ "Haruka, you're still hanging out with these guys?", 2000,
+					" You never learn.", true ] );
+
+				changeScene( school2 );
+
+				vn.say( haruka, [ "And what about you?", 2000,
+					" Have you learned anything?", true ] );
+				vn.say( makoto, "Haruka?" );
+				vn.say( rin, [ "I'm glad you asked.", 2000,
+					" Why don't I show you?", true ] );
+
+				vn.say( "", [ "Haruka's former friend and teammate, Rin joined the swimming club of a nearby school.",
+					"Nagisa with Haruka and Makoto formed a new swimming club at their school.",
+					"With only three members, the club needed one more member so they searched for a member.",
+					"In a few weeks, Rei decided to join the club after Nagisa's persuasion.",
+					"After training through the summer, they entered a competition.", 3000,
+					" There, they met Rin again...", true ] );
+
+				changeScene( meet1 );
+				changeScene( meet2 );
+
+				vn.say( "", "But he was taken out of the relay and had lost in his free style swim event." );
+
+				changeScene( meet3 );
+
+				vn.say( rin, [ "Why are you here?", 2000,
+					" Come to laugh at my pathetic loss?", true ] );
+				vn.say( haruka, "Rin..." );
+				vn.say( rin, [ "You saw what happened in the free.", 2000,
+					" I was taken out of the relay!", true,
+					"The world is laughing at me.", 2000,
+					" So join in!", true,
+					"No need to pity me.", 2000,
+					" I told you to laugh!", 2000, true,
+					" That's all I'm good for now anyway.", true,
+					"I'm not even good enough to race you guys in a relay!" ] );
+				vn.say( haruka, "Calm down, Rin!" );
+				vn.say( rin, [ "Shut up!", 2000,
+					" What would you know?!", true ] );
+				vn.say( haruka, [ "I know...", 3000,
+					"how fun it is to swim with friends...", 3000, true,
+					"how good it feels to swim in a relay together...", true,
+					"You were the one who taught me that, Rin!", 2000,
+					" You're the reason that I...", true ] );
+				vn.say( rin, "Shut up!" );
+				vn.say( haruka, [ "I understand now!", 2000,
+					"I found the reason!", 2000,
+					"Why it is I swim!", 2000,
+					"Who I'm swimming for!" ] );
+				vn.say( rin, "I told you to shut up!" );
+
+				changeScene( meet5 );
+				changeScene( meet6 );
+				changeScene( meet7 );
+
+				vn.say( haruka, [ "This tree looks like the...", 1000,
+					" cherry blossom tree that was in the school yard.", 4000, true,
+					" Isn't that why you're here?", true ] );
+
+				changeScene( meet8 );
+
+				vn.say( rin, "Why?" );
+
+				changeScene( meet9 );
+
+				vn.say( rin, [ "Why can't I be free?", 2000,
+					"I want to swim with you guys.", 2000,
+					" I want to swim in a relay with you guys.", 2000, true,
+					"But it's too late now." ] );
+				
+				changeScene( meet10 );
+
+				vn.say( haruka, "Let's go, Rin." );
+				vn.say( rei, "Oh, there they are!" );
+				vn.say( nagisa, "Rin-chan!" );
+				vn.say( rin, "you guys..." );
+				vn.say( rei, [ "Honestly...", 2000,
+					" Watching you annoys me so much.", 3000, true,
+					" If you want to swim, you should.", true ] );
+
+				changeScene( meet11 );
+
+				vn.say( haruka, "Rin, come!" );
+
+				changeScene( meet12 );
+
+				vn.say( haruka, [ "It's my turn to show you...", 2000,
+					"something you've never seen before", true ] );
+
+				changeScene( water );
+				changeScene( relay1 );
+				changeScene( relay2 );
+				changeScene( relay3 );
+				changeScene( relay4 );
+				changeScene( relay5 );
+
+				vn.say( rin, "Haruka, you showed me the best scene I could've asked for." );
+				vn.say( haruka, "Yeah." );
+
+				changeScene( relay6 );
+
+				vn.say( rin, [ "Makoto!", 2000, "Nagisa!", true ] );
+				vn.say( makoto, "Rin!" );
+				vn.say( nagisa, "Rin-rin!" );
+				vn.say( rin, "It's been too long!" );
+
+				changeScene( relay7 );
+				changeScene( after1 );
+				
+				vn.say( "", [ "After that emotional performance, we were disqualified.", 2000,
+					" When we were asked why we did it...", true ] );
+
+				changeScene( after2 );
+
+				vn.say( rei, "It was only right.", 2000 );
+				vn.say( nagisa, "Yep, we may be on different teams...", 3000 );
+				vn.say( makoto, "...but we're still...", 3000 );
+				vn.say( haruka, "...teammates...", 4000 );
+
+				changeScene( after4 );
+
+				vn.say( nagisa, "It's over." );
+				vn.say( makoto, "Will we make it back here next year?" );
+				vn.say( rei, [ "We have to make it back!", 2000,
+					" It'll be my turn to unveil my dazzling butterfly technique!", true ] );
+
+				changeScene( after3 );
+
+				vn.say( nagisa, "Right." );
+				vn.say( makoto, "Hahaha!" );
+				vn.say( haruka, "Don't worry." );
+
+				changeScene( after5 );
+
+				vn.say( haruka, "We'll be back." );
+
+				changeScene( after6 );
+				changeScene( after7 );
+				
+				vn.say( haruka, "So you're following your dad's dream?" );
+				vn.say( rin, [ "No, I'm not following my dad's dream.",
+					"I'm following my own dream.", 2000,
+					" What about you, Haruka?", true ] );
+				vn.say( haruka, [ "Me?", 2000, " I'm...", true ] );
+				vn.showSayDialog( false );
+
+				vn.pause( 2000 );
+				changeScene( end );
+				vn.showSayDialog( false );
+				vn.pause( 5000 );
+
+				// fade out bg
+				vn.fadeBg( "out", 1000 );
+				vn.pause( 1000 );
+
+			}
+
+			function initVN() {
+
+				// init novel
+				var vn = new VisualNovel( "programming-vn", 800, 600, "img/free/" );
+
+				vn.init();
+
+				config( vn );
+
+				intro( vn );
+
+				start( vn );
+				
+				vn.reset();
+
+			}
+
+		</script>
+
+	</body>
+
+</html>

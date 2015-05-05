@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			.smallTxt {
+				font-size: 12px;
+			}
+
+			#my-vn-novelTitleContainer {
+				background-color: transparent;
+			}
+
+			#my-vn-novelTitleText {
+				color: rgba(255,255,100,1);
+				text-shadow: 0px 0px 20px rgba( 255, 255, 100, 1 );
+			}
+
+			#my-vn-novelSubtitleText {
+				color: rgba(0,255,255,1);
+				text-shadow: 0px 0px 20px rgba( 0, 255, 255, 1 );
+			}
+
+			#my-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#my-vn-startMenuButton {
+				color: white;
+			}
+
+			#my-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: rgba(255,255,100,1);
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+		<script type="text/javascript" src="../dependencies/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="../dependencies/Sprite3D.js"></script>
+
+		<script type="text/javascript" src="../build/visual-novel.min.js"></script>
+
+		<script type="text/javascript" src="../examples/js/preloadjs-0.4.1.min.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="my-vn"></div>
+
+		</div>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					var imgPath = "img/python/";
+					var vnBgImage = "bg/bg.jpg";
+					var vnCharImage1 = "character/nao-normal1.png";
+					var vnCharImage2 = "character/nao-normal2.png";
+					var vnDlgImage1 = "character/na1_pe_000.png";
+					var vnDlgImage2 = "character/na1_pe_010.png";
+
+					/**
+					 * Preload
+					 */
+
+					function preload() {
+
+						var queue = new createjs.LoadQueue( true );
+						var path = '../examples/' + imgPath;
+
+						queue.loadManifest( [
+							{
+								id : 'bg',
+								src : path + vnBgImage
+							},
+							{
+								id : 'normal1',
+								src : path + vnCharImage1
+							},
+							{
+								id : 'normal2',
+								src : path + vnCharImage2
+							},
+							{
+								id : 'dialog1',
+								src : path + vnDlgImage1
+							},
+							{
+								id : 'dialog2',
+								src : path + vnDlgImage2
+							}
+						] );
+
+						queue.load();
+
+					}
+
+					/**
+					 * Visual Novel
+					 */
+
+					function initVN() {
+
+						// init novel
+						var vn = new VisualNovel( "my-vn", 800, 600, imgPath );
+
+						vn.init();
+
+						config( vn );
+
+						intro( vn );
+
+						start( vn );
+						
+						vn.reset();
+
+					}
+
+					function config( novel ) {
+
+						novel.setNovelTitle( "My Visual Novel", "", 300, 100 );
+
+						novel.setStartScreenBgColor( "black" );
+						// novel.setStartScreenBgImage( vnBgImage, 800, 600 );
+						novel.setStartScreenMenuPos( 310, 500 );
+
+						// novel.setBgColor( "black" );
+						novel.setBgImage( vnBgImage, 800, 600 );
+
+						novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+						// novel.setDialogBgImage( vnBgImage, 680, 150 );
+						novel.setDialogTextColor( "black" );
+						novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+
+						novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+					}
+
+					function intro( novel ) {
+
+						var textSetting = { x: 0.55, y: 0, z: 0.4, 
+							width : 300, height : 50,
+							color: "white", size : 30,
+							bgColor : "transparent", bgImage : "",
+							fade: 500 };
+
+						function removeText() {
+							novel.pause( 2000 );
+							novel.fadeSceneText( "t", "out", 500 );
+							novel.pause( 1000 );
+							novel.removeSceneText( "t" );
+						}
+					
+						novel.setBgImage( vnBgImage, 800, 600 );
+
+						novel.fadeBg( "in", 1000 );
+						novel.pause( 1000 );
+
+						novel.addTextToScene( "t", "My Visual Novel", textSetting, 500 );
+						removeText();
+
+						novel.fadeBg( "out", 1000 );
+						novel.pause( 1000 );
+
+						novel.setBgImage( vnBgImage, 800, 600 );
+						novel.setBgSize( 800, 600 );
+						novel.fadeBg( "in", 1000 );
+
+					}
+
+					function start( novel ) {
+
+						// define character
+						var me = {
+							name: "Character",
+							width: 600,
+							height: 600,
+							image: {
+								"default" : vnCharImage1,
+								"happy" : vnCharImage1,
+								"happy2" : vnCharImage2
+							},
+							pos: {
+								x : 1.0,
+								y : 0.007
+							},
+							dialog: {
+								image: vnDlgImage1,
+								nextImage: vnDlgImage2,
+								imageDelay: 5000,
+								height: 40,
+								location: "left",
+								button: {
+									text: "...",
+									// image: "",
+									// imageHover: "",
+									bgColor: "transparent",
+									bgColorHover: "transparent",
+									width: 20,
+									height: 20
+								}
+							}
+						};
+
+						// add character
+						novel.addCharacter( me, 1000, "fade" );
+
+						novel.moveCharacter( me, 0.2, 0, 500 );
+						novel.fadeCharacter( me, "in", 500 );
+						novel.pause( 1000 );
+
+						// loop character image for blink eyes effect
+						novel.loop( "me", true, function() {
+
+							novel.setCharacterImage( me, "happy2" );
+
+							setTimeout( function() {
+								novel.setCharacterImage( me, "happy" );
+							}, 200 );
+
+						}, 4000 );
+
+						// var showText = function (target, message, index, interval) {    
+						//  	if (index < message.length) { 
+						//     	// document.getElementById(target).append(
+						//     	// 	message[index++]);
+						//     	target.innerHTML += message[ index++ ];
+						//     	setTimeout( function () {
+						//     		showText(target, message, index, interval);
+						//     	}, interval); 
+						// 	}
+						// }
+
+						// novel.say( me, "", 1 );
+						// novel.eventTracker.addEvent( "nowait", function() {
+
+						// 	showText( novel.dialogTextId, "hello world", 0, 100 );
+
+						// }, 1500 );
+
+						novel.say( me, "Hi there!",
+							{ "interval": 200, "delay": 1000, "button": true } );
+						novel.showSayDialog( false );
+
+						novel.moveCharacter( me, 0.4, 0, 200 );
+
+						var choices = [
+							{
+								label : "Choice 1",
+								action : function() {
+
+									novel.say( me, "Choice 1" );
+									novel.showSayDialog( false );
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Choice 2",
+								action : function() {
+
+									novel.say( me, "Choice 2" );
+									novel.showSayDialog( false );
+									novel.repeatEvent();
+								}
+							},
+							{
+								label : "Done",
+								action : function() {}
+							}
+						];
+						
+						// Show choices
+						novel.choice(
+							"choices",
+							choices,
+							{ x : 0.1,  y : 0.3 },
+							{ image : vnDlgImage1, width : 100, height : 100 }
+						);
+
+						novel.say( me, "Thank you for reading ~", 2000 );
+						novel.showSayDialog( false );
+
+						// remove character
+						novel.clearLoop( "me" );
+						novel.moveCharacter( me, 1.0, 0, 500 );
+						novel.fadeCharacter( me, "out", 500 );
+
+						// fade out bg
+						novel.fadeBg( "out", 1000 );
+						novel.pause( 1000 );
+
+					}
+
+					// Preload all images
+					preload();
+
+					// Initialize visual novel
+					initVN();
+					
+				}
+
+			);
+
+		</script>
+
+	</body>
+
+</html>

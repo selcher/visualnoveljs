@@ -69,7 +69,11 @@ function VisualNovel( id, width, height, imgPath ) {
 
 		// TODO : Check if used...
 		// TODO : implement one timer loop
-		this.timers = {};
+		this.timers = {
+			"dialog" : {
+				"text" : null
+			}
+		};
 
 		// scene
 		this.sceneContainer = null;
@@ -916,7 +920,7 @@ VisualNovel.prototype.refreshDialogButtonPositionView = function refreshDialogBu
 
 };
 
-VisualNovel.prototype.updateDialogButtonListeners = function updateDialogButtonListeners( character ) {
+VisualNovel.prototype.updateDialogButtonListeners = function updateDialogButtonListeners( character, callback ) {
 
 	// TODO : refactor... too long
 	var self = this;
@@ -1010,6 +1014,10 @@ VisualNovel.prototype.updateDialogButtonListeners = function updateDialogButtonL
 	// Proceed to next event on click
 	this.dialogButtonId.onclick = function clickDialogButton( e ) {
 				
+		// perform passed callback when button is clicked
+		// e.g. clear timeout for showing line by each char
+		callback();
+
 		self.eventTracker.nextEvent();
 
 		clearDialogImageAnimation();
@@ -1874,22 +1882,63 @@ VisualNovel.prototype.resetCharacters = function resetCharacters() {
 
 
 
+VisualNovel.prototype.showTextByChar = function showTextByChar( message, index, interval ) {
+	 	
+ 	if ( index < message.length ) {
+
+    	this.setSayDialogText( message[ index++ ], true );
+
+    	this.timers.dialog.text = setTimeout( function () {
+
+    		this.showTextByChar( message, index, interval );
+
+    	}.bind( this ), interval );
+
+	} else {
+
+		this.timers.dialog.text = null;
+
+	}
+
+};
+
 VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
 
 	var self = this;
+	var showLineByEachChar = typeof delay === "object";
+	var delayTime = delay;
+	var showDialogButton = typeof delay === "undefined";
+
+	if ( showLineByEachChar ) {
+
+		delayTime = delay.interval * line.length + ( delay.delay ? delay.delay : 0 );
+		
+		if ( delay.button ) {
+			
+			delayTime = 0;
+			showDialogButton = true;
+		
+		}
+	}
 
 	function callSayLine() {
 
 		var mode = self.novelMode;
+		var textTimer = self.timers.dialog.text;
 
-		// show
+		// Steps:
+		// 1. show say dialog container
+		// 2. build say dialog container
+		// 3. update references to divs and button in container
+		// 4. set text in container (TODO: add text later after building container)
 		self.setSayDialogDisplay( true, mode );
 
-		self.buildSayDialog( character, line, delay, mode );
+		self.buildSayDialog( character, showLineByEachChar ? "" : line, delayTime, mode );
 
 		self.updateSayDialogReference( self.novelId );
 
-		if ( typeof delay === "undefined" ) {
+		// TODO : move ( inside condition ) to separate function
+		if ( showDialogButton ) {
 
 			self.updateSayDialogButtonReference( self.novelId );
 
@@ -1897,12 +1946,30 @@ VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
 			self.updateDialogButtonPosition( character );
 			self.refreshDialogButtonPositionView( character );
 
-			self.updateDialogButtonListeners( character );
+			self.updateDialogButtonListeners( character, function onDialogButtonClick() {
+				
+				if ( textTimer ) {
+
+					clearTimeout( textTimer );
+					textTimer = null;
+				
+				}
+
+			} );
+
+		}
+
+		if ( showLineByEachChar ) {
+
+			// replace variables in line
+			var dialogLine = self.util.replaceVariablesInText( line, self.userInput );
+			
+			self.showTextByChar( dialogLine, 0, delay.interval );
 
 		}
 	}
 
-	this.eventTracker.addEvent( delay ? "nowait" : "wait", callSayLine, delay );
+	this.eventTracker.addEvent( delayTime ? "nowait" : "wait", callSayLine, delayTime );
 
 };
 
@@ -1912,8 +1979,7 @@ VisualNovel.prototype.sayLineExtend = function sayLineExtend( line, delay ) {
 
 	function callSayLineExtend() {
 
-		var content = self.dialogTextId.innerHTML + line;
-		self.dialogTextId.innerHTML = content;
+		self.setSayDialogText( line, true );
 
 	}
 
@@ -2042,12 +2108,9 @@ VisualNovel.prototype.say = function say( character, line, delay ) {
 
 VisualNovel.prototype.buildSayDialog = function buildSayDialog( character, line, delay, novelMode ) {
 
-	// Default : dialogModeId
-	var mode = novelMode ? novelMode : this.novelMode;
-	var containerId = mode == "novel" ? "novelModeId" : "dialogModeId";
 	var sayTemplate = this.getSayTemplate( character, line, delay );
 
-	this[ containerId ].innerHTML = sayTemplate;
+	this.setSayDialogContainer( sayTemplate, novelMode );
 
 };
 
@@ -2143,6 +2206,22 @@ VisualNovel.prototype.getSayTemplateVariables = function getSayTemplateVariables
 	};
 
 	return templateVariables;
+
+};
+
+VisualNovel.prototype.setSayDialogContainer = function setSayDialogContainer( template, novelMode ) {
+
+	// Default : dialogModeId
+	var mode = novelMode ? novelMode : this.novelMode;
+	var containerId = mode == "novel" ? "novelModeId" : "dialogModeId";
+
+	this[ containerId ].innerHTML = template;
+
+};
+
+VisualNovel.prototype.setSayDialogText = function setSayDialogText( line, isAppend ) {
+
+	this.dialogTextId.innerHTML = isAppend ? this.dialogTextId.innerHTML + line : line;
 
 };
 
