@@ -49,6 +49,8 @@
 
 		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
 
+		<script type="text/javascript" src="js/preloadjs-0.4.1.min.js"></script>
+
 	</head>
 
 	<body>
@@ -66,10 +68,51 @@
 				function() {
 
 					initVN();
+					preload();
 					
 				}
 
 			);
+
+			function preload() {
+
+				var queue = new createjs.LoadQueue( true );
+				var path = 'img/jp/';
+
+				queue.loadManifest( [
+					{
+						id : 'bg',
+						src : path + 'bg/jpbg.png'
+					},
+					{
+						id : 'stare',
+						src : path + 'bg/stare.jpg',
+					},
+					{
+						id : 'happy',
+						src : path + 'character/happy.png'
+					},
+					{
+						id : 'sad',
+						src : path + 'character/sad.png'
+					},
+					{
+						id : 'sleep',
+						src : path + 'character/sleep.png'
+					},
+					{
+						id : 'think',
+						src : path + 'character/think.png'
+					},
+					{
+						id : 'angry',
+						src : path + 'character/angry.png'
+					}
+				] );
+
+				queue.load();
+
+			}
 
 			function config( novel ) {
 
