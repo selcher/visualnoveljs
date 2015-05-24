@@ -971,6 +971,20 @@ VisualNovel.prototype.setDialogBorderStyle = function setDialogBorderWidth( img,
 
 };
 
+VisualNovel.prototype.updateDialogBorderStyle = function updateDialogBorderStyle( img, color, width, radius ) {
+
+	var self = this;
+
+	function eventToAdd() {
+		
+		self.setDialogBorderStyle( img, color, width, radius );
+	
+	}
+
+	this.eventTracker.addEvent( "nowait", eventToAdd );
+
+};
+
 VisualNovel.prototype.setDialogButtonPosition = function setDialogButtonPosition( x, y ) {
 
 	// dialogButtonPos = { left : .., bottom : .. }
@@ -1183,7 +1197,10 @@ VisualNovel.prototype.setBgImage = function setBgImage( bgImg, width, height, re
 
 		}
 
-		screenBg.update();
+		// Update bg at start of frame
+		requestAnimationFrame( function() {
+			screenBg.update();
+		} );
 
 	}
 
@@ -1214,16 +1231,34 @@ VisualNovel.prototype.setBgSize = function setBgSize( width, height, duration, d
 		
 		if ( duration ) {
 
-			// TODO: refactor...
-			var increment = vector2D( 
-				self.getBgSize(), 
-				{ width : width, height : height }, 
-				"width", "height" );
-			var step = ( increment.maxDifference / 40 ) / ( duration / 1000 );
-			increment.width = increment.width * step;
-			increment.height = increment.height * step;
+			var previousSize = self.getBgSize();
+			var distance = {
+				"width": width - previousSize.width,
+				"height": height - previousSize.height
+			};
 
-			self.setBgSizeByStep( width, height, 25, increment );
+			var animationStartTime = Date.now();
+			var animationDuration = duration;
+
+			var bgSizeUpdate = function() {
+
+				var currentTime = Date.now();
+				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
+
+				self.setBgSizeTo(
+					previousSize.width + ( timeDifference * distance.width ),
+					previousSize.height + ( timeDifference * distance.height )
+				);
+
+				if ( timeDifference <= 1 ) {
+
+					requestAnimationFrame( bgSizeUpdate );
+				
+				}
+
+			};
+
+			requestAnimationFrame( bgSizeUpdate );
 
 		} else {
 
@@ -1239,32 +1274,6 @@ VisualNovel.prototype.setBgSize = function setBgSize( width, height, duration, d
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
-
-};
-
-VisualNovel.prototype.setBgSizeByStep = function setBgSizeByStep( width, height, timeStep, increment ) {
-
-	// TODO
-	var currentSize = this.getBgSize();
-	var currentWidth = currentSize.width;
-	var currentHeight = currentSize.height;
-	var incWidth = increment.width;
-	var incHeight = increment.height;
-	var notAtFinalWidth = incWidth > 0 ? currentWidth <= width : currentWidth >= width;
-	var notAtFinalHeight = incHeight > 0 ? currentHeight <= height : currentHeight >= height;
-
-	if ( notAtFinalWidth && notAtFinalHeight ) {
-
-		var newWidth = notAtFinalWidth ? currentWidth + incWidth : currentWidth;
-		var newHeight = notAtFinalHeight ? currentHeight + incHeight : currentHeight;
-
-		this.setBgSizeTo( newWidth, newHeight );
-
-		setTimeout( function() {
-			this.setBgSizeByStep( width, height, timeStep, increment );
-		}.bind( this ), timeStep );
-
-	}
 
 };
 
@@ -1296,25 +1305,47 @@ VisualNovel.prototype.setBgPosition = function setBgPosition( x, y, duration, de
 
 	function eventToAdd() {
 
+		var previousPosition = self.getBgPosition();
+		var distance = {
+			"x": x - previousPosition.x,
+			"y": y - previousPosition.y
+		};
+
+		var sprite = self.screenBgId;
+
 		if ( duration ) {
 
-			var previousPosition = self.getBgPosition();
-			var finalPosition = {
-				x : x,
-				y : y
+			var animationStartTime = Date.now();
+			var animationDuration = duration;
+
+			var bgPositionUpdate = function() {
+
+				var currentTime = Date.now();
+				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
+
+				sprite.x = previousPosition.x + ( timeDifference * distance.x );
+				sprite.y = previousPosition.y + ( timeDifference * distance.y );
+				sprite.update();
+
+				if ( timeDifference <= 1 ) {
+
+					requestAnimationFrame( bgPositionUpdate );
+				
+				}
+
 			};
 
-			// TODO : refactor
-			increment = vector2D( previousPosition, finalPosition, "x", "y" );
-			var step = ( increment.maxDifference / 40 ) / ( duration / 1000 );
-			increment.x = increment.x * step;
-			increment.y = increment.y * step;
-
-			self.setBgPositionByStep( previousPosition, finalPosition, 25, increment );
+			requestAnimationFrame( bgPositionUpdate );
 
 		} else {
 
-			self.moveBgPositionBy( x, y );
+			requestAnimationFrame( function() {
+
+				sprite.x = previousPosition.x + distance.x;
+				sprite.y = previousPosition.y + distance.y;
+				sprite.update();
+
+			} );
 
 		}
 
@@ -1333,48 +1364,6 @@ VisualNovel.prototype.getBgPosition = function getBgPosition() {
 	};
 
 	return position;
-
-};
-
-VisualNovel.prototype.setBgPositionByStep = function setBgPositionByStep( currentPos, finalPos, timeStep, increment ) {
-
-	var self = this;
-	var posx = currentPos.x;
-	var posy = currentPos.y;
-	var finalPosx = finalPos.x;
-	var finalPosy = finalPos.y;
-	var atFinalPosx = increment.x > 0 ? posx >= finalPosx : posx <= finalPosx;
-	var atFinalPosy = increment.y > 0 ? posy >= finalPosy : posy <= finalPosy;
-	var atFinalPos = increment.axis == "x" ? atFinalPosx : atFinalPosy;
-	var incx = atFinalPosx ? 0 : increment.x;
-	var incy = atFinalPosy ? 0 : increment.y;
-
-	// Debug
-	// console.log( posx + "," + posy + " => " + finalPosx + "," + finalPosy );
-	
-	if ( !atFinalPos ) {
-
-		this.moveBgPositionBy( incx, incy );
-
-		// TODO : refactor
-		setTimeout( function setBgPositionByStepTimeout() {
-
-			var newPos = {
-				x : posx + incx,
-				y : posy + incy
-			};
-
-			self.setBgPositionByStep( newPos, finalPos, timeStep, increment );
-
-		}, timeStep );
-
-	}
-
-};
-
-VisualNovel.prototype.moveBgPositionBy = function moveBgPositionBy( x, y ) {
-
-	this.screenBgId.move( x, y, 0 ).update();
 
 };
 
@@ -1814,11 +1803,26 @@ VisualNovel.prototype.moveCharacter = function moveCharacter( character, x, y, d
 		var characterObject = self.getCharacter( character.name );
 		var sprite = characterObject.sprite;
 		var newPos = {
-			x : x ? x > 1 || x < -1 ? x : x * self.screenWidth : sprite.x,
-			y : y ? y > 1 || y < -1 ? y : y * self.screenHeight : sprite.y
+			x : typeof x !== "undefined" ? x > 1 || x < -1 ? x : x * self.screenWidth : sprite.x,
+			y : typeof y !== "undefined" ? y > 1 || y < -1 ? y : y * self.screenHeight : sprite.y
 		};
-		
-		characterObject.move( newPos.x, newPos.y, 0, delay );
+
+		if ( delay ) {
+
+			characterObject.move( newPos.x, newPos.y, 0, delay );
+
+		} else {
+
+			requestAnimationFrame( function() {
+
+				sprite.x = newPos.x;
+				sprite.y = newPos.y;
+				sprite.update();
+
+			} );
+
+		}
+	
 	}
 
 	this.eventTracker.addEvent( "nowait", eventToAdd );
@@ -1881,8 +1885,8 @@ VisualNovel.prototype.addCharacter = function addCharacter( character, delay, fa
 		var posX = ( self.screenWidth * character.pos.x );
 
 		var position = {
-			x : posX,
-			y : posY,
+			x : Math.floor( posX ),
+			y : Math.floor( posY ),
 			z : 0
 		};
 		var transformOrigin = {
@@ -2002,14 +2006,18 @@ VisualNovel.prototype.setCharacterImage = function setCharacterImage( character,
 
 	if ( typeof characterImage === "object" ) {
 
-		characterObject.sprite.setCSS( "background-image", 
-			"url('" + characterImage.src + "')" );
-		characterObject.sprite.setCSS( "background-position", characterImage.position );
+		requestAnimationFrame( function() {
+			characterObject.sprite.setCSS( "background-image", 
+				"url('" + characterImage.src + "')" );
+			characterObject.sprite.setCSS( "background-position", characterImage.position );
+		} );
 
 	} else {
 
-		characterObject.sprite.setCSS( "background-image", 
-			"url('" + characterImage + "')" );
+		requestAnimationFrame( function() {
+			characterObject.sprite.setCSS( "background-image", 
+				"url('" + characterImage + "')" );
+		} );
 	
 	}
 
@@ -2125,7 +2133,6 @@ VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
 	function callSayLine() {
 
 		var mode = self.novelMode;
-		var textTimer = self.timers.dialog.text;
 
 		// Steps:
 		// 1. show say dialog container
@@ -2149,6 +2156,8 @@ VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
 
 			self.updateDialogButtonListeners( character, function onDialogButtonClick() {
 				
+				var textTimer = self.timers.dialog.text;
+
 				if ( textTimer ) {
 
 					clearTimeout( textTimer );
@@ -2196,6 +2205,7 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 	// line, delay => sayLine
 	// line, includePrevLinesFlag => sayLine ( include previous extend lines )
 	// line, delay, includePrevLinesFlag => sayLineExtend
+	// line, interval (object) => sayLine
 
 	var util = this.util;
 	var NoOfLines = line.length;
@@ -2211,17 +2221,30 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 			temp.push( l );
 			nextIndex = i + 1;
 
-			// delay passed
+			// delay (number) passed
 			if ( nextIndex < NoOfLines && typeof line[ nextIndex ] === "number" ) {
+
 				temp.push( line[ nextIndex ] );
+			
 			}
 
-			// next dialog flag ( after line or delay argument ) passed
+			// include previous line flag ( after line or delay argument ) passed
 			// if not passed, add the next line to the current dialog
 			if ( nextIndex < NoOfLines && typeof line[ nextIndex ] === "boolean" ) {
+
 				temp.push( 0, line[ nextIndex ] );
+
 			} else if ( nextIndex + 1 < NoOfLines && typeof line[ nextIndex + 1 ] === "boolean" ) {
+
 				temp.push( line[ nextIndex + 1 ] );	
+
+			}
+
+			// interval per character passed
+			if ( nextIndex < NoOfLines && typeof line[ nextIndex ] == "object" ) {
+
+				temp.push( line[ nextIndex ] );
+
 			}
 
 			lines.push( temp );
@@ -2234,7 +2257,9 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 	util.foreach( lines, function( l, i ) {
 
 		// TODO: add comments!! =3
-		// 0 = line, 1 = delay, 2 = include previous lines flag
+		// 0 = line, 1 = delay / interval, 2 = include previous lines flag
+
+		// last parameter is inclue previous line flag
 		if ( typeof l[ l.length -1 ] === "boolean" ) {
 
 			if ( l[ 1 ] === 0 ) {
@@ -2251,6 +2276,11 @@ VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, l
 				this.sayLineExtend.apply( this, l );
 
 			}
+
+		} else if ( typeof l[ 1 ] === "object" ) {
+
+			// interval (object) passed
+			this.sayLine( character, l[ 0 ], l[ 1 ] );
 
 		} else {
 
@@ -4176,86 +4206,52 @@ Sprite.prototype.setBackground = function setBackground( width, height, image, c
  * @param x = x position
  * @param y = y position
  * @param z = z position
- * @param speed = duration of move in milliseconds
+ * @param duration = duration of move in milliseconds
  */
-Sprite.prototype.move = function move( x, y, z, speed ) {
+Sprite.prototype.move = function move( x, y, z, duration ) {
 
-	// TODO: when moving, update transform origin...
+	// console.log( "from:", this.sprite.x, this.sprite.y );
+	// console.log( "to:", x, y, z, duration );
 	
-	var self = this;
-	var sprite = this.sprite;
-	var spritex = sprite.x;
-	var spritey = sprite.y;
-	var spritez = sprite.z;
-
 	// spriteType = character => use y ( up / down )
 	//			  = container => use z ( up / down )
-	var newPosx = x ? x : spritex;
-	var newPosy = y ? y : spritey;
-	var newPosz = z ? z : spritez;
-		
-	if ( typeof sprite.moveStep === "undefined" || sprite.moveStep === null ) {
+	var sprite = this.sprite;
+	var originalPos = {
+		"x": sprite.x,
+		"y": sprite.y,
+		"z": sprite.z
+	};
+	var distance = {
+		"x": x - sprite.x,
+		"y": y - sprite.y,
+		"z": z - sprite.z
+	};
 
-		// Although could be looped...but may affect performance...
-		var stepx = 0;
-		var stepy = 0;
-		var stepz = 0;
+	var animationStartTime = Date.now();
+	var animationDuration = 500;
 
-		if ( x && spritex !== newPosx ) {
-			var distancex = Math.abs( newPosx - spritex ) / 100;
-			stepx = spritex < newPosx ? distancex : -distancex;
-			stepx = Math.round( stepx );
-		}
+	var moveUpdate = function() {
 
-		if ( y && spritey !== newPosy ) {
-			var distancey = Math.abs( newPosy - spritey ) / 100;
-			stepy = spritey < newPosy ? distancey : -distancey;
-			stepy = Math.round( stepy );
-		}
-		
-		if ( z && spritez !== newPosz ) {
-			var distancez = Math.abs( newPosz - spritez ) / 100;
-			stepz = spritez < newPosz ? distancez : -distancez;
-			stepz = Math.round( stepz );
-		}
+		var currentTime = Date.now();
+		var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
 
-		sprite.moveStep = {
-			"x" : stepx,
-			"y" : stepy,
-			"z" : stepz
-		};
+		// TODO: when moving, update transform origin...
 
-	}
+		sprite.x = originalPos.x + Math.floor( timeDifference * distance.x );
+		sprite.y = originalPos.y + Math.floor( timeDifference * distance.y );
+		// console.log( timeDifference, sprite.x, sprite.y );
 
-	var moveStep = sprite.moveStep;
-	var checkPosX = moveStep.x > 0 ? spritex < newPosx : spritex > newPosx;
-	var checkPosY = moveStep.y > 0 ? spritey < newPosy : spritey > newPosy;
-	var checkPosZ = moveStep.z > 0 ? spritez < newPosz : spritez > newPosz;
-
-	// Debug
-	// console.log( newPos );
-	// console.log( distance );
-	// console.log( checkPosX + "," + checkPosY + "," + checkPosZ );
-
-	if ( checkPosX || checkPosY || checkPosZ ) {
-
-		sprite.x = x ? spritex + moveStep.x : spritex;
-		sprite.y = y ? spritey + moveStep.y : spritey;
-		sprite.z = z ? spritez + moveStep.z : spritez;
-		
 		sprite.update();
 
-		sprite.timer.move = setTimeout( function() {
+		if ( timeDifference <= 1 ) {
 
-			self.move( x, y, z, speed );
+			requestAnimationFrame( moveUpdate );
+		
+		}
 
-		}, speed ? speed / 100 : 0 );
+	};
 
-	} else {
-
-		sprite.moveStep = null;
-
-	}
+	requestAnimationFrame( moveUpdate );
 
 };
 
@@ -4367,29 +4363,39 @@ Sprite.prototype.rotateTo = function rotateTo( axis, angle, speed, sprite ) {
 
 };
 
-Sprite.prototype.fade = function fade( startOpacity, endOpacity, step, speed ) {
-	
+Sprite.prototype.fade = function fade( startOpacity, endOpacity, step, duration ) {
+
+	// TODO: remove step...no longer needed... or keep?
 	// Step + => fade in
 	// Step - => fade out
-	var newOpacity = startOpacity + step;
-	var fadeNotDone = step < 0 ? 
-		endOpacity <= newOpacity && newOpacity <= startOpacity :
-		startOpacity <= newOpacity && newOpacity <= endOpacity;
 
-	if ( fadeNotDone ) {
+	// console.log( "fade:", startOpacity, endOpacity, step, duration );
 
-		var self = this;
-		var sprite = this.sprite;
+	var distance = endOpacity - startOpacity;
+	var sprite = this.sprite;
+
+	var animationStartTime = Date.now();
+	var animationDuration = duration;
+
+	var fadeUpdate = function() {
+
+		var currentTime = Date.now();
+		var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
+
+		var newOpacity = startOpacity + ( timeDifference * distance );
+		// console.log( timeDifference, newOpacity );
 
 		sprite.setOpacity( newOpacity / 100 );
 
-		sprite.timer.fade = setTimeout( function() {
+		if ( timeDifference <= 1 ) {
 
-			self.fade( newOpacity, endOpacity, step, speed );
+			requestAnimationFrame( fadeUpdate );
 
-		}, speed / 100 );
+		}
 
-	}
+	};
+
+	requestAnimationFrame( fadeUpdate );
 
 };
 
