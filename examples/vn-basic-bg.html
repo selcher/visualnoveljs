@@ -82,6 +82,8 @@
 
 					var imgPath = "img/python/";
 					var vnBgImage = "bg/bg.jpg";
+					var vnNightImage = "../persona/bg/night.jpg";
+					var vnHallImage = "../persona/bg/hall.jpg";
 					var vnCharImage1 = "character/nao-normal1.png";
 					var vnCharImage2 = "character/nao-normal2.png";
 					var vnDlgImage1 = "character/na1_pe_000.png";
@@ -100,6 +102,14 @@
 							{
 								id : 'bg',
 								src : path + vnBgImage
+							},
+							{
+								id : 'night',
+								src : path + vnNightImage
+							},
+							{
+								id : 'hall',
+								src : path + vnHallImage
 							},
 							{
 								id : 'normal1',
@@ -136,8 +146,6 @@
 
 						config( vn );
 
-						intro( vn );
-
 						start( vn );
 						
 						vn.reset();
@@ -146,7 +154,7 @@
 
 					function config( novel ) {
 
-						novel.setNovelTitle( "My Visual Novel", "", 300, 100 );
+						novel.setNovelTitle( "Example: Background", "", 300, 100 );
 
 						novel.setStartScreenBgColor( "black" );
 						// novel.setStartScreenBgImage( vnBgImage, 800, 600 );
@@ -161,38 +169,6 @@
 						novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
 
 						novel.setNovelMode( "dialog", 680, 150, 10, 420 );
-
-					}
-
-					function intro( novel ) {
-
-						var textSetting = { x: 0.55, y: 0, z: 0.4, 
-							width : 300, height : 50,
-							color: "white", size : 30,
-							bgColor : "transparent", bgImage : "",
-							fade: 500 };
-
-						function removeText() {
-							novel.pause( 2000 );
-							novel.fadeSceneText( "t", "out", 500 );
-							novel.pause( 1000 );
-							novel.removeSceneText( "t" );
-						}
-					
-						novel.setBgImage( vnBgImage, 800, 600 );
-
-						novel.fadeBg( "in", 1000 );
-						novel.pause( 1000 );
-
-						novel.addTextToScene( "t", "My Visual Novel", textSetting, 500 );
-						removeText();
-
-						novel.fadeBg( "out", 1000 );
-						novel.pause( 1000 );
-
-						novel.setBgImage( vnBgImage, 800, 600 );
-						novel.setBgSize( 800, 600 );
-						novel.fadeBg( "in", 1000 );
 
 					}
 
@@ -220,8 +196,6 @@
 								location: "left",
 								button: {
 									text: "...",
-									// image: "",
-									// imageHover: "",
 									bgColor: "transparent",
 									bgColorHover: "transparent",
 									width: 20,
@@ -229,6 +203,9 @@
 								}
 							}
 						};
+
+						// fade in bg
+						novel.fadeBg( "in", 1000 );
 
 						// add character
 						novel.addCharacter( me );
@@ -248,30 +225,159 @@
 
 						}, 4000 );
 
-						novel.say( me, "Hi there!",
-							{ "interval": 200, "delay": 1000, "button": true } );
+						novel.say( me, "This example will show you what we can do with the background.",
+							{ "interval": 50, "delay": 1000, "button": true } );
 						novel.showSayDialog( false );
 
 						novel.moveCharacter( me, 0.4, 0, 200 );
 
 						var choices = [
 							{
-								label : "Choice 1",
+								label : "Background Image",
 								action : function() {
 
-									novel.say( me, "Choice 1" );
+									novel.say( me, [
+										"To change the background image:<br/><br/>", 20,
+										"novel.setBgImage( image, width, height );", true
+									] );
+
+									novel.setBgImage( vnNightImage, 800, 600 );
+									novel.say( me, "Example:<br/><br/>novel.setBgImage( 'night.jpg', 800, 600 );" );
+
+									novel.setBgImage( vnHallImage, 800, 600 );
+									novel.say( me, "Example:<br/><br/>novel.setBgImage( 'hall.jpg', 800, 600 );" );
+
+									novel.setBgImage( vnBgImage, 800, 600 );
+									novel.say( me, "Example:<br/><br/>novel.setBgImage( 'brown.jpg', 800, 600 );" );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
 
 								}
 							},
 							{
-								label : "Choice 2",
+								label : "Background Color",
 								action : function() {
 
-									novel.say( me, "Choice 2" );
+									novel.say( me, [
+										"To change the background color:<br/><br/>", 20,
+										"novel.setBgColor( color );", true
+									] );
+
+									novel.setBgImage( "" );
+
+									novel.say( me, [
+										"Before changing the background color, clear the background image first:<br/><br/>", 20,
+										"novel.setBgImage( '' );", true
+									] );
+
+									novel.setBgColor( "blue" );
+									novel.say( me, "Example:<br/><br/>novel.setBgColor( 'blue' );" );
+
+									novel.setBgColor( "yellow" );
+									novel.say( me, "Example:<br/><br/>novel.setBgColor( 'yellow' );" );
+
+									novel.setBgImage( vnBgImage, 800, 600 );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Fade",
+								action : function() {
+
+									novel.say( me, [
+										"To fade the background in/out:<br/><br/>", 20,
+										"novel.fadeBg( 'out', 1000);<br/>", 20, true,
+										"novel.fadeBg( 'in', 1000);<br/>", true,
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeBg( "out", 1000 );
+									novel.pause( 1000 );
+									novel.fadeBg( "in", 1000 );
+									novel.pause( 2000 );
+
+									novel.repeatEvent();
+								}
+							},
+							{
+								label : "Size",
+								action : function() {
+
+									novel.say( me, [
+										"To change the background size:<br/><br/>", 20,
+										"novel.setBgSize( width, height, duration, delay );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeCharacter( me, "out", 1000 );
+
+									novel.setBgImage( vnHallImage, 800, 600 );
+									novel.setBgSize( 800, 600 );
+									novel.pause( 1000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgSize( 1200, 900, 5000, 5000 );" );
+									novel.showSayDialog( false );
+
+									novel.setBgSize( 1200, 900, 5000, 5000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgSize( 800, 600, 5000, 5000 );" );
+									novel.showSayDialog( false );
+
+									novel.setBgSize( 800, 600, 5000, 5000 );
+									novel.pause( 1000 );
+
+									novel.fadeCharacter( me, "in", 1000 );
+									novel.setBgImage( vnBgImage, 800, 600 );
+									novel.pause( 1000 );
+
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Position",
+								action : function() {
+
+									novel.say( me, [
+										"To set the background position:<br/><br/>", 20,
+										"novel.setBgPosition( x, y, duration, delay );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeCharacter( me, "out", 1000 );
+
+									novel.setBgImage( vnHallImage, 1600, 1200 );
+									novel.setBgSize( 1200, 900 );
+									novel.pause( 1000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgPosition( -300, 0, 5000, 5000 );" );
+									novel.showSayDialog( false );
+									novel.setBgPosition( -300, 0, 5000, 5000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgPosition( -100, 0, 2000, 2000 );" );
+									novel.showSayDialog( false );
+									novel.setBgPosition( -100, 0, 2000, 2000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgPosition( -100, -100, 2000, 2000 );" );
+									novel.showSayDialog( false );
+									novel.setBgPosition( -100, -100, 2000, 2000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgPosition( -400, -150, 2000, 2000 );" );
+									novel.showSayDialog( false );
+									novel.setBgPosition( -400, -150, 2000, 2000 );
+									novel.pause( 1000 );
+
+									novel.fadeCharacter( me, "in", 1000 );
+
+									novel.setBgImage( vnBgImage, 800, 600 );
+									novel.setBgPosition( 0, 0, 0, 1000 );
+
+									novel.repeatEvent();
+
 								}
 							},
 							{
@@ -287,6 +393,8 @@
 							{ x : 0.1,  y : 0.3 },
 							{ image : vnDlgImage1, width : 100, height : 100 }
 						);
+
+						novel.say( "", "<div>Learn more by viewing the examples <a href='../'>here</a>.</div>" );
 
 						novel.say( me, "Thank you for reading ~", 2000 );
 						novel.showSayDialog( false );

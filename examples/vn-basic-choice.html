@@ -8,11 +8,11 @@
 		<style>
 
 			body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				background-color: black;
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				background-color:black;
 			}
 
 			#content {
@@ -30,12 +30,12 @@
 			}
 
 			#my-vn-novelTitleText {
-				color: rgba( 255, 255, 100, 1 );
+				color: rgba(255,255,100,1);
 				text-shadow: 0px 0px 20px rgba( 255, 255, 100, 1 );
 			}
 
 			#my-vn-novelSubtitleText {
-				color: rgba( 0, 255, 255, 1 );
+				color: rgba(0,255,255,1);
 				text-shadow: 0px 0px 20px rgba( 0, 255, 255, 1 );
 			}
 
@@ -49,7 +49,7 @@
 
 			#my-vn-startMenuButton:hover {
 				background-color: transparent;
-				color: rgba( 255, 255, 100, 1 );
+				color: rgba(255,255,100,1);
 			}
 
 		</style>
@@ -136,8 +136,6 @@
 
 						config( vn );
 
-						intro( vn );
-
 						start( vn );
 						
 						vn.reset();
@@ -146,7 +144,7 @@
 
 					function config( novel ) {
 
-						novel.setNovelTitle( "My Visual Novel", "", 300, 100 );
+						novel.setNovelTitle( "Example: Choice", "", 300, 100 );
 
 						novel.setStartScreenBgColor( "black" );
 						// novel.setStartScreenBgImage( vnBgImage, 800, 600 );
@@ -161,38 +159,6 @@
 						novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
 
 						novel.setNovelMode( "dialog", 680, 150, 10, 420 );
-
-					}
-
-					function intro( novel ) {
-
-						var textSetting = { x: 0.55, y: 0, z: 0.4, 
-							width : 300, height : 50,
-							color: "white", size : 30,
-							bgColor : "transparent", bgImage : "",
-							fade: 500 };
-
-						function removeText() {
-							novel.pause( 2000 );
-							novel.fadeSceneText( "t", "out", 500 );
-							novel.pause( 1000 );
-							novel.removeSceneText( "t" );
-						}
-					
-						novel.setBgImage( vnBgImage, 800, 600 );
-
-						novel.fadeBg( "in", 1000 );
-						novel.pause( 1000 );
-
-						novel.addTextToScene( "t", "My Visual Novel", textSetting, 500 );
-						removeText();
-
-						novel.fadeBg( "out", 1000 );
-						novel.pause( 1000 );
-
-						novel.setBgImage( vnBgImage, 800, 600 );
-						novel.setBgSize( 800, 600 );
-						novel.fadeBg( "in", 1000 );
 
 					}
 
@@ -231,7 +197,7 @@
 						};
 
 						// add character
-						novel.addCharacter( me );
+						novel.addCharacter( me, 0, 'fade' );
 
 						novel.moveCharacter( me, 0.2, 0, 1000 );
 						novel.fadeCharacter( me, "in", 1000 );
@@ -248,28 +214,75 @@
 
 						}, 4000 );
 
-						novel.say( me, "Hi there!",
-							{ "interval": 200, "delay": 1000, "button": true } );
+						novel.say( me, "Learn how to configure and display choice menus.",
+							{ "interval": 50, "delay": 1000, "button": true } );
 						novel.showSayDialog( false );
 
 						novel.moveCharacter( me, 0.4, 0, 200 );
 
 						var choices = [
 							{
-								label : "Choice 1",
+								label : "Display Choices",
 								action : function() {
 
-									novel.say( me, "Choice 1" );
+									novel.updateDialogBorderStyle( "", "lightblue", "10px", 10 );
+									novel.setNovelMode( "dialog", 300, 500, 20, 40 );
+
+									novel.say( me, [
+										"Define the choices:<br/><br/>", 20,
+										"<pre style='font-size:12px'>var choices = [<br/>", 20, true,
+										"{<br/>  label: 'Choice1',<br/>", 20, true,
+										"  action: function() {<br/>    novel.say( '', 'choice1' );<br/>},<br/>", 20, true,
+										"{<br/>  label: 'Choice2',<br/>", 20, true,
+										"  action: function() {<br/>    novel.say( '', 'choice2' );<br/>}<br/>", 20, true,
+										"];</pre>", true,
+
+										"Display the choices:<br/><br/>", 20,
+										'<pre style="font-size:12px">novel.choice(<br/>', 20, true,
+										'    "choices",<br/>', 20, true,
+										'    choices,<br/>', 20, true,
+										'    { x : 0.1,  y : 0.3 }<br/>', 20, true,
+										');</pre>', true,
+
+										"To repeat the menu after selecting a choice, add repeatEvent:<br/><br/>", 20,
+										"<pre style='font-size:12px;'>{<br/>  label: 'Choice1',<br/>", 20, true,
+										"  action: function() {<br/>    novel.say( '', 'choice1' );<br/>", 20, true,
+										"    novel.repeatEvent();<br/>", 20, true,
+										"  }<br/>}</pre>", true
+									] );
+
+									novel.updateDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+									novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
 
 								}
 							},
 							{
-								label : "Choice 2",
+								label : "Add Image",
 								action : function() {
 
-									novel.say( me, "Choice 2" );
+									novel.updateDialogBorderStyle( "", "lightblue", "10px", 10 );
+									novel.setNovelMode( "dialog", 300, 500, 20, 40 );
+
+									novel.say( me, [
+										"To add an image on the menu, add the image option:<br/><br/>", 20,
+										'<pre style="font-size:12px">novel.choice(<br/>', 20, true,
+										'    "choices",<br/>', 20, true,
+										'    choices,<br/>', 20, true,
+										'    { x : 0.1,  y : 0.3 },<br/>', 20, true,
+										'    {<br/>', 20, true,
+										'        image : "image.png",<br/>', 20, true,
+										'        width : 100,<br/>', 20, true,
+										'        height : 100<br/>', 20, true,
+										'    }<br/>', 20, true,
+										');</pre>', true,
+									] );
+
+									novel.updateDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+									novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
 								}
@@ -287,6 +300,8 @@
 							{ x : 0.1,  y : 0.3 },
 							{ image : vnDlgImage1, width : 100, height : 100 }
 						);
+
+						novel.say( "", "<div>Learn more by viewing the examples <a href='../'>here</a>.</div>" );
 
 						novel.say( me, "Thank you for reading ~", 2000 );
 						novel.showSayDialog( false );

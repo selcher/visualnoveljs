@@ -554,7 +554,7 @@
 					},
 					pos: {
 						x : -0.4,
-						y : 0.007
+						y : 0
 					},
 					dialog: {
 						button: {
@@ -578,7 +578,7 @@
 				vn.addCharacter( lin, 1000, "fade" );
 				vn.changeCharacterImage( lin, "sleep" );
 
-				vn.moveCharacter( lin, 0.3, 0, 500 );
+				vn.moveCharacter( lin, 0.3, 0.35, 500 );
 				vn.fadeCharacter( lin, "in", 500 );
 				vn.pause( 1000 );
 				vn.changeCharacterImage( lin, "happy" );
@@ -589,7 +589,7 @@
 				vn.say( lin, "Let's learn Hiragana, Katakana, and some Nippongo words" );
 				vn.showSayDialog( false );
 
-				vn.moveCharacter( lin, 0.1, 0, 200 );
+				vn.moveCharacter( lin, 0.1, 0.35, 200 );
 
 				var progTopics = [
 					{
@@ -598,11 +598,11 @@
 
 							vn.clearLoop( "lin" );
 							vn.changeCharacterImage( lin, "think" );
-							vn.moveCharacter( lin, 0.6, 0, 500 );
+							vn.moveCharacter( lin, 0.55, 0.35, 0 );
 							hiragana( vn, lin, engChars, hiraganaChars );
 							vn.showSayDialog( false );
 							vn.changeCharacterImage( lin, "happy" );
-							vn.moveCharacter( lin, 0.1, 0, 500 );
+							vn.moveCharacter( lin, 0.1, 0.35, 0 );
 							charAnimation();
 							vn.repeatEvent();
 
@@ -614,11 +614,11 @@
 
 							vn.clearLoop( "lin" );
 							vn.changeCharacterImage( lin, "think" );
-							vn.moveCharacter( lin, 0.6, 0, 500 );
+							vn.moveCharacter( lin, 0.55, 0.35, 0 );
 							katakana( vn, lin, engChars, katakanaChars );
 							vn.showSayDialog( false );
 							vn.changeCharacterImage( lin, "happy" );
-							vn.moveCharacter( lin, 0.1, 0, 500 );
+							vn.moveCharacter( lin, 0.1, 0.35, 0 );
 							charAnimation();
 							vn.repeatEvent();
 						}
@@ -629,11 +629,11 @@
 
 							vn.clearLoop( "lin" );
 							vn.changeCharacterImage( lin, "think" );
-							vn.moveCharacter( lin, 0.6, 0, 500 );
+							vn.moveCharacter( lin, 0.55, 0.35, 0 );
 							words( vn, lin, wordsList );
 							vn.showSayDialog( false );
 							vn.changeCharacterImage( lin, "happy" );
-							vn.moveCharacter( lin, 0.1, 0, 500 );
+							vn.moveCharacter( lin, 0.1, 0.35, 0 );
 							charAnimation();
 							vn.repeatEvent();
 						}
@@ -667,7 +667,7 @@
 				vn.changeCharacterImage( lin, "sleep" );
 
 				// remove character
-				vn.moveCharacter( lin, -0.4, 0, 500 );
+				vn.moveCharacter( lin, -0.4, 0.35, 500 );
 				vn.fadeCharacter( lin, "out", 500 );
 
 				// fade out bg

@@ -184,14 +184,12 @@
 				// display character
 				vn.addCharacter( yu, 1000, "fade" );
 
-				vn.moveCharacter( yu, 0.3, 0, 500 );
+				vn.moveCharacter( yu, 0.4, 0, 500 );
 				vn.fadeCharacter( yu, "in", 500 );
 				vn.pause( 1000 );
 
 				vn.say( yu, "This guide will walk you through some of the basic and advanced topics about the JavaScript language" );
 				vn.showSayDialog( false );
-
-				vn.moveCharacter( yu, 0.1, 0, 200 );
 
 				// update dialog size
 				vn.setNovelMode( "dialog", 350, 300, 20, 20 );
@@ -201,9 +199,7 @@
 						label : "Basic",
 						action : function() {
 
-							vn.moveCharacter( yu, 0.4, 0, 500 );
 							basicjs( vn, yu );
-							vn.moveCharacter( yu, 0.1, 0, 500 );
 							vn.showSayDialog( false );
 							vn.repeatEvent();
 
@@ -214,10 +210,8 @@
 						action : function() {
 
 							vn.changeCharacterImage( yu, "dress" );
-							vn.moveCharacter( yu, 0.4, 0, 500 );
 							advancedjs( vn, yu );
 							vn.changeCharacterImage( yu, "school" );
-							vn.moveCharacter( yu, 0.1, 0, 500 );
 							vn.showSayDialog( false );
 							vn.repeatEvent();
 						}
@@ -227,26 +221,22 @@
 						action : function() {
 
 							vn.changeCharacterImage( yu, "kimono" );
-							vn.moveCharacter( yu, 0.4, 0, 500 );
 							references( vn, yu );
 							vn.changeCharacterImage( yu, "school" );
-							vn.moveCharacter( yu, 0.1, 0, 500 );
 							vn.showSayDialog( false );
 							vn.repeatEvent();
 						}
 					},
 					{
 						label : "Done",
-						action : function() {
-							vn.moveCharacter( yu, 0.4, 0, 500 );
-						}
+						action : function() {}
 					}
 				];
 				
 				vn.choice(
 					"progTopics",
 					progTopics,
-					{ x : 0.6,  y : 0.3 }
+					{ x : 0.2,  y : 0.3 }
 				);
 
 				// update dialog size

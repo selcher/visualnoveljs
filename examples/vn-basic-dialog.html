@@ -136,8 +136,6 @@
 
 						config( vn );
 
-						intro( vn );
-
 						start( vn );
 						
 						vn.reset();
@@ -146,7 +144,7 @@
 
 					function config( novel ) {
 
-						novel.setNovelTitle( "My Visual Novel", "", 300, 100 );
+						novel.setNovelTitle( "Example: Dialog", "", 300, 100 );
 
 						novel.setStartScreenBgColor( "black" );
 						// novel.setStartScreenBgImage( vnBgImage, 800, 600 );
@@ -164,43 +162,11 @@
 
 					}
 
-					function intro( novel ) {
-
-						var textSetting = { x: 0.55, y: 0, z: 0.4, 
-							width : 300, height : 50,
-							color: "white", size : 30,
-							bgColor : "transparent", bgImage : "",
-							fade: 500 };
-
-						function removeText() {
-							novel.pause( 2000 );
-							novel.fadeSceneText( "t", "out", 500 );
-							novel.pause( 1000 );
-							novel.removeSceneText( "t" );
-						}
-					
-						novel.setBgImage( vnBgImage, 800, 600 );
-
-						novel.fadeBg( "in", 1000 );
-						novel.pause( 1000 );
-
-						novel.addTextToScene( "t", "My Visual Novel", textSetting, 500 );
-						removeText();
-
-						novel.fadeBg( "out", 1000 );
-						novel.pause( 1000 );
-
-						novel.setBgImage( vnBgImage, 800, 600 );
-						novel.setBgSize( 800, 600 );
-						novel.fadeBg( "in", 1000 );
-
-					}
-
 					function start( novel ) {
 
 						// define character
 						var me = {
-							name: "Character",
+							name: "Nao",
 							width: 600,
 							height: 600,
 							image: {
@@ -231,10 +197,10 @@
 						};
 
 						// add character
-						novel.addCharacter( me );
+						novel.addCharacter( me, 1000, "fade" );
 
-						novel.moveCharacter( me, 0.2, 0, 1000 );
-						novel.fadeCharacter( me, "in", 1000 );
+						novel.moveCharacter( me, 0.2, 0, 500 );
+						novel.fadeCharacter( me, "in", 500 );
 						novel.pause( 1000 );
 
 						// loop character image for blink eyes effect
@@ -248,30 +214,114 @@
 
 						}, 4000 );
 
-						novel.say( me, "Hi there!",
-							{ "interval": 200, "delay": 1000, "button": true } );
+						novel.say( me, "In this example, it will show the various options for modifying the dialog.",
+							{ "interval": 30, "delay": 1000, "button": true } );
 						novel.showSayDialog( false );
 
 						novel.moveCharacter( me, 0.4, 0, 200 );
 
 						var choices = [
 							{
-								label : "Choice 1",
+								label : "Size & Position",
 								action : function() {
 
-									novel.say( me, "Choice 1" );
+									novel.say( me, [
+										"To change the size and position of the dialog:<br/>", 20,
+										"novel.setNovelMode( 'dialog', width, height, x, y );<br/>", true
+									] );
+
+									novel.setNovelMode( "dialog", 300, 500, 30, 50 );
+
+									novel.say( me, "Example:<br/><br/>novel.setNovelMode( 'dialog', 300, 500, 30, 50 );" );
+
+									novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+									novel.say( me, "Example:<br/><br/>novel.setNovelMode( 'dialog', 680, 150, 10, 420 );" );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
 
 								}
 							},
 							{
-								label : "Choice 2",
+								label : "Border Style",
 								action : function() {
 
-									novel.say( me, "Choice 2" );
+									novel.say( me, [
+										"To change the dialog border style:<br/>", 20,
+										"novel.updateDialogBorderStyle( image, color, width, radius );", true
+									] );
+
+									novel.updateDialogBorderStyle( "", "darkred", "1px 10px", "0px 60px" );
+
+									novel.say( me, "Example:<br/><br/>novel.updateDialogBorderStyle( '', 'darkred', '1px 10px', '0px 60px' );" );
+
+									novel.updateDialogBorderStyle( "", "white", "0px", "10px" );
+
+									novel.say( me, "Example:<br/><br/>novel.updateDialogBorderStyle( '', 'white', '0px', '10px' );" );
+
+									novel.updateDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+
+									novel.say( me, "Example:<br/><br/>novel.updateDialogBorderStyle( '', 'lightblue', '10px 50px', 60 );" );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
+								}
+							},
+							{
+								label : "Character portrait",
+								action : function() {
+
+									novel.updateDialogBorderStyle( "", "lightblue", 10, 10 );
+									novel.setNovelMode( "dialog", 300, 500, 30, 50 );
+
+									novel.say( me, [
+										'Add the dialog option on the character object:<br/><br/><code style="font-size:12px;">', 20,
+										'var me = {<br/>', 20, true,
+										'...<br/>', 20, true,
+										'dialog: {<br/>', 20, true,
+										'	image: "normal.png",<br/>', 20, true,
+										'	nextImage: "blink.png",<br/>', 20, true,
+										'	imageDelay: 5000,<br/>', 20, true,
+										'	height: 40,<br/>', 20, true,
+										'	location: "left",<br/>', 20, true,
+										'	button: {<br/>', 20, true,
+										'		text: "...",<br/>', 20, true,
+										'		bgColor: "transparent",<br/>', 20, true,
+										'		bgColorHover: "transparent",<br/>', 20, true,
+										'		width: 20,<br/>', 20, true,
+										'		height: 20<br/>', 20, true,
+										'	}<br/>', 20, true,
+										'};</code>', true
+									] );
+
+									novel.updateDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+									novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+									novel.showSayDialog( false );
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Input",
+								action : function() {
+
+									novel.say( me, [
+										"To display an input dialog and store it to a variable:<br/><br/>", 20,
+										"novel.input( variable, text );", true,
+										"Example:<br/><br/>", 20,
+										"novel.input( 'name', 'What's your name?' );<br/>", 20, true,
+										"novel.say( '', 'Pleased to meet you, {name}!' );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.input( "name", "What's your name?" );
+									novel.say( me, "Pleased to meet you, {name}" );
+
+									novel.showSayDialog( false );
+									novel.repeatEvent();
+
 								}
 							},
 							{
@@ -287,6 +337,8 @@
 							{ x : 0.1,  y : 0.3 },
 							{ image : vnDlgImage1, width : 100, height : 100 }
 						);
+
+						novel.say( "", "<div>Learn more by viewing the examples <a href='../'>here</a>.</div>" );
 
 						novel.say( me, "Thank you for reading ~", 2000 );
 						novel.showSayDialog( false );

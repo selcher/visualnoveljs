@@ -30,12 +30,12 @@
 			}
 
 			#my-vn-novelTitleText {
-				color: rgba( 255, 255, 100, 1 );
+				color: rgba( 255,255,100,1 );
 				text-shadow: 0px 0px 20px rgba( 255, 255, 100, 1 );
 			}
 
 			#my-vn-novelSubtitleText {
-				color: rgba( 0, 255, 255, 1 );
+				color: rgba( 0,255,255,1 );
 				text-shadow: 0px 0px 20px rgba( 0, 255, 255, 1 );
 			}
 
@@ -49,7 +49,7 @@
 
 			#my-vn-startMenuButton:hover {
 				background-color: transparent;
-				color: rgba( 255, 255, 100, 1 );
+				color: rgba(255,255,100,1);
 			}
 
 		</style>
@@ -136,8 +136,6 @@
 
 						config( vn );
 
-						intro( vn );
-
 						start( vn );
 						
 						vn.reset();
@@ -146,17 +144,14 @@
 
 					function config( novel ) {
 
-						novel.setNovelTitle( "My Visual Novel", "", 300, 100 );
+						novel.setNovelTitle( "Example: Character", "", 300, 100 );
 
 						novel.setStartScreenBgColor( "black" );
-						// novel.setStartScreenBgImage( vnBgImage, 800, 600 );
 						novel.setStartScreenMenuPos( 310, 500 );
 
-						// novel.setBgColor( "black" );
 						novel.setBgImage( vnBgImage, 800, 600 );
 
 						novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
-						// novel.setDialogBgImage( vnBgImage, 680, 150 );
 						novel.setDialogTextColor( "black" );
 						novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
 
@@ -164,43 +159,11 @@
 
 					}
 
-					function intro( novel ) {
-
-						var textSetting = { x: 0.55, y: 0, z: 0.4, 
-							width : 300, height : 50,
-							color: "white", size : 30,
-							bgColor : "transparent", bgImage : "",
-							fade: 500 };
-
-						function removeText() {
-							novel.pause( 2000 );
-							novel.fadeSceneText( "t", "out", 500 );
-							novel.pause( 1000 );
-							novel.removeSceneText( "t" );
-						}
-					
-						novel.setBgImage( vnBgImage, 800, 600 );
-
-						novel.fadeBg( "in", 1000 );
-						novel.pause( 1000 );
-
-						novel.addTextToScene( "t", "My Visual Novel", textSetting, 500 );
-						removeText();
-
-						novel.fadeBg( "out", 1000 );
-						novel.pause( 1000 );
-
-						novel.setBgImage( vnBgImage, 800, 600 );
-						novel.setBgSize( 800, 600 );
-						novel.fadeBg( "in", 1000 );
-
-					}
-
 					function start( novel ) {
 
 						// define character
 						var me = {
-							name: "Character",
+							name: "Nao",
 							width: 600,
 							height: 600,
 							image: {
@@ -220,8 +183,6 @@
 								location: "left",
 								button: {
 									text: "...",
-									// image: "",
-									// imageHover: "",
 									bgColor: "transparent",
 									bgColorHover: "transparent",
 									width: 20,
@@ -229,6 +190,10 @@
 								}
 							}
 						};
+
+						// fade bg in
+						novel.fadeBg( "in", 1000 );
+						novel.pause( 1000 );
 
 						// add character
 						novel.addCharacter( me );
@@ -248,30 +213,158 @@
 
 						}, 4000 );
 
-						novel.say( me, "Hi there!",
-							{ "interval": 200, "delay": 1000, "button": true } );
+						novel.say( me, "In this example, it will show how you can perform actions on a character portrait.",
+							{ "interval": 30, "delay": 1000, "button": true } );
+
 						novel.showSayDialog( false );
 
 						novel.moveCharacter( me, 0.4, 0, 200 );
 
 						var choices = [
 							{
-								label : "Choice 1",
+								label : "Add",
 								action : function() {
 
-									novel.say( me, "Choice 1" );
+									novel.updateDialogBorderStyle( "", "lightblue", "10px 10px", 10 );
+									novel.setNovelMode( "dialog", 300, 500, 30, 30 );
+
+									novel.say( me, [
+										"<br/>Define a character object:<br/><br/><code/>", 20,
+										"var me = {<br/>", 20, true,
+										"name: 'Me',<br/>", 20, true,
+										"width: 600,<br/>", 20, true,
+										"height: 600,<br/>", 20, true,
+										"image: {<br/>", 20, true,
+										'   "default": "normal.png",<br/>', 20, true,
+										'	"normal": "normal.png",<br/>', 20, true,
+										'	"happy": "happy.png"<br/>', 20, true,
+										"},<br/>", 20, true,
+										"pos: {<br/>", 20, true,
+										"	x : 1.0,<br/>", 20, true,
+										"	y : 0.007<br/>", 20, true,
+										"}<br/>", 20, true,
+										"};</code>", 20, true,
+										"<br/><br/>See docs for more details.", true,
+
+										"<br/>Add the character:<br/><br/>", 20,
+										"novel.addCharacter( character, delay, fade );<br/><br/>", 20, true,
+										"Example:<br/><br/>", 20, true,
+										"novel.addCharacter( me, 1000, 'fade' );", true
+									] );
+
+									novel.updateDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+									novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
 									novel.showSayDialog( false );
 									novel.repeatEvent();
 
 								}
 							},
 							{
-								label : "Choice 2",
+								label : "Move",
 								action : function() {
 
-									novel.say( me, "Choice 2" );
+									novel.say( me, [
+										"To move a character:<br/>novel.moveCharacter( character, x, y, duration );",
+										"Example:<br/>novel.moveCharacter( character, 0.1, 0, 200 );"
+									] );
 									novel.showSayDialog( false );
+
+									novel.moveCharacter( me, 0.1, 0, 500 );
+									novel.pause( 500 );
+									novel.moveCharacter( me, 0.1, 0.1, 500 );
+									novel.pause( 500 );
+									novel.moveCharacter( me, 0.2, 0.1, 500 );
+									novel.pause( 500 );
+									novel.moveCharacter( me, 0.2, 0, 500 );
+									novel.pause( 500 );
+
+									novel.moveCharacter( me, 0.4, 0, 200 );
+
 									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Fade",
+								action : function() {
+
+									novel.say( me, [
+										"To fade a character,<br/>novel.fadeCharacter( character, in/out, duration );",
+										"Example:<br/>novel.fadeCharacter( character, 'in', 1000 );"
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeCharacter( me, "out", 1000 );
+									novel.pause( 1000 );
+									novel.fadeCharacter( me, "in", 1000 );
+									novel.pause( 1000 );
+
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Change",
+								action : function() {
+
+									// Clear animation
+									novel.clearLoop( "me" );
+
+									novel.say( me, [
+										"To change the image of a character:<br/>novel.setCharacterImage( character, imageLabel );",
+										"Example:<br/>novel.changeCharacterImage( me, 'happy' );<br/>Note: 'normal' is defined in the me character object."
+									] );
+									novel.showSayDialog( false );
+
+									novel.pause( 1000 );
+									novel.changeCharacterImage( me, "happy2" );
+									novel.pause( 2000 );
+									novel.changeCharacterImage( me, "happy" );
+									novel.pause( 1000 );
+
+									// loop character image for blink eyes effect
+									novel.loop( "me", true, function() {
+
+										novel.setCharacterImage( me, "happy2" );
+
+										setTimeout( function() {
+											novel.setCharacterImage( me, "happy" );
+										}, 200 );
+
+									}, 4000 );
+
+									novel.repeatEvent();
+								}
+							},
+							{
+								label : "Flip",
+								action : function() {
+
+									novel.say( me, "To Flip a character:<br/>novel.flipCharacter( character );" );
+									novel.showSayDialog( false );
+
+									// Clear animation
+									novel.clearLoop( "me" );
+
+									novel.flipCharacter( me );
+									novel.pause( 2000 );
+									novel.flipCharacter( me );
+									novel.pause( 1000 );
+
+									// loop character image for blink eyes effect
+									novel.loop( "me", true, function() {
+
+										novel.setCharacterImage( me, "happy2" );
+
+										setTimeout( function() {
+											novel.setCharacterImage( me, "happy" );
+										}, 200 );
+
+									}, 4000 );
+
+									novel.repeatEvent();
+
 								}
 							},
 							{
@@ -287,6 +380,8 @@
 							{ x : 0.1,  y : 0.3 },
 							{ image : vnDlgImage1, width : 100, height : 100 }
 						);
+
+						novel.say( "", "<div>Learn more by viewing the examples <a href='../'>here</a>.</div>" );
 
 						novel.say( me, "Thank you for reading ~", 2000 );
 						novel.showSayDialog( false );

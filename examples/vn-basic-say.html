@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				background-color: #000000;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: #FFFFFF;
+			}
+
+			.smallTxt {
+				font-size: 12px;
+			}
+
+			#my-vn-novelTitleContainer {
+				background-color: transparent;
+			}
+
+			#my-vn-novelTitleText {
+				color: rgba( 255, 255, 100, 1 );
+				text-shadow: 0px 0px 20px rgba( 255, 255, 100, 1 );
+			}
+
+			#my-vn-novelSubtitleText {
+				color: rgba( 0, 255, 255, 1 );
+				text-shadow: 0px 0px 20px rgba( 0, 255, 255, 1 );
+			}
+
+			#my-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#my-vn-startMenuButton {
+				color: #FFFFFF;
+			}
+
+			#my-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: rgba( 255, 255, 100, 1 );
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../src/order.css" />
+		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="my-vn"></div>
+
+		</div>
+
+		<script type="text/javascript" src="../dependencies/Sprite3D.js"></script>
+
+		<script type="text/javascript" src="../build/visual-novel.min.js"></script>
+
+		<script type="text/javascript" src="../examples/js/preloadjs-0.4.1.min.js"></script>
+
+		<script>
+
+			( function() {
+
+				/**
+				 * Visual Novel
+				 */
+
+				function initVN() {
+
+					var vn = new VisualNovel( "my-vn", 800, 600, "" );
+
+					vn.init();
+
+					config( vn );
+					start( vn );
+					
+					vn.reset();
+
+				}
+
+				function config( novel ) {
+
+					novel.setNovelTitle( "Example: Say", "", 300, 100 );
+
+					novel.setStartScreenBgColor( "black" );
+					novel.setStartScreenMenuPos( 310, 500 );
+
+					novel.setBgColor( "black" );
+
+					novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+					novel.setDialogTextColor( "black" );
+					novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+
+					novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+				}
+
+				function start( novel ) {
+
+					novel.pause( 1000 );
+
+					novel.say( "", "This example will introduce you to how to say lines using VisualNovelJS.",
+						{ "interval": 50, "delay": 1000, "button": true } );
+
+					novel.say( "", "Select a topic:", 500 );
+
+					var choices = [
+						{
+							label : "Say a line",
+							action : function() {
+
+								novel.say( "", 'Say a line by: vn.say( name, text );' );
+								novel.say( "", 'Example: vn.say( "Me", "Hello World" ); ');
+
+								novel.say( "Demo", "Hello World" );
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+
+							}
+						},
+						{
+							label : "Say a line with a delay",
+							action : function() {
+
+								novel.say( "", "Say a line and ...", 2000 );
+								novel.say( "", "add a delay before saying the next line.", 2000 );
+								novel.say( "", 'Usage: vn.say( name, text, delay );<br/>Example: vn.say( "Me", "Hello World", 1000 );' );
+
+								novel.say( "Demo", "Hello world", 1000 );
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+							}
+						},
+						{
+							label: "Say multiple lines",
+							action: function() {
+
+								novel.say( "", [
+									"Say multiple lines by:<br/>vn.say( name, [ line, line, ... ] );",
+									'Example: vn.say( "Me", [ "Hello", "World" ] );'
+								] );
+
+								novel.say( "Demo", [
+									"Hello",
+									"world"
+								] );
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+							}
+						},
+						{
+							label: "Say multiple lines with delay",
+							action: function() {
+
+								novel.say( "", [
+									"Say multiple lines with a delay for a line by adding a delay after each line.",
+									'vn.say( "Me", [<br/>line, delay,<br/>line, delay,<br/>...<br/>] );',
+									'vn.say( "Me", [<br/>"Hello", 1000,<br/>"world"<br/>] );'
+								] );
+
+								novel.say( "Demo", [
+									"Hello", 1000,
+									"world"
+								] );
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+							}
+						},
+						{
+							label: "Say multiple lines including previous line",
+							action: function() {
+
+								novel.say( "", [
+									"Say multiple lines including previous line by adding true/false after a line.",
+									'Usage: vn.say( "Me", [<br/>line, delay<br/>line, delay, include<br/>...<br/>] );',
+									'Example: vn.say( "Me", [<br/>"Hello", 1000,<br/>" world", true<br/>] );'
+								] );
+
+								novel.say( "Demo", [
+									"Hello", 1000,
+									" world", true
+								] );
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+							}
+						},
+						{
+							label: "Say a line with a delay per character",
+							action: function() {
+
+								novel.say( "", [
+									"Say a line with a delay per character by specifying an interval in milliseconds.",
+									'Usage: vn.say( name, line, { interval: 50 } );',
+									'Example: vn.say( "Me", "Hello World", { interval : time, delay: time, button: true } );'
+								] );
+
+								novel.say( "Demo",
+									"Hello World",
+									{ "interval": 50, "delay": 1000, "button": true }
+								);
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+
+							}
+						},
+						{
+							label: "Say multiple lines with a delay per character",
+							action: function() {
+
+								novel.say( "", [
+									"Say multiple lines with a delay per character by specifying an interval in milliseconds.",
+									'Usage: vn.say( name, [<br/>line, { interval: 50 },<br/>line, { interval: 50 },<br/>...<br/>] );',
+									'Example: vn.say( "Me", [<br/>"This is a single line", { interval : time, delay: time, button: true },<br/>"This is another single line", { interval : time, delay: time, button: true }<br/>] );'
+								] );
+
+								novel.say( "Demo", [
+									"This is a single line.", { "interval": 50, "delay": 1000, "button": true },
+									"This is is another single line", { "interval": 50, "delay": 1000, "button": true }
+								] );
+
+								novel.say( "", "Select a topic:", 500 );
+								novel.repeatEvent();
+							}
+						},
+						{
+							label : "Done",
+							action : function() {}
+						}
+					];
+					
+					// Show choices
+					novel.choice(
+						"choices",
+						choices,
+						{ x : 0.1,  y : 0.3 }
+					);
+
+					novel.say( "", "<div>Learn more by viewing the examples <a href='../'>here</a>.</div>" );
+					
+					novel.say( "", "Thank you for reading ~",
+						{ "interval": 50, "delay": 2000, "button": true } );
+					novel.showSayDialog( false );
+
+				}
+
+				// Initialize visual novel
+				initVN();
+				
+			} )()
+
+		</script>
+
+	</body>
+
+</html>
