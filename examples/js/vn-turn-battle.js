@@ -34,6 +34,7 @@ function TurnBattle( playerStatus, enemyStatus ) {
 	Player.prototype.turn = function turn( enemy ) {
 		// show actions menu
 	};
+	
 
 	// Enemy extends player
 	function Enemy( status ) {

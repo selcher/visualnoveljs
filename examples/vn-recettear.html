@@ -41,8 +41,7 @@
 
 		</style>
 
-		<link rel="stylesheet" type="text/css" href="../src/order.css" />
-		<link rel="stylesheet" type="text/css" href="../src/layout.css" />
+		<link rel="stylesheet" type="text/css" href="../build/visual-novel.css" />
 
 		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
 		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
@@ -136,7 +135,7 @@
 					image: "character/rec_recette.png",
 					pos: {
 						x : -0.3,
-						y : 0.007
+						y : 0
 					},
 					dialog: {
 						button: {
@@ -153,7 +152,7 @@
 					image: "character/rec_arma2.png",
 					pos: {
 						x : 1.0,
-						y : 0.007
+						y : 0.25
 					},
 					dialog: {
 						button: {
@@ -192,7 +191,7 @@
 					},
 					pos: {
 						x : 1.0,
-						y : 0.007
+						y : 0.2
 					},
 					dialog: {
 						button: {
@@ -206,14 +205,14 @@
 				vn.addCharacter( arma, 1000, "fade" );
 				vn.addCharacter( griff, 1000, "fade" );
 
-				vn.moveCharacter( rec, 0.4, 0, 500 );
+				vn.moveCharacter( rec, 0.4, 0.31, 500 );
 				vn.fadeCharacter( rec, "in", 500 );
 				vn.pause( 1000 );
 
 				vn.say( rec, [ "Welcome to Recettear!!",
 					"My name is Recette, ", 1000,
 					"the proud owner of this item shop", 2000, true ] );
-				vn.moveCharacter( rec, 0.1, 0, 200 );
+				vn.moveCharacter( rec, 0.1, 0.31, 200 );
 
 				vn.showSayDialog( false );
 
@@ -273,7 +272,7 @@
 				vn.showSayDialog( false );
 
 				// remove character
-				vn.moveCharacter( rec, -0.3, 0, 500 );
+				vn.moveCharacter( rec, -0.3, 0.31, 500 );
 				vn.fadeCharacter( rec, "out", 500 );
 
 				// fade out bg
@@ -317,20 +316,20 @@
 					vn.showSayDialog( true );
 				}
 
-				vn.moveCharacter( rec, -0.03, 0, 0 );
-				vn.moveCharacter( arma, 1.0, 0, 0 );
+				vn.moveCharacter( rec, -0.03, 0.31, 0 );
+				vn.moveCharacter( arma, 1.0, 0.25, 0 );
 				vn.pause( 2000 );
 				vn.say( "Scene:", "One day, Arma visits Recettear to visit Recette" );
 				vn.showSayDialog( false );
 
-				vn.moveCharacter( arma, 0.6, 0, 1000 );
+				vn.moveCharacter( arma, 0.6, 0.25, 1000 );
 				vn.pause( 2000 );
 
 				vn.say( rec, [ "Oh!", 500, 
 					" Hi Arma!", true ] );
 				vn.showSayDialog( false );
 
-				vn.moveCharacter( arma, 0.25, 0, 1500 );
+				vn.moveCharacter( arma, 0.25, 0.25, 4000 );
 				vn.pause( 2000 );
 
 				vn.say( rec, "Did you come to visit?" );
@@ -341,13 +340,13 @@
 				vn.showSayDialog( false );
 
 				vn.flipCharacter( arma );
-				vn.moveCharacter( arma, 0.3, 0, 500 );
+				vn.moveCharacter( arma, 0.3, 0.25, 500 );
 				vn.pause( 2000 );
-				vn.moveCharacter( arma, 0.4, 0, 500 );
+				vn.moveCharacter( arma, 0.4, 0.25, 500 );
 				vn.pause( 2000 );
 				vn.flipCharacter( arma );
 				vn.pause( 1000 );
-				vn.moveCharacter( arma, 0.3, 0, 500 );
+				vn.moveCharacter( arma, 0.3, 0.25, 500 );
 
 				vn.say( "", [ "Arma notices a familiar item on a shelf", 2000,
 					"... and decides to take it with her", true
@@ -357,10 +356,10 @@
 				vn.flipCharacter( arma );
 				vn.pause( 1000 );
 
-				vn.moveCharacter( arma, 0.5, 0, 1000 );
+				vn.moveCharacter( arma, 0.5, 0.25, 1000 );
 				vn.pause( 1000 );
 
-				vn.moveCharacter( rec, 0.1, 0, 500 );
+				vn.moveCharacter( rec, 0.1, 0.31, 500 );
 				vn.say( rec, "W-wait!" );
 
 				vn.flipCharacter( arma );
@@ -388,7 +387,7 @@
 
 				vn.say( rec, "... and that's why you need to pay for items in places like this!" );
 
-				vn.moveCharacter( arma, 1.0, 0, 0 );
+				vn.moveCharacter( arma, 1.0, 0.25, 0 );
 
 			}
 
@@ -396,7 +395,7 @@
 
 				// rec and griff
 
-				vn.moveCharacter( griff, 0.5, 0, 1000 );
+				vn.moveCharacter( griff, 0.5, 0.2, 1000 );
 
 				vn.say( "Scene:", "In a certain dungeon, Recette and Griff meet" );
 
@@ -405,10 +404,10 @@
 					"Please tell me you're not actually serious!" ] );
 
 				vn.changeCharacterImage( griff, "sad" );
-				vn.moveCharacter( griff, 0.6, 0, 100 );
+				vn.moveCharacter( griff, 0.6, 0.2, 100 );
 				vn.say( griff, "Ghkt! What is ..." );
 				vn.changeCharacterImage( griff, "normal" );
-				vn.moveCharacter( griff, 0.5, 0, 500 );
+				vn.moveCharacter( griff, 0.5, 0.2, 500 );
 
 				vn.say( griff, [ 
 					"Is there something WRONG with being a a Lord of Darkness?", 3000,
@@ -443,7 +442,7 @@
 					" hmm", true ] );
 
 				vn.changeCharacterImage( griff, "normal" );
-				vn.moveCharacter( griff, 1.0, 0, 0 );
+				vn.moveCharacter( griff, 1.0, 0.2, 0 );
 
 			}
 
@@ -451,7 +450,7 @@
 
 				// rec and griff
 
-				vn.moveCharacter( griff, 0.6, 0, 1000 );
+				vn.moveCharacter( griff, 0.6, 0.2, 1000 );
 
 				vn.say( "Scene:", "In the town square at night, Recette and Griff meet" );
 
@@ -486,7 +485,7 @@
 					' realize this is not a "tan",', 1000, true,
 					' correct?', true ] );
 
-				vn.moveCharacter( griff, 1.0, 0, 0 );
+				vn.moveCharacter( griff, 1.0, 0.2, 0 );
 
 			}
 
@@ -494,7 +493,7 @@
 
 				// rec and griff
 
-				vn.moveCharacter( griff, 0.6, 0, 1000 );
+				vn.moveCharacter( griff, 0.6, 0.2, 1000 );
 
 				vn.say( "Scene:", "At the town square, Recette and Griff meet" );
 
@@ -529,7 +528,7 @@
 					" BAD ones.", true ] );
 
 				vn.changeCharacterImage( griff, "normal" );
-				vn.moveCharacter( griff, 1.0, 0, 0 );
+				vn.moveCharacter( griff, 1.0, 0.2, 0 );
 
 			}
 
