@@ -4,10 +4,31 @@ module.exports = function( grunt ) {
 	grunt.initConfig( {
 		pkg : grunt.file.readJSON( 'package.json' ),
 		srcFiles : 'src/*.js',
-		buildFile : 'build/<%= pkg.name %>-<%= pkg.version %>.min.js',
+		// buildSrcMinFile : 'build/<%= pkg.name %>-<%= pkg.version %>.min.js',
+		buildSrcMinFile : 'build/<%= pkg.name %>.min.js',
+		buildSrcFile : 'build/<%= pkg.name %>.js',
+		cssSrcFile : 'src/*.css',
+		buildCssSrcMinFile : 'build/<%= pkg.name %>.min.css',
+		buildCssSrcFile : 'build/<%= pkg.name %>.css',
 		testFiles : 'spec/*.js',
 		domtestFiles : 'spec/dom/*.html',
 		vendorFiles : 'dependencies/*.js',
+		concat : {
+			css : {
+				options : {
+					separator : ''
+				},
+				src : [ '<%= cssSrcFile %>' ],
+				dest : '<%= buildCssSrcFile %>'
+			},
+			js : {
+				options : {
+					separator : ''
+				},
+				src : [ '<%= srcFiles %>' ],
+				dest : '<%= buildSrcFile %>'
+			}
+		},
 		uglify : {
 			options : {
 				banner : '/**\n' +
@@ -17,8 +38,14 @@ module.exports = function( grunt ) {
 						' */\n'
 			},
 			build : {
-				src : '<%= srcFiles %>',
-				dest : '<%= buildFile %>'
+				src : '<%= buildSrcFile %>',
+				dest : '<%= buildSrcMinFile %>'
+			}
+		},
+		cssmin : {
+			css : {
+				src : '<%= buildCssSrcFile %>',
+				dest : '<%= buildCssSrcMinFile %>'
 			}
 		},
 		jshint : {
@@ -68,13 +95,13 @@ module.exports = function( grunt ) {
 	// require( 'load-grunt-tasks' )( grunt, [ 'grunt-*', '!grunt-template-jasmine-requirejs' ] );
 
 	// Defalt task : just minify code
-	grunt.registerTask( 'default', [ 'jasmine', 'qunit', 'uglify', 'notify' ] );
+	grunt.registerTask( 'default', [ 'jshint', 'jasmine', 'concat', 'cssmin', 'uglify', 'notify' ] );
 
 	// Development : watch for file changes and run:
 	// 1. jasmine for code testing
 	grunt.registerTask( 'dev', [ 'watch' ] );
 
 	// Production : check code and then minify
-	grunt.registerTask( 'prod', [ 'jshint', 'jasmine', 'uglify', 'notify' ] );
+	grunt.registerTask( 'prod', [ 'jshint', 'jasmine', 'concat', 'cssmin', 'uglify', 'notify' ] );
 
 };
