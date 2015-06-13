@@ -2,15 +2,12 @@
  * Function: Parser
  *
  * Parser : parsing templates
- * Extends Util
  */
 function Parser() {
 
 	var parser = null;
 
 	if ( this instanceof Parser ) {
-
-		Util.apply( this, arguments );
 
 		parser = this;
 
@@ -24,11 +21,63 @@ function Parser() {
 
 }
 
-// Create a Parser.prototype object that inherits from Util.prototype
-Parser.prototype = Object.create( Util.prototype );
+/**
+ * Function: foreach
+ *
+ * Loop list and perform callback in each item in list
+ *
+ * @param list
+ * @param callback
+ * @param context
+ */
+Parser.prototype.foreach = function foreach( list, callback, context ) {
 
-// Set the "constructor" property to refer to Parser
-Parser.prototype.constructor = Parser;
+	for( var i = list.length; i--; ) {
+
+		if ( context ) {
+
+			callback.call( context, list[ i ], i );
+
+		} else {
+
+			callback( list[ i ], i );
+
+		}
+
+	}
+
+};
+
+/**
+ * Function: replaceVariablesInText
+ *
+ * Replace the variables in the string with the passed values
+ *
+ * text : "My name is {name}..."
+ * valuesToReplace : { name : "elizabeth" }
+ *
+ * @param text
+ * @param valuesToReplace = object containing keys that will be replaced in text
+ */
+Parser.prototype.replaceVariablesInText = function replaceVariablesInText( text, valuesToReplace ) {
+
+	var processedText = text + "";
+	var key = "";
+	var newText = "";
+	var exp = null;
+
+	// for in...seems fine to use for objects except arrays!
+	for ( key in valuesToReplace ) {
+
+		newText = valuesToReplace[ key ];
+		exp = new RegExp( "{" + key + "}", "gi" );
+		processedText = processedText.replace( exp, newText );
+
+	}
+	
+	return processedText;
+
+};
 
 /**
  * Function: parseTemplate
