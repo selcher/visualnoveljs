@@ -1,6 +1,6 @@
 describe( 'Parser class', function() {
 
-	var parser = Parser();
+	var parser = new Parser();
 
 	it( 'parseConditionsInTemplate', function() {
 
