@@ -862,7 +862,7 @@ VisualNovel.prototype.initNovelModeContainer = function initNovelModeContainer()
 
 VisualNovel.prototype.initDialogModeContainer = function initDialogModeContainer() {
 
-	// TODO : refactor dialog into separate class
+	// TODO : refactor dialog into separate class / module
 
 	this.setSayDialogDisplay( false );
 	this.setDialogModeContainerSize( this.dialogWidth, this.dialogHeight );
@@ -1300,6 +1300,7 @@ VisualNovel.prototype.setBgPosition = function setBgPosition( x, y, duration, de
 
 	// TODO : refactor for smoother animation
 	//		  look for better method or optimization techniques
+	//		  using requestAimationFrame
 
 	var self = this;
 
@@ -2172,7 +2173,7 @@ VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
 		if ( showLineByEachChar ) {
 
 			// replace variables in line
-			var dialogLine = self.util.replaceVariablesInText( line, self.userInput );
+			var dialogLine = self.parser.replaceVariablesInText( line, self.userInput );
 			
 			self.showTextByChar( dialogLine, 0, delay.interval );
 
@@ -2369,7 +2370,7 @@ VisualNovel.prototype.getSayTemplateVariables = function getSayTemplateVariables
 
 	var name = typeof character === "object" ? character.name : character;
 	var dialogNameStyle = typeof character === "object" ? character.nameStyle : "";
-	var dialogLine = this.util.replaceVariablesInText( line, this.userInput );
+	var dialogLine = this.parser.replaceVariablesInText( line, this.userInput );
 
 	var characterDialogSettings = character.dialog;
 	var dialogSettings = characterDialogSettings ? true : false;
