@@ -95,13 +95,13 @@ module.exports = function( grunt ) {
 	// require( 'load-grunt-tasks' )( grunt, [ 'grunt-*', '!grunt-template-jasmine-requirejs' ] );
 
 	// Defalt task : just minify code
-	grunt.registerTask( 'default', [ 'jshint', 'jasmine', 'concat', 'cssmin', 'uglify', 'notify' ] );
+	grunt.registerTask( 'default', [ 'jshint', 'concat', 'cssmin', 'uglify', 'notify' ] );
 
 	// Development : watch for file changes and run:
 	// 1. jasmine for code testing
 	grunt.registerTask( 'dev', [ 'watch' ] );
 
 	// Production : check code and then minify
-	grunt.registerTask( 'prod', [ 'jshint', 'jasmine', 'concat', 'cssmin', 'uglify', 'notify' ] );
+	grunt.registerTask( 'prod', [ 'jshint', 'concat', 'cssmin', 'uglify', 'notify' ] );
 
 };
