@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name='HandheldFriendly' content='True' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+
+		<style>
+
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				background-color: black;
+			}
+
+			#content {
+				width: 800px;
+				margin: 0 auto;
+				color: white;
+			}
+
+			.smallTxt {
+				font-size: 12px;
+			}
+
+			#my-vn-novelTitleContainer {
+				background-color: transparent;
+			}
+
+			#my-vn-novelTitleText {
+				color: rgba( 255, 255, 100, 1 );
+				text-shadow: 0px 0px 20px rgba( 255, 255, 100, 1 );
+			}
+
+			#my-vn-novelSubtitleText {
+				color: rgba( 0, 255, 255, 1 );
+				text-shadow: 0px 0px 20px rgba( 0, 255, 255, 1 );
+			}
+
+			#my-vn-startMenuButtonContainer {
+				background-color: transparent;
+			}
+
+			#my-vn-startMenuButton {
+				color: white;
+			}
+
+			#my-vn-startMenuButton:hover {
+				background-color: transparent;
+				color: rgba( 255, 255, 100, 1 );
+			}
+
+		</style>
+
+		<link rel="stylesheet" type="text/css" href="../build/visual-novel.min.css" />
+
+	</head>
+
+	<body>
+
+		<div id="content">
+
+			<div id="my-vn"></div>
+
+		</div>
+
+		<script type="text/javascript" src="../dependencies/jquery-1.8.3.min.js"></script>
+
+		<script type="text/javascript" src="../build/visual-novel.min.js"></script>
+
+		<script type="text/javascript" src="../examples/js/preloadjs-0.4.1.min.js"></script>
+
+		<script>
+
+			$( "document" ).ready(
+
+				function() {
+
+					var imgPath = "img/python/";
+					var vnBgImage = "bg/bg.jpg";
+					var vnCharImage1 = "character/nao-normal1.png";
+					var vnCharImage2 = "character/nao-normal2.png";
+					var vnDlgImage1 = "character/na1_pe_000.png";
+					var vnDlgImage2 = "character/na1_pe_010.png";
+
+					/**
+					 * Preload
+					 */
+
+					function preload() {
+
+						var queue = new createjs.LoadQueue( true );
+						var path = '../examples/' + imgPath;
+
+						queue.loadManifest( [
+							{
+								id : 'bg',
+								src : path + vnBgImage
+							},
+							{
+								id : 'normal1',
+								src : path + vnCharImage1
+							},
+							{
+								id : 'normal2',
+								src : path + vnCharImage2
+							},
+							{
+								id : 'dialog1',
+								src : path + vnDlgImage1
+							},
+							{
+								id : 'dialog2',
+								src : path + vnDlgImage2
+							}
+						] );
+
+						queue.load();
+
+					}
+
+					/**
+					 * Visual Novel
+					 */
+
+					function initVN() {
+
+						// init novel
+						var vn = new VisualNovel( "my-vn", 800, 600, imgPath );
+
+						vn.init();
+
+						config( vn );
+
+						start( vn );
+						
+						vn.reset();
+
+					}
+
+					function config( novel ) {
+
+						novel.setNovelTitle( "Example: Scene Objects", "", 300, 100 );
+
+						novel.setStartScreenBgColor( "black" );
+						// novel.setStartScreenBgImage( vnBgImage, 800, 600 );
+						novel.setStartScreenMenuPos( 310, 500 );
+
+						// novel.setBgColor( "black" );
+						novel.setBgImage( vnBgImage, 800, 600 );
+
+						novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
+						// novel.setDialogBgImage( vnBgImage, 680, 150 );
+						novel.setDialogTextColor( "black" );
+						novel.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
+
+						novel.setNovelMode( "dialog", 680, 150, 10, 420 );
+
+					}
+
+					function start( novel ) {
+
+						// define character
+						var me = {
+							name: "Character",
+							width: 600,
+							height: 600,
+							image: {
+								"default" : vnCharImage1,
+								"happy" : vnCharImage1,
+								"happy2" : vnCharImage2
+							},
+							pos: {
+								x : 1.0,
+								y : 0.007
+							},
+							dialog: {
+								image: vnDlgImage1,
+								nextImage: vnDlgImage2,
+								imageDelay: 5000,
+								height: 30,
+								location: "left",
+								button: {
+									text: "...",
+									// image: "",
+									// imageHover: "",
+									bgColor: "transparent",
+									bgColorHover: "transparent",
+									width: 20,
+									height: 20
+								}
+							}
+						};
+
+						novel.fadeBg( "in", 1000 );
+
+						// add character
+						novel.addCharacter( me );
+
+						novel.moveCharacter( me, 0.2, 0, 500 );
+						novel.fadeCharacter( me, "in", 500 );
+						novel.pause( 1000 );
+
+						// loop character image for blink eyes effect
+						novel.loop( "me", true, function() {
+
+							requestAnimationFrame( function() {
+								novel.setCharacterImage( me, "happy2" );
+							} );
+
+							setTimeout( function() {
+								requestAnimationFrame( function() {
+									novel.setCharacterImage( me, "happy" );
+								} );
+							}, 200 );
+
+						}, 4000 );
+
+						novel.say( me, [
+							"Hi there!",
+							{ "interval": 50, "button": true },
+							"This example will show you how to add objects to the background scene.",
+							{ "interval": 50, "button": true }
+						] );
+						novel.showSayDialog( false );
+
+						novel.moveCharacter( me, 0.4, 0, 500 );
+
+						var choices = [
+							{
+								label : "Add & Remove",
+								action : function() {
+
+									novel.say( me, [
+										"To add a scene object:<br/>", 20,
+										"novel.addObjectToScene( name, name, imageInfo, position, delay, fadeInfo )", true,
+										"Example:<br/>", 20,
+										'novel.addObjectToScene( "fool", ' +
+											'{ "width": 100, "height": 200, "path": "..' +
+												'/persona/tarot/fool.png" }, ' +
+											'{ "x": 0.3, "y": 0, "z": 0 }, ' +
+											'1000,' +
+											'{ duration: 1000 } ' +
+										');', true
+									] );
+									novel.showSayDialog( false );
+
+									novel.addObjectToScene( "fool",
+										{ "width": 100, "height": 200, "path": "../persona/tarot/fool.png" },
+										{ "x": 0.3, "y": 0, "z": 0 },
+										1000,
+										{ duration: 1000 }
+									);
+
+									novel.say( me, [
+										"To remove a scene object:<br/><br/>", 20,
+										"novel.removeSceneObject( name );", true,
+										"Example:<br/><br/>", 20,
+										"novel.removeSceneObject( 'fool' );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.removeSceneObject( "fool" );
+									novel.pause( 1000 );
+
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Fade",
+								action : function() {
+
+									novel.say( me, [
+										"To fade in a scene object when adding it, use the fadeInfo option<br/>", 20,
+										"novel.addObjectToScene( name, name, imageInfo, position, delay, fadeInfo )", true,
+										"Example:<br/>", 20,
+										'novel.addObjectToScene( "fool", ' +
+											'{ "width": 100, "height": 200, "path": "..' +
+												'/persona/tarot/fool.png" }, ' +
+											'{ "x": 0.3, "y": 0, "z": 0 }, ' +
+											'1000,' +
+											'{ duration: 1000 } ' +
+										');', true
+									] );
+									novel.showSayDialog( false );
+
+									novel.addObjectToScene( "fool",
+										{ "width": 100, "height": 200, "path": "../persona/tarot/fool.png" },
+										{ "x": 0.3, "y": 0, "z": 0 },
+										1000,
+										{ duration: 1000 }
+									);
+
+									novel.say( me, [
+										"To fade out/in a scene object:<br/><br/>", 20,
+										"novel.fadeSceneObject( name, out/in, duration, from, to );", true,
+										"Example:<br/><br/>", 20,
+										"novel.fadeSceneObject( 'fool', 'out', 1000, 1, 0.5 );<br/>", 20, true,
+										"novel.fadeSceneObject( 'fool', 'in', 1000, 0.5, 1 );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeSceneObject( "fool", "out", 1000, 1, 0.2 );
+									novel.pause( 2000 );
+
+									novel.fadeSceneObject( "fool", "in", 1000, 0.2, 1 );
+									novel.pause( 2000 );
+
+									novel.fadeSceneObject( "fool", "out", 1000, 1, 0.2 );
+									novel.pause( 1000 );
+									novel.removeSceneObject( "fool" );
+
+									novel.repeatEvent();
+								}
+							},
+							{
+								label : "Move",
+								action : function() {
+
+									novel.addObjectToScene( "fool",
+										{ "width": 100, "height": 200, "path": "../persona/tarot/fool.png" },
+										{ "x": 0.3, "y": 0, "z": 0 },
+										1000,
+										{ duration: 1000 }
+									);
+
+									novel.say( me, [
+										"To move a scene object:<br/><br/>", 20,
+										"novel.moveSceneObject( name, x, y, z, duration, delay );", true,
+										"Example:<br/><br/>", 20,
+										"novel.moveSceneObject( 'fool', 0.2, 0, 0.1, 500, 1000 );<br/>", 20, true,
+										"novel.moveSceneObject( 'fool', 0.3, 0, 0, 500, 1000 );<br/>", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.moveSceneObject( "fool", 0.2, 0, 0.1, 500, 1000 );
+									novel.moveSceneObject( "fool", 0.3, 0, 0, 500, 1000 );
+
+									novel.fadeSceneObject( "fool", "out", 1000 );
+									novel.pause( 1000 );
+
+									novel.removeSceneObject( "fool" );
+
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Rotate",
+								action : function() {
+
+									novel.addObjectToScene( "fool",
+										{ "width": 100, "height": 200, "path": "../persona/tarot/fool.png" },
+										{ "x": 0.3, "y": 0, "z": 0 },
+										1000,
+										{ duration: 1000 }
+									);
+
+									novel.say( me, [
+										"To rotate an object to a specific angle:<br/><br/>", 20,
+										"novel.rotateSceneObject( name, axis, angle, duration, loop );", true,
+										"Example:<br/><br/>", 20,
+										"novel.rotateSceneObject( 'fool', 'y', 45, 1000, false );", true
+									] );
+
+									novel.rotateSceneObject( "fool", "y", 45, 1000, false );
+									novel.pause( 1000 );
+
+									novel.say( me, [
+										"To rotate an object continuously:<br/><br/>", 20,
+										"novel.rotateSceneObject( name, axis, angle, duration, loop );", true,
+										"Example:<br/><br/>", 20,
+										"novel.rotateSceneObject( 'fool', 'y', 1, 0, true );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.rotateSceneObject( "fool", "y", 1, 0, true );
+									novel.pause( 5000 );
+
+									novel.say( me, [
+										"To reset the rotation:<br/><br/>", 20,
+										"novel.resetSceneObject( name, 'rotate' );", true,
+										"Example:<br/><br/>", 20,
+										"novel.resetSceneObject( 'fool', 'rotate' );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeSceneObject( "fool", "out", 1000 );
+									novel.pause( 1000 );
+
+									novel.resetSceneObject( "fool", "rotate" );
+									novel.removeSceneObject( "fool" );
+
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Done",
+								action : function() {}
+							}
+						];
+						
+						// Show choices
+						novel.choice(
+							"choices",
+							choices,
+							{ x : 0.1,  y : 0.3 },
+							{ image : vnDlgImage1, width : 100, height : 100 }
+						);
+
+						novel.say( me, "Thank you for reading ~", 2000 );
+						novel.showSayDialog( false );
+
+						// remove character
+						novel.clearLoop( "me" );
+						novel.moveCharacter( me, 1.0, 0, 500 );
+						novel.fadeCharacter( me, "out", 500 );
+
+						// fade out bg
+						novel.fadeBg( "out", 1000 );
+						novel.pause( 1000 );
+
+					}
+
+					// Preload all images
+					preload();
+
+					// Initialize visual novel
+					initVN();
+					
+				}
+
+			);
+
+		</script>
+
+	</body>
+
+</html>
