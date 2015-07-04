@@ -1224,6 +1224,7 @@ VisualNovel.prototype.setBgSize = function setBgSize( width, height, duration, d
 
 	// TODO : implement as zoom?
 	//		  duration, delay
+	// Note: for animation: use setBGScale instead
 
 	var self = this;
 
@@ -1290,9 +1291,61 @@ VisualNovel.prototype.getBgSize = function getBgSize() {
 
 VisualNovel.prototype.setBgSizeTo = function setBgSizeTo( width, height ) {
 
-	// TODO: check if scale can be used..
 	this.screenBgId.setSize( width, height )
 				.setCSS( "background-size", width + "px " + height + "px" );
+
+};
+
+VisualNovel.prototype.setBgScale = function setBgScale( scaleWidth, scaleHeight, duration, delay ) {
+
+	var self = this;
+
+	function eventToAdd() {
+
+		var sprite = self.screenBgId;
+		
+		if ( duration ) {
+
+			var previousScaleWidth = sprite.scaleX;
+			var previousScaleHeight = sprite.scaleY;
+			var distance = {
+				"width": scaleWidth - previousScaleWidth,
+				"height": scaleHeight - previousScaleHeight
+			};
+
+			var animationStartTime = Date.now();
+			var animationDuration = duration;
+
+			var bgScaleUpdate = function() {
+
+				var currentTime = Date.now();
+				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
+
+				if ( timeDifference <= 1 ) {
+
+					sprite.setScale(
+						previousScaleWidth + ( timeDifference * distance.width ),
+						previousScaleHeight + ( timeDifference * distance.height ),
+						1
+					).update();
+
+					requestAnimationFrame( bgScaleUpdate );
+				
+				}
+
+			};
+
+			requestAnimationFrame( bgScaleUpdate );
+
+		} else {
+
+			sprite.setScale( scaleWidth, scaleHeight, 1 ).update();
+
+		}
+
+	}
+
+	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
 
 };
 
@@ -1494,7 +1547,7 @@ VisualNovel.prototype.resetBg = function resetBg( action, delay ) {
 
 
 
-VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, bgInfo, position, delay, fade, fadeSpeed ) {
+VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, bgInfo, position, delay, fadeInfo ) {
 
 	var self = this;
 
@@ -1514,9 +1567,9 @@ VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, bgInfo
 		sceneObject.setBackground( width, height, 
 			bgInfo.path ? self.imgPath + bgInfo.path : "", bgInfo.color );
 
-		if ( fade ) {
+		if ( fadeInfo ) {
 
-			sceneObject.fadeIn( fadeSpeed );
+			sceneObject.fadeIn( fadeInfo.duration, fadeInfo.from, fadeInfo.to );
 
 		}
 
@@ -1554,8 +1607,16 @@ VisualNovel.prototype.setSceneObjectPosition = function setSceneObjectPosition( 
 	var sceneObject = sceneObjectInfo.obj;
 	var sprite = sceneObject.sprite;
 	var newPos = util.scalePosition(
-			{ x : x ? x : sprite.x, y : y ? y : sprite.y, z : z ? z : sprite.z },
-			{ x : this.screenWidth, y : this.screenHeight, z : this.screenHeight }
+			{
+				x : typeof x !== "undefined" ? x : sprite.x,
+				y : typeof y !== "undefined" ? y : sprite.y,
+				z : typeof z !== "undefined" ? z : sprite.z
+			},
+			{
+				x : this.screenWidth,
+				y : this.screenHeight,
+				z : this.screenHeight
+			}
 		);
 
 	if ( moveSpeed ) {
@@ -1566,13 +1627,13 @@ VisualNovel.prototype.setSceneObjectPosition = function setSceneObjectPosition( 
 
 };
 
-VisualNovel.prototype.rotateSceneObject = function rotateSceneObject( name, axis, angle, speed, loop ) {
+VisualNovel.prototype.rotateSceneObject = function rotateSceneObject( name, axis, angle, duration, loop ) {
 
 	var self = this;
 
 	function eventToAdd() {
 
-		self.setSceneObjectRotation( name, axis, angle, speed, loop );
+		self.setSceneObjectRotation( name, axis, angle, duration, loop );
 
 	}
 
@@ -1580,30 +1641,30 @@ VisualNovel.prototype.rotateSceneObject = function rotateSceneObject( name, axis
 
 };
 
-VisualNovel.prototype.setSceneObjectRotation = function setSceneObjectRotation( name, axis, angle, speed, loop ) {
+VisualNovel.prototype.setSceneObjectRotation = function setSceneObjectRotation( name, axis, angle, duration, loop ) {
 
 	var sceneObjectInfo = this.util.getObjectInList( this.scenes.object, "name", name );
 	var sceneObject = sceneObjectInfo.obj;
 
 	if ( loop ) {
 		
-		sceneObject.rotate( axis, angle, speed, loop );
+		sceneObject.rotate( axis, angle, loop );
 	
 	} else {
 
-		sceneObject.rotateTo( axis, angle, speed );
+		sceneObject.rotateTo( axis, angle, duration );
 
 	}
 
 };
 
-VisualNovel.prototype.fadeSceneObject = function fadeSceneObject( name, type, fadeSpeed ) {
+VisualNovel.prototype.fadeSceneObject = function fadeSceneObject( name, type, fadeSpeed, from, to ) {
 
 	var self = this;
 
 	function eventToAdd() {
 
-		self.setSceneObjectFade( name, type, fadeSpeed );
+		self.setSceneObjectFade( name, type, fadeSpeed, from, to );
 
 	}
 
@@ -1611,18 +1672,20 @@ VisualNovel.prototype.fadeSceneObject = function fadeSceneObject( name, type, fa
 
 };
 
-VisualNovel.prototype.setSceneObjectFade = function setSceneObjectFade( name, type, fadeSpeed ) {
+VisualNovel.prototype.setSceneObjectFade = function setSceneObjectFade( name, type, fadeSpeed, from, to ) {
 
 	var sceneObjectInfo = this.util.getObjectInList( this.scenes.object, "name", name );
 	var sceneObject = sceneObjectInfo.obj;
 	var fadeType = typeof type === "string" ? type.toLowerCase() : "";
 
 	if ( fadeType === "in" ) {
-		sceneObject.fadeIn( fadeSpeed );
-	}
 
-	if ( fadeType === "out" ) {
-		sceneObject.fadeOut( fadeSpeed );
+		sceneObject.fadeIn( fadeSpeed, from, to );
+
+	} else if ( fadeType === "out" ) {
+
+		sceneObject.fadeOut( fadeSpeed, from, to );
+
 	}
 
 };
@@ -1655,9 +1718,8 @@ VisualNovel.prototype.resetSceneObject = function resetSceneObject( name, action
 		// TODO : refactor
 		if ( sceneObject && actionTimer ) {
 
-			if ( action == "rotate" ) {
+			if ( action === "rotate" ) {
 
-				window.clearInterval( actionTimer );
 				actionTimer = null;
 
 			}
@@ -2727,7 +2789,7 @@ VisualNovel.prototype.buildMenuChoices = function buildMenuChoices( listOfChoice
 
 	// Get menu choices template
 	var menuImg = menuImage ? menuImage : { image : "", width : 0, height : 0 };
-	var imgPath = this.imgPath + menuImg.image;
+	var imgPath = menuImage ? this.imgPath + menuImg.image : "";
 	var menuChoiceTemplate = this.getMenuChoicesTemplate( listOfChoices, imgPath, 
 		menuImg.width, menuImg.height );
 
