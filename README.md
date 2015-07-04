@@ -1,7 +1,7 @@
 Visual Novel Creation
 ======================
 
-#### Javascript Visual Novel Library ####
+#### Javascript Visual Novel Framework ####
 
 The aim of this project is to:
 
@@ -21,7 +21,7 @@ The aim of this project is to:
 - save / load state
 - custom menus
 - more animations
-- remove dependencies (sprite3D.js)
+- music
 
 #### Contribute ####
 All contributions for the project are welcome.
