@@ -307,7 +307,8 @@
 								action : function() {
 
 									novel.say( me, [
-										"To change the background size:<br/><br/>", 20,
+										"To change the background size:<br/>", 20,
+										"(Note: use scaling for better animation)<br/><br/>", 20,
 										"novel.setBgSize( width, height, duration, delay );", true
 									] );
 									novel.showSayDialog( false );
@@ -327,6 +328,41 @@
 									novel.showSayDialog( false );
 
 									novel.setBgSize( 800, 600, 5000, 5000 );
+									novel.pause( 1000 );
+
+									novel.fadeCharacter( me, "in", 1000 );
+									novel.setBgImage( vnBgImage, 800, 600 );
+									novel.pause( 1000 );
+
+									novel.repeatEvent();
+
+								}
+							},
+							{
+								label : "Scale",
+								action : function() {
+
+									novel.say( me, [
+										"To change the background scale:<br/><br/>", 20,
+										"novel.setBgScale( scale-width, scale-height, duration, delay );", true
+									] );
+									novel.showSayDialog( false );
+
+									novel.fadeCharacter( me, "out", 1000 );
+
+									novel.setBgImage( vnHallImage, 800, 600 );
+									novel.setBgSize( 800, 600 );
+									novel.pause( 1000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgScale( 1.5, 1.5, 2000, 2000 );" );
+									novel.showSayDialog( false );
+
+									novel.setBgScale( 1.5, 1.5, 2000, 2000 );
+
+									novel.say( me, "Example:<br/><br/>novel.setBgScale( 1, 1, 2000, 2000 );" );
+									novel.showSayDialog( false );
+
+									novel.setBgScale( 1, 1, 2000, 2000 );
 									novel.pause( 1000 );
 
 									novel.fadeCharacter( me, "in", 1000 );

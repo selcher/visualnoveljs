@@ -44,7 +44,6 @@
 		<link rel="stylesheet" type="text/css" href="../build/visual-novel.min.css" />
 
 		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
-		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
 
 		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
 
@@ -198,12 +197,16 @@
 				vn.setStartScreenMenuBgColor( "rgba( 0, 0, 0, 0.9 )" );
 				vn.setStartScreenMenuPos( 0, 350 );
 				vn.setDialogBgColor( "rgba( 255, 255, 255, 0.8 )" );
+				vn.setBgImage( "bg/night.jpg", 800, 600, false, 800, 600 );
 				vn.setDialogTextColor( "black" );
 				vn.setDialogBorderStyle( "", "lightblue", "10px 50px", 60 );
 
 			}
 
 			function intro( vn ) {
+
+				vn.fadeBg( "out", 1000 );
+				vn.pause( 1000 );
 
 				// set mode to dialog ( novel mode not yet implemented )
 				vn.setNovelMode( "dialog", 680, 130, 10, 420 );
@@ -212,6 +215,7 @@
 				vn.setBgImage( "bg/hall.jpg", 1600, 1200 );
 
 				vn.setBgSize( 1600, 1200 );
+				vn.setBgScale( 1, 1 );
 				vn.fadeBg( "in", 1000 );
 					var textSetting = { x: 0.55, y: 0, z: 0.4, 
 						width : 300, height : 50,
@@ -239,8 +243,7 @@
 				vn.setBgPosition( -400, -150, 2000, 3000 );
 					vn.fadeSceneText( "py", "out", 500 );
 
-				vn.setBgSize( 2000, 1500, 6000, 0 );
-				vn.setBgPosition( -600, -300, 6000, 8000 );
+				vn.setBgScale( 1.5, 1.5, 3000, 3000 );
 					vn.removeSceneText( "py" );
 
 			}
@@ -290,14 +293,13 @@
 					vn.pause( 500 );
 
 					vn.addObjectToScene( arcana,
-						{ width: 100, height: 200, path: imgPath },
-						{ x: 0.5, y: 0, z: 0.15 }, 500, true, 500
+						{ width: 150, height: 300, path: imgPath },
+						{ x: 0.5, y: 0, z: 0.2 },
+						500,
+						{ duration: 500 }
 					);
-					vn.moveSceneObject( arcana, 0.5, 0.1, 0, 1000, 0 );
-
-					vn.pause( 1000 );
-
-					vn.moveSceneObject( arcana, 0.6, 0.1, 0, 500, 0 );
+					vn.moveSceneObject( arcana, 0.5, 0, 0.25, 500, 1000 );
+					vn.moveSceneObject( arcana, 0.7, 0, 0.25, 500, 0 );
 					vn.rotateSceneObject( arcana, "y", 1, 20, true );
 
 					vn.pause( 500 );
@@ -611,6 +613,7 @@
 				vn.fadeBg( "out", 500 );
 				vn.pause( 500 );
 				vn.resetBg( "fade" );
+				vn.setBgScale( 1, 1 );
 
 			}
 

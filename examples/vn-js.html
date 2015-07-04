@@ -38,12 +38,15 @@
 				background-color: transparent;
 			}
 
+			#js-vn-dialogMenuChoiceContainer {
+				border-color: darkred;
+			}
+
 		</style>
 
 		<link rel="stylesheet" type="text/css" href="../build/visual-novel.min.css" />
 
 		<script src="../dependencies/jquery-1.8.3.min.js" type="text/javascript"></script>
-		<script src="../dependencies/Sprite3D.js" type="text/javascript"></script>
 
 		<script src="../build/visual-novel.min.js" type="text/javascript"></script>
 
@@ -102,15 +105,15 @@
 
 			function config( novel ) {
 
-				novel.setNovelTitle( "JS Guide", "a visual novel", 300, 100 );
-				// vn.setStartScreenBgColor( "black" );
+				novel.setNovelTitle( "", "", 300, 100 );
+				novel.setStartScreenBgColor( "black" );
 				novel.setStartScreenBgImage( "bg/js.jpg", 800, 600 );
 				novel.setStartScreenMenuPos( 30, 500 );
-				novel.setBgColor( "white" );
-				// novel.setBgImage( "bg/stare.jpg", 800, 600 );
+				novel.setBgColor( "black" );
+				novel.setBgImage( "bg/js.jpg", 800, 600, false, 800, 600 );
 				novel.setDialogBgColor( "rgba( 255, 255, 255, 0.6)" );
 				novel.setDialogTextColor( "black" );
-				novel.setDialogBorderStyle( "", "darkblue", "1px 10px", "0px 60px" );
+				novel.setDialogBorderStyle( "", "darkred", "1px 10px", "0px 60px" );
 				novel.setNovelMode( "dialog", 300, 250, 20, 20 );
 
 			}
@@ -129,11 +132,8 @@
 					novel.pause( 1000 );
 					novel.removeSceneText( "js" );
 				}
-			
-				// novel.setBgImage( "", 800, 600 );
-				novel.setBgColor( "black" );
 
-				novel.fadeBg( "in", 1000 );
+				novel.fadeBg( "out", 1000 );
 				novel.pause( 1000 );
 
 				novel.addTextToScene( "js",
@@ -143,15 +143,11 @@
 				removeText();
 
 				textSetting.x = 0.58;
-				novel.addTextToScene( "js", "JS Guide<br/>a visual novel",
+				novel.addTextToScene( "js", "Javascript<br/>an introduction",
 					textSetting, 500
 				);
 				removeText();
 
-				novel.fadeBg( "out", 1000 );
-				novel.pause( 1000 );
-				novel.setBgColor( "white" );
-				// novel.setBgImage( "bg/stare.jpg", 800, 600 );
 				novel.fadeBg( "in", 1000 );
 
 			}
@@ -170,7 +166,7 @@
 						"kimono" : "character/yu2_base0.png"
 					},
 					pos: {
-						x : -0.5,
+						x : -0.6,
 						y : 0.007
 					},
 					dialog: {
@@ -235,7 +231,7 @@
 				vn.choice(
 					"progTopics",
 					progTopics,
-					{ x : 0.2,  y : 0.3 }
+					{ x : 0.1,  y : 0.3 }
 				);
 
 				// update dialog size

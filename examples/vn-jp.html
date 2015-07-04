@@ -115,7 +115,7 @@
 
 			function config( novel ) {
 
-				novel.setNovelTitle( "JP Guide", "a visual novel", 300, 100 );
+				novel.setNovelTitle( "JP Quiz", "a guessing game", 300, 100 );
 				novel.setNovelTitlePosition( 35, 70 );
 				// vn.setStartScreenBgColor( "black" );
 				novel.setStartScreenBgImage( "bg/jpbg.png", 800, 600 );
@@ -156,7 +156,7 @@
 				removeText();
 
 				textSetting.x = 0.58;
-				novel.addTextToScene( "jp", "JP Guide<br/>a visual novel",
+				novel.addTextToScene( "jp", "JP Quiz<br/>a guessing game",
 					textSetting, 500
 				);
 				removeText();
@@ -565,10 +565,17 @@
 				function charAnimation() {
 
 					vn.loop( "lin", true, function() {
-						vn.setCharacterImage( lin, "sleep" );
+						
+						requestAnimationFrame( function() {
+							vn.setCharacterImage( lin, "sleep" );
+						} );
+
 						setTimeout( function() {
-							vn.setCharacterImage( lin, "happy" );
+							requestAnimationFrame( function() {
+								vn.setCharacterImage( lin, "happy" );
+							} );
 						}, 200 );
+
 					}, 5000 );
 
 				}
