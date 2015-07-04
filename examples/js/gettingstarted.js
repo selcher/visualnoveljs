@@ -102,7 +102,7 @@ function initGettingStarted() {
 	vn2.init();
 	vn2.setNovelTitle( "Visual Novel JS", "getting started", 300, 100 );
 	vn2.setStartScreenBgColor( "black" );
-	vn2.setStartScreenMenuPos( 400, 400 );
+	vn2.setStartScreenMenuPos( 550, 500 );
 	vn2.setBgColor( "black" );
 	vn2.setDialogBgColor( "white" );
 	vn2.setDialogTextColor( "black" );
