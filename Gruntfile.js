@@ -3,16 +3,20 @@ module.exports = function( grunt ) {
 	// Project Configuration
 	grunt.initConfig( {
 		pkg : grunt.file.readJSON( 'package.json' ),
+
 		srcFiles : 'src/*.js',
-		// buildSrcMinFile : 'build/<%= pkg.name %>-<%= pkg.version %>.min.js',
-		buildSrcMinFile : 'build/<%= pkg.name %>.min.js',
 		buildSrcFile : 'build/<%= pkg.name %>.js',
+		buildSrcMinFile : 'build/<%= pkg.name %>.min.js',
+		buildSrcMinVersionFile : 'build/<%= pkg.name %>-<%= pkg.version %>.min.js',
+		
 		cssSrcFile : 'src/*.css',
-		buildCssSrcMinFile : 'build/<%= pkg.name %>.min.css',
 		buildCssSrcFile : 'build/<%= pkg.name %>.css',
+		buildCssSrcMinFile : 'build/<%= pkg.name %>.min.css',
+		
 		testFiles : 'spec/*.js',
 		domtestFiles : 'spec/dom/*.html',
 		vendorFiles : 'dependencies/*.js',
+		
 		concat : {
 			css : {
 				options : {
@@ -48,12 +52,20 @@ module.exports = function( grunt ) {
 				dest : '<%= buildCssSrcMinFile %>'
 			}
 		},
+		copy : {
+			build : {
+				cwd : '',
+				src : [ '<%= buildSrcMinFile %>' ],
+				dest : '<%= buildSrcMinVersionFile %>',
+				expand : false
+			}
+		},
 		jshint : {
-			all: [ 'Gruntfile.js', '<%= srcFiles %>' ]
+			all : [ 'Gruntfile.js', '<%= srcFiles %>' ]
 		},
 		watch : {
-			files: [ '<%= srcFiles %>', 'Gruntfile.js' ],
-			tasks: [ 'jasmine', 'qunit', 'jshint' ]
+			files : [ '<%= srcFiles %>', 'Gruntfile.js' ],
+			tasks : [ 'jasmine', 'qunit', 'jshint' ]
 		},
 		notify : {
 			uglify : {
@@ -95,13 +107,13 @@ module.exports = function( grunt ) {
 	// require( 'load-grunt-tasks' )( grunt, [ 'grunt-*', '!grunt-template-jasmine-requirejs' ] );
 
 	// Defalt task : just minify code
-	grunt.registerTask( 'default', [ 'jshint', 'concat', 'cssmin', 'uglify', 'notify' ] );
+	grunt.registerTask( 'default', [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
 
 	// Development : watch for file changes and run:
 	// 1. jasmine for code testing
 	grunt.registerTask( 'dev', [ 'watch' ] );
 
 	// Production : check code and then minify
-	grunt.registerTask( 'prod', [ 'jshint', 'concat', 'cssmin', 'uglify', 'notify' ] );
+	grunt.registerTask( 'prod', [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
 
 };
