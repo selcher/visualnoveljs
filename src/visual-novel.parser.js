@@ -1,215 +1,224 @@
-/**
- * Function: Parser
- *
- * Parser : parsing templates
- */
-function Parser() {
+( function( VN ) {
 
-	var parser = null;
+	/**
+	 * Function: Parser
+	 *
+	 * Parser : parsing templates
+	 */
+	function Parser() {
 
-	if ( this instanceof Parser ) {
+		var parser = null;
 
-		parser = this;
+		if ( this instanceof Parser ) {
 
-	} else {
-
-		parser = new Parser();
-
-	}
-
-	return parser;
-
-}
-
-/**
- * Function: foreach
- *
- * Loop list and perform callback in each item in list
- *
- * @param list
- * @param callback
- * @param context
- */
-Parser.prototype.foreach = function foreach( list, callback, context ) {
-
-	for( var i = list.length; i--; ) {
-
-		if ( context ) {
-
-			callback.call( context, list[ i ], i );
+			parser = this;
 
 		} else {
 
-			callback( list[ i ], i );
+			parser = new Parser();
 
 		}
 
-	}
-
-};
-
-/**
- * Function: replaceVariablesInText
- *
- * Replace the variables in the string with the passed values
- *
- * text : "My name is {name}..."
- * valuesToReplace : { name : "elizabeth" }
- *
- * @param text
- * @param valuesToReplace = object containing keys that will be replaced in text
- */
-Parser.prototype.replaceVariablesInText = function replaceVariablesInText( text, valuesToReplace ) {
-
-	var processedText = text + "";
-	var key = "";
-	var newText = "";
-	var exp = null;
-
-	// for in...seems fine to use for objects except arrays!
-	for ( key in valuesToReplace ) {
-
-		newText = valuesToReplace[ key ];
-		exp = new RegExp( "{" + key + "}", "gi" );
-		processedText = processedText.replace( exp, newText );
+		return parser;
 
 	}
-	
-	return processedText;
 
-};
+	/**
+	 * Function: foreach
+	 *
+	 * Loop list and perform callback in each item in list
+	 *
+	 * @param list
+	 * @param callback
+	 * @param context
+	 */
+	Parser.prototype.foreach = function foreach( list, callback, context ) {
 
-/**
- * Function: parseTemplate
- *
- * Parse conditions and loops in template,
- * and replace variables in template
- *
- * @param template
- * @param valuesToReplace
- */
-Parser.prototype.parseTemplate = function parseTemplate( template, valuesToReplace ) {
+		for( var i = list.length; i--; ) {
 
-	// Parse conditions first before parsing variables
-	template = this.parseConditionsInTemplate( template, valuesToReplace );
+			if ( context ) {
 
-	// Parse variables in template
-	template = this.replaceVariablesInText( template, valuesToReplace );
+				callback.call( context, list[ i ], i );
 
-	// Parse for each loops
-	template = this.parseLoopsInTemplate( template, valuesToReplace );
+			} else {
 
-	return template;
+				callback( list[ i ], i );
 
-};
+			}
 
-/**
- * Function: parseConditionsInTemplate
- *
- * template : '<if={delay}><button>OK</button></if>'
- * valuesToReplace : { delay : true }
- *
- * @param template = array of strings
- * @param valuesToReplace = object of values to replace in template
- */
-Parser.prototype.parseConditionsInTemplate = function parseConditionsInTemplate( template, valuesToReplace ) {
-
-	// TODO: refactor...
-	
-	var parsedTemplate = template.slice();
-	var conditions = [];
-	var tempConditions = parsedTemplate.split( /(<\s*if\s*[^>]*>(.|\n)*?<\s*\/\s*if>)/i );
-	
-	// trim "" and ">" returned by the split...expression may need refactoring
-	this.foreach( tempConditions, function( condition ) {
-		
-		if ( condition !== "" && condition !== ">" ) {
-			conditions.unshift( condition );
 		}
 
-	} );
+	};
 
-	if ( conditions.length > 1 ) {
+	/**
+	 * Function: replaceVariablesInText
+	 *
+	 * Replace the variables in the string with the passed values
+	 *
+	 * text : "My name is {name}..."
+	 * valuesToReplace : { name : "elizabeth" }
+	 *
+	 * @param text
+	 * @param valuesToReplace = object containing keys that will be replaced in text
+	 */
+	Parser.prototype.replaceVariablesInText = function replaceVariablesInText( text, valuesToReplace ) {
 
-		// there may be multiple conditions, so parse each condition
-		this.foreach( conditions, function( condition, conditionIndex ) {
+		var processedText = text + "";
+		var key = "";
+		var newText = "";
+		var exp = null;
 
-			var conditionVariable = condition.replace( /<if={(.*)}>.*<\/if>/i, "$1" );
-			var conditionVariableValue = valuesToReplace[ conditionVariable ];
-			var conditionContentFormat = conditionVariableValue === undefined ?
-				conditionVariable :
-				conditionVariableValue ? condition.replace( /<if={.*}>(.*)<\/if>/i, "$1" ) : "";
+		// for in...seems fine to use for objects except arrays!
+		for ( key in valuesToReplace ) {
 
-			conditions[ conditionIndex ] = conditionContentFormat.slice();
+			newText = valuesToReplace[ key ];
+			exp = new RegExp( "{" + key + "}", "gi" );
+			processedText = processedText.replace( exp, newText );
 
-		}, this );
-
-	}
-
-	parsedTemplate = conditions.join( "" );
-
-	return parsedTemplate;
-
-};
-
-/**
- * Function: parseLoopsInTemplate
- *
- * template : <foreach={choice in choices}><button>{choice.label}</button></foreach>
- * valuesToReplace : { choices : [ { label:'new' }, {label:'continue'}, {label:'exit'} ] }
- *
- * @param template
- * @param valuesToReplace
- */
-Parser.prototype.parseLoopsInTemplate = function parseLoopsInTemplate( template, valuesToReplace ) {
-
-	// TODO : refactor...
-
-	var parsedTemplate = template.slice();
-	var loops = parsedTemplate.match( /<foreach={.*}>.*<\/foreach>/gi );
-
-	if ( loops && loops.length > 0 ) {
-
-		var parsedLoops = [];
+		}
 		
-		// there may be multiple loops, so parse each loop
-		this.foreach( loops, function( loop, loopIndex ) {
+		return processedText;
 
-			var parsedLoop = [];
+	};
 
-			var loopContentFormat = loop.replace( /<foreach={.*}>(.*)<\/foreach>/gi, "$1" );
-			var loopForeachVariables = loop.replace( /<foreach={(.*)}>.*<\/foreach>/gi, "$1" );
-			loopForeachVariables = loopForeachVariables.split( " " );
-			// choice in choices
-			var forEachList = loopForeachVariables[ 2 ];
-			var forEachVariable = loopForeachVariables[ 0 ];
+	/**
+	 * Function: parseTemplate
+	 *
+	 * Parse conditions and loops in template,
+	 * and replace variables in template
+	 *
+	 * @param template
+	 * @param valuesToReplace
+	 */
+	Parser.prototype.parseTemplate = function parseTemplate( template, valuesToReplace ) {
 
-			// build each loop content
-			this.foreach( valuesToReplace[ forEachList ], function( eachObject, eachIndex ) {
+		// Parse conditions first before parsing variables
+		template = this.parseConditionsInTemplate( template, valuesToReplace );
 
-				var loopContent = loopContentFormat.replace( /{index}/gi, eachIndex );
-				var eachVariableExp = new RegExp( "{" + forEachVariable + ".(.*)}", "gi" );
-				loopContent = loopContent.replace( eachVariableExp, "{$1}" );
-				loopContent = this.replaceVariablesInText( loopContent, eachObject );
+		// Parse variables in template
+		template = this.replaceVariablesInText( template, valuesToReplace );
 
-				parsedLoop.unshift( loopContent );
+		// Parse for each loops
+		template = this.parseLoopsInTemplate( template, valuesToReplace );
+
+		return template;
+
+	};
+
+	/**
+	 * Function: parseConditionsInTemplate
+	 *
+	 * template : '<if={delay}><button>OK</button></if>'
+	 * valuesToReplace : { delay : true }
+	 *
+	 * @param template = array of strings
+	 * @param valuesToReplace = object of values to replace in template
+	 */
+	Parser.prototype.parseConditionsInTemplate = function parseConditionsInTemplate( template, valuesToReplace ) {
+
+		// TODO: refactor...
+		
+		var parsedTemplate = template.slice();
+		var conditions = [];
+		var tempConditions = parsedTemplate.split( /(<\s*if\s*[^>]*>(.|\n)*?<\s*\/\s*if>)/i );
+		
+		// trim "" and ">" returned by the split...expression may need refactoring
+		this.foreach( tempConditions, function( condition ) {
 			
-			}, this );
-
-			// store parsed loop content
-			parsedLoops.push( parsedLoop.join( "" ) );	
-
-		}, this );
-
-		// replace each loop in template with parsed loop content
-		this.foreach( parsedLoops, function( parsedLoop ) {
-
-			parsedTemplate = parsedTemplate.replace( /<foreach={.*}>.*<\/foreach>/i, parsedLoop );
+			if ( condition !== "" && condition !== ">" ) {
+				conditions.unshift( condition );
+			}
 
 		} );
 
-	}
+		if ( conditions.length > 1 ) {
 
-	return parsedTemplate;
+			// there may be multiple conditions, so parse each condition
+			this.foreach( conditions, function( condition, conditionIndex ) {
 
-};
+				var conditionVariable = condition.replace( /<if={(.*)}>.*<\/if>/i, "$1" );
+				var conditionVariableValue = valuesToReplace[ conditionVariable ];
+				var conditionContentFormat = conditionVariableValue === undefined ?
+					conditionVariable :
+					conditionVariableValue ? condition.replace( /<if={.*}>(.*)<\/if>/i, "$1" ) : "";
+
+				conditions[ conditionIndex ] = conditionContentFormat.slice();
+
+			}, this );
+
+		}
+
+		parsedTemplate = conditions.join( "" );
+
+		return parsedTemplate;
+
+	};
+
+	/**
+	 * Function: parseLoopsInTemplate
+	 *
+	 * template : <foreach={choice in choices}><button>{choice.label}</button></foreach>
+	 * valuesToReplace : { choices : [ { label:'new' }, {label:'continue'}, {label:'exit'} ] }
+	 *
+	 * @param template
+	 * @param valuesToReplace
+	 */
+	Parser.prototype.parseLoopsInTemplate = function parseLoopsInTemplate( template, valuesToReplace ) {
+
+		// TODO : refactor...
+
+		var parsedTemplate = template.slice();
+		var loops = parsedTemplate.match( /<foreach={.*}>.*<\/foreach>/gi );
+
+		if ( loops && loops.length > 0 ) {
+
+			var parsedLoops = [];
+			
+			// there may be multiple loops, so parse each loop
+			this.foreach( loops, function( loop, loopIndex ) {
+
+				var parsedLoop = [];
+
+				var loopContentFormat = loop.replace( /<foreach={.*}>(.*)<\/foreach>/gi, "$1" );
+				var loopForeachVariables = loop.replace( /<foreach={(.*)}>.*<\/foreach>/gi, "$1" );
+				loopForeachVariables = loopForeachVariables.split( " " );
+				// choice in choices
+				var forEachList = loopForeachVariables[ 2 ];
+				var forEachVariable = loopForeachVariables[ 0 ];
+
+				// build each loop content
+				this.foreach( valuesToReplace[ forEachList ], function( eachObject, eachIndex ) {
+
+					var loopContent = loopContentFormat.replace( /{index}/gi, eachIndex );
+					var eachVariableExp = new RegExp( "{" + forEachVariable + ".(.*)}", "gi" );
+					loopContent = loopContent.replace( eachVariableExp, "{$1}" );
+					loopContent = this.replaceVariablesInText( loopContent, eachObject );
+
+					parsedLoop.unshift( loopContent );
+				
+				}, this );
+
+				// store parsed loop content
+				parsedLoops.push( parsedLoop.join( "" ) );	
+
+			}, this );
+
+			// replace each loop in template with parsed loop content
+			this.foreach( parsedLoops, function( parsedLoop ) {
+
+				parsedTemplate = parsedTemplate.replace( /<foreach={.*}>.*<\/foreach>/i, parsedLoop );
+
+			} );
+
+		}
+
+		return parsedTemplate;
+
+	};
+
+	/**
+	 * Attach module to namespace
+	 */
+	 VN.prototype.parser = new Parser();
+
+} )( window.VisualNovel = window.VisualNovel || {} );
