@@ -1145,623 +1145,642 @@
 
 } )( window );
 
+
+
+
+
 // TODO: Integrate Sprite class into Spritely?
 //		 Implement way to add svg into scene container div
+//		 ( allow user to create custom events for adding svg )
 
-/**
- * Function: Sprite
- *
- * Constructor for creating a sprite
- *
- * States :
- *		1. sprite
- * Behaviors :
- *		1. Move
- *		2. Rotate
- *		3. Fade
- *
- * @param width = width of sprite
- * @param height = height of sprite
- * @parram position = x, y, z position of sprite
- * @param transformOrigin = position of css transform
- * @param rotate = rotation angles along x, y, z axis
- **/
-function Sprite( width, height, position, transformOrigin, rotate ) {
+( function( VN ) {
 
-	if ( this instanceof Sprite ) {
+	/**
+	 * Function: Sprite
+	 *
+	 * Constructor for creating a sprite
+	 *
+	 * States :
+	 *		1. sprite
+	 * Behaviors :
+	 *		1. Move
+	 *		2. Rotate
+	 *		3. Fade
+	 *
+	 * @param width = width of sprite
+	 * @param height = height of sprite
+	 * @parram position = x, y, z position of sprite
+	 * @param transformOrigin = position of css transform
+	 * @param rotate = rotation angles along x, y, z axis
+	 **/
+	function Sprite( width, height, position, transformOrigin, rotate ) {
 
-		// Add states
-		this.sprite = null;
+		if ( this instanceof Sprite ) {
 
-		this.init( width, height, position, transformOrigin, rotate );
+			// Add states
+			this.sprite = null;
 
-		return this;
+			this.init( width, height, position, transformOrigin, rotate );
 
-	} else {
+			return this;
 
-		return new Sprite( width, height, position, transformOrigin, rotate );
+		} else {
 
-	}
+			return new Sprite( width, height, position, transformOrigin, rotate );
 
-}
-
-/**
- * Function: init
- *
- * Initialize sprite using Spritely JS library
- *
- * @param width = width of sprite
- * @param height = height of sprite
- * @parram position = x, y, z position of sprite
- * @param transformOrigin = position of css transform
- * @param rotate = rotation angles along x, y, z axis
- */
-Sprite.prototype.init = function init( width, height, position, transformOrigin, rotate ) {
-
-	var s = this.createSprite( width, height, position, transformOrigin, rotate );
-
-	this.sprite = s;
-
-};
-
-/**
- * Function: createSprite
- *
- * Return a Spritely instance
- * Uses Spritely JS library
- *
- * @param width = width of sprite
- * @param height = height of sprite
- * @parram position = x, y, z position of sprite
- * @param transformOrigin = position of css transform
- * @param rotate = rotation angles along x, y, z axis
- */
-Sprite.prototype.createSprite = function createSprite( width, height, position, transformOrigin, rotate ) {
-
-	var pos = position;
-	var transOrigx = transformOrigin.x;
-	var transOrigy = transformOrigin.y;
-	var transOrigz = transformOrigin.z;
-	
-	var s = new Spritely()
-		.setClassName( "sprite" )
-		.setSize( width, height )
-		.setTransformOrigin( transOrigx, transOrigy, transOrigz )
-		.setPosition( pos.x, pos.y, pos.z )
-		.rotateX( rotate && rotate.x ? rotate.x : 0 )
-		.rotateY( rotate && rotate.y ? rotate.y : 0 )
-		.rotateZ( rotate && rotate.z ? rotate.z : 0 )
-		.setRotateFirst( true );
-
-	s.setCSS( "-webkit-transform-origin", 
-		transOrigx + "px " + transOrigy + "px" ).update();
-
-	s.timer = {};
-
-	return s;
-
-};
-
-/**
- * Function: setBackground
- *
- * Set background image or color of sprite
- *
- * @param width = width of background image
- * @param height = height of background image
- * @param image = path to image
- * @param color = background color
- */
-Sprite.prototype.setBackground = function setBackground( width, height, image, color ) {
-
-	var bgSize = "";
-	var bgImage = "";
-
-	if ( typeof image === "object" ) {
-
-		bgImage = image && image.src ? "background-image:url('" + image.src + "');" : "";
-		bgImage += bgImage && image.position ? "background-position:" + image.position + ";" : "";
-
-	} else {
-
-		bgSize = width && height ? "background-size:" + width + "px " + height + "px;" : "";
-		bgImage = image ? "background-image:url('" + image + "');" : bgImage;
-
-	}
-	
-	var bgColor = color ? "background-color:" + color + ";" : "";
-	var preSemicolon = bgSize || bgImage || bgColor ? ";" : "";
-
-	this.sprite.style.cssText += preSemicolon + bgSize + bgImage + bgColor;
-
-};
-
-/**
- * Function: move
- *
- * Move sprite to position x, y, z at speed
- *
- * @param x = x position
- * @param y = y position
- * @param z = z position
- * @param duration = duration of move in milliseconds
- */
-Sprite.prototype.move = function move( x, y, z, duration ) {
-
-	// console.log( "from:", this.sprite.x, this.sprite.y );
-	// console.log( "to:", x, y, z, duration );
-	
-	// spriteType = character => use y ( up / down )
-	//			  = container => use z ( up / down )
-	var sprite = this.sprite;
-	var originalPos = {
-		"x": sprite.x,
-		"y": sprite.y,
-		"z": sprite.z
-	};
-	var distance = {
-		"x": x - sprite.x,
-		"y": y - sprite.y,
-		"z": z - sprite.z
-	};
-
-	var animationStartTime = Date.now();
-	var animationDuration = duration;
-
-	var moveUpdate = function() {
-
-		var currentTime = Date.now();
-		var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
-
-		// TODO: when moving, update transform origin...
-
-		sprite.x = originalPos.x + Math.floor( timeDifference * distance.x );
-		sprite.y = originalPos.y + Math.floor( timeDifference * distance.y );
-		sprite.z = originalPos.z + Math.floor( timeDifference * distance.z );
-		// console.log( timeDifference, sprite.x, sprite.y );
-
-		sprite.update();
-
-		if ( timeDifference <= 1 ) {
-
-			requestAnimationFrame( moveUpdate );
-		
 		}
 
+	}
+
+	/**
+	 * Function: init
+	 *
+	 * Initialize sprite using Spritely JS library
+	 *
+	 * @param width = width of sprite
+	 * @param height = height of sprite
+	 * @parram position = x, y, z position of sprite
+	 * @param transformOrigin = position of css transform
+	 * @param rotate = rotation angles along x, y, z axis
+	 */
+	Sprite.prototype.init = function init( width, height, position, transformOrigin, rotate ) {
+
+		var s = this.createSprite( width, height, position, transformOrigin, rotate );
+
+		this.sprite = s;
+
 	};
 
-	requestAnimationFrame( moveUpdate );
+	/**
+	 * Function: createSprite
+	 *
+	 * Return a Spritely instance
+	 * Uses Spritely JS library
+	 *
+	 * @param width = width of sprite
+	 * @param height = height of sprite
+	 * @parram position = x, y, z position of sprite
+	 * @param transformOrigin = position of css transform
+	 * @param rotate = rotation angles along x, y, z axis
+	 */
+	Sprite.prototype.createSprite = function createSprite( width, height, position, transformOrigin, rotate ) {
 
-};
+		var pos = position;
+		var transOrigx = transformOrigin.x;
+		var transOrigy = transformOrigin.y;
+		var transOrigz = transformOrigin.z;
+		
+		var s = new Spritely()
+			.setClassName( "sprite" )
+			.setSize( width, height )
+			.setTransformOrigin( transOrigx, transOrigy, transOrigz )
+			.setPosition( pos.x, pos.y, pos.z )
+			.rotateX( rotate && rotate.x ? rotate.x : 0 )
+			.rotateY( rotate && rotate.y ? rotate.y : 0 )
+			.rotateZ( rotate && rotate.z ? rotate.z : 0 )
+			.setRotateFirst( true );
 
-// TODO: moveTo
-/**
- * Function: moveTo
- *
- * Move sprite to position x, y, z
- *
- * @param x = x position
- * @param y = y position
- * @param z = z position
- */
-Sprite.prototype.moveTo = function moveTo( x, y, z, sprite ) {
+		s.setCSS( "-webkit-transform-origin", 
+			transOrigx + "px " + transOrigy + "px" ).update();
 
-	var spriteToMove = sprite ? sprite : this.sprite;
+		s.timer = {};
 
-	spriteToMove.x = x;
-	spriteToMove.y = y;
-	spriteToMove.z = z;
+		return s;
 
-	spriteToMove.update();
+	};
 
-};
+	/**
+	 * Function: setBackground
+	 *
+	 * Set background image or color of sprite
+	 *
+	 * @param width = width of background image
+	 * @param height = height of background image
+	 * @param image = path to image
+	 * @param color = background color
+	 */
+	Sprite.prototype.setBackground = function setBackground( width, height, image, color ) {
 
-/**
- * Function: rotate
- *
- * Rotate sprite along axis at the given speed
- *
- * @param axis = axis to rotate sprite
- * @param angle = angle to rotate sprite
- * @param loop = set to true to continuously rotate at given angle
- * @param sprite = sprite to rotate ( optional )
- */
-Sprite.prototype.rotate = function rotate( axis, angle, loop, sprite ) {
-	
-	// type : container ( z )
-	//		  object ( y )
-	//		  floor ( z )
+		var bgSize = "";
+		var bgImage = "";
 
-	var spriteToRotate = sprite ? sprite : this.sprite;
-	var callRotateSprite = function() {};
-	var rotateDelay = speed ? speed : 0;
+		if ( typeof image === "object" ) {
 
-	if ( axis ) {
+			bgImage = image && image.src ? "background-image:url('" + image.src + "');" : "";
+			bgImage += bgImage && image.position ? "background-position:" + image.position + ";" : "";
 
-		callRotateSprite = function() {
-			spriteToRotate[ "rotate" + axis.toUpperCase() ]( angle ).update();
+		} else {
+
+			bgSize = width && height ? "background-size:" + width + "px " + height + "px;" : "";
+			bgImage = image ? "background-image:url('" + image + "');" : bgImage;
+
+		}
+		
+		var bgColor = color ? "background-color:" + color + ";" : "";
+		var preSemicolon = bgSize || bgImage || bgColor ? ";" : "";
+
+		this.sprite.style.cssText += preSemicolon + bgSize + bgImage + bgColor;
+
+	};
+
+	/**
+	 * Function: move
+	 *
+	 * Move sprite to position x, y, z at speed
+	 *
+	 * @param x = x position
+	 * @param y = y position
+	 * @param z = z position
+	 * @param duration = duration of move in milliseconds
+	 */
+	Sprite.prototype.move = function move( x, y, z, duration ) {
+
+		// console.log( "from:", this.sprite.x, this.sprite.y );
+		// console.log( "to:", x, y, z, duration );
+		
+		// spriteType = character => use y ( up / down )
+		//			  = container => use z ( up / down )
+		var sprite = this.sprite;
+		var originalPos = {
+			"x": sprite.x,
+			"y": sprite.y,
+			"z": sprite.z
 		};
-
-	}
-
-	if ( loop ) {
-		
-		// Rotate sprite continuously
-		spriteToRotate.timer.rotate = true;
-
-		requestAnimationFrame( function rotateUpdate() {
-
-			callRotateSprite();
-
-			if ( spriteToRotate.timer.rotate ) {
-				requestAnimationFrame( rotateUpdate );
-			}
-
-		} );
-
-	} else {
-
-		// Rotate sprite after delay
-		requestAnimationFrame( function() {
-
-			callRotateSprite();
-
-		} );
-		
-	}
-
-};
-
-Sprite.prototype.rotateTo = function rotateTo( axis, angle, duration, sprite ) {
-	
-	// type : container ( z )
-	//		  object ( y )
-	//		  floor ( z )
-
-	var self = this;
-	var spriteToRotate = sprite ? sprite : this.sprite;
-	var rotateAxis = axis.toUpperCase();
-	var setRotationProp = "setRotation" + rotateAxis;
-
-	if ( duration ) {
+		var distance = {
+			"x": x - sprite.x,
+			"y": y - sprite.y,
+			"z": z - sprite.z
+		};
 
 		var animationStartTime = Date.now();
 		var animationDuration = duration;
 
-		var currentAngle = spriteToRotate[ "rotation" + rotateAxis ];
-		var angleDiff = angle - currentAngle;
-
-		var rotateUpdate = function() {
+		var moveUpdate = function() {
 
 			var currentTime = Date.now();
 			var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
 
-			spriteToRotate[ setRotationProp ](
-				currentAngle + ( timeDifference * angleDiff )
-			).update();
+			// TODO: when moving, update transform origin...
+
+			sprite.x = originalPos.x + Math.floor( timeDifference * distance.x );
+			sprite.y = originalPos.y + Math.floor( timeDifference * distance.y );
+			sprite.z = originalPos.z + Math.floor( timeDifference * distance.z );
+			// console.log( timeDifference, sprite.x, sprite.y );
+
+			sprite.update();
 
 			if ( timeDifference <= 1 ) {
 
-				requestAnimationFrame( rotateUpdate );
+				requestAnimationFrame( moveUpdate );
 			
 			}
 
 		};
 
-		requestAnimationFrame( rotateUpdate );
+		requestAnimationFrame( moveUpdate );
 
-	} else {
+	};
 
-		requestAnimationFrame( function() {
+	// TODO: moveTo
+	/**
+	 * Function: moveTo
+	 *
+	 * Move sprite to position x, y, z
+	 *
+	 * @param x = x position
+	 * @param y = y position
+	 * @param z = z position
+	 */
+	Sprite.prototype.moveTo = function moveTo( x, y, z, sprite ) {
 
-			spriteToRotate[ setRotationProp ]( angle ).update();
+		var spriteToMove = sprite ? sprite : this.sprite;
 
-		} );
+		spriteToMove.x = x;
+		spriteToMove.y = y;
+		spriteToMove.z = z;
 
-	}
+		spriteToMove.update();
 
-};
+	};
 
-Sprite.prototype.fade = function fade( startOpacity, endOpacity, duration ) {
+	/**
+	 * Function: rotate
+	 *
+	 * Rotate sprite along axis at the given speed
+	 *
+	 * @param axis = axis to rotate sprite
+	 * @param angle = angle to rotate sprite
+	 * @param loop = set to true to continuously rotate at given angle
+	 * @param sprite = sprite to rotate ( optional )
+	 */
+	Sprite.prototype.rotate = function rotate( axis, angle, loop, sprite ) {
+		
+		// type : container ( z )
+		//		  object ( y )
+		//		  floor ( z )
 
-	// console.log( "fade:", startOpacity, endOpacity, step, duration );
+		var spriteToRotate = sprite ? sprite : this.sprite;
+		var callRotateSprite = function() {};
+		var rotateDelay = speed ? speed : 0;
 
-	var distance = endOpacity - startOpacity;
-	var sprite = this.sprite;
+		if ( axis ) {
 
-	var animationStartTime = Date.now();
-	var animationDuration = duration;
+			callRotateSprite = function() {
+				spriteToRotate[ "rotate" + axis.toUpperCase() ]( angle ).update();
+			};
 
-	var fadeUpdate = function() {
+		}
 
-		var currentTime = Date.now();
-		var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
+		if ( loop ) {
+			
+			// Rotate sprite continuously
+			spriteToRotate.timer.rotate = true;
 
-		var newOpacity = startOpacity + ( timeDifference * distance );
-		// console.log( timeDifference, newOpacity );
+			requestAnimationFrame( function rotateUpdate() {
 
-		sprite.setOpacity( newOpacity );
+				callRotateSprite();
 
-		if ( timeDifference <= 1 ) {
+				if ( spriteToRotate.timer.rotate ) {
+					requestAnimationFrame( rotateUpdate );
+				}
 
-			requestAnimationFrame( fadeUpdate );
+			} );
+
+		} else {
+
+			// Rotate sprite after delay
+			requestAnimationFrame( function() {
+
+				callRotateSprite();
+
+			} );
+			
+		}
+
+	};
+
+	Sprite.prototype.rotateTo = function rotateTo( axis, angle, duration, sprite ) {
+		
+		// type : container ( z )
+		//		  object ( y )
+		//		  floor ( z )
+
+		var self = this;
+		var spriteToRotate = sprite ? sprite : this.sprite;
+		var rotateAxis = axis.toUpperCase();
+		var setRotationProp = "setRotation" + rotateAxis;
+
+		if ( duration ) {
+
+			var animationStartTime = Date.now();
+			var animationDuration = duration;
+
+			var currentAngle = spriteToRotate[ "rotation" + rotateAxis ];
+			var angleDiff = angle - currentAngle;
+
+			var rotateUpdate = function() {
+
+				var currentTime = Date.now();
+				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
+
+				spriteToRotate[ setRotationProp ](
+					currentAngle + ( timeDifference * angleDiff )
+				).update();
+
+				if ( timeDifference <= 1 ) {
+
+					requestAnimationFrame( rotateUpdate );
+				
+				}
+
+			};
+
+			requestAnimationFrame( rotateUpdate );
+
+		} else {
+
+			requestAnimationFrame( function() {
+
+				spriteToRotate[ setRotationProp ]( angle ).update();
+
+			} );
 
 		}
 
 	};
 
-	requestAnimationFrame( fadeUpdate );
+	Sprite.prototype.fade = function fade( startOpacity, endOpacity, duration ) {
 
-};
+		// console.log( "fade:", startOpacity, endOpacity, step, duration );
 
-Sprite.prototype.fadeIn = function fadeIn( duration, from, to ) {
-	
-	var startOpacity = from && from > 0 ? from : 0;
-	var endOpacity = to && to > 0 ? to : 1;
-	
-	this.fade( startOpacity, endOpacity, duration );
+		var distance = endOpacity - startOpacity;
+		var sprite = this.sprite;
 
-};
+		var animationStartTime = Date.now();
+		var animationDuration = duration;
 
-Sprite.prototype.fadeOut = function fadeOut( duration, from, to ) {
-	
-	var startOpacity = from && from > 0 ? from : 1;
-	var endOpacity = to && to > 0 ? to : 0;
-	
-	this.fade( startOpacity, endOpacity, duration );
+		var fadeUpdate = function() {
 
-};
+			var currentTime = Date.now();
+			var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
 
+			var newOpacity = startOpacity + ( timeDifference * distance );
+			// console.log( timeDifference, newOpacity );
 
+			sprite.setOpacity( newOpacity );
 
+			if ( timeDifference <= 1 ) {
 
+				requestAnimationFrame( fadeUpdate );
 
+			}
 
+		};
 
+		requestAnimationFrame( fadeUpdate );
 
-
-
-// Factory for creating objects
-
-function ObjectFactory( type ) {
-
-	var newObject = null;
-	
-	if ( type === "SceneObject" ) {
-
-		newObject = SceneObject.apply( {}, [].slice.call( arguments, 1 ) );
-
-	}
-
-	if ( type === "Character" ) {
-
-		newObject = Character.apply( {}, [].slice.call( arguments, 1 ) );
-
-	}
-
-	if ( type === "SpriteContainer" ) {
-
-		// TODO: refactor into SpriteContainer class so ScreenBg can reuse it
-		newObject = new Spritely( arguments[ 1 ] );
-		newObject.addChild( Spritely.createCenteredContainer() );
-
-	}
-
-	if ( type === "ScreenBg" ) {
-
-		// TODO: refactor to create ScreenBg class
-		newObject = new Spritely( arguments[ 1 ] );
-		newObject.addChild( Spritely.createCenteredContainer() );
-
-		newObject.sprite = newObject;
-		newObject.timer = {};		
-		newObject.rotate = Sprite.prototype.rotate;
-		newObject.rotateTo = Sprite.prototype.rotateTo;
-		newObject.fade = Sprite.prototype.fade;
-		newObject.fadeIn = Sprite.prototype.fadeIn;
-		newObject.fadeOut = Sprite.prototype.fadeOut;
-
-	}
-
-	if ( type === "SceneFloor" ) {
-
-		var width = arguments[ 1 ];
-		var height = arguments[ 2 ];
-		var position = { x : -( width / 2 ), y : -( height / 2 ), z : -50 };
-		var transformOrigin = { x : 0, y : 0 };
-		var rotate = { x : -90, y : 0, z : 0 };
-		newObject = new Sprite(	width, height, position, transformOrigin, rotate );
-		newObject.sprite.addClassName( "sceneFloor" );
-
-	}
-
-	if ( type === "SceneFloorContainer" ) {
-
-		// TODO : refactor
-		newObject = new Spritely()
-			.setClassName( "sceneFloorContainer" )
-			.setZ( 0 )
-			// .rotateX( -20 )
-			.update();
-
-	}
-
-	return newObject;
-
-}
-
-
-
-
-
-
-
-
-
-
-/**
- *	Object : Character
- *  States:
- *		1. sprite
- *  Behaviors:
- *		1. Move
- *		2. Rotate
- *		3. FadeIn/FadeOut
- **/
-function Character( width, height, position, transformOrigin, rotate ) {
-
-	if ( this instanceof Character ) {
-
-		// Call the parent constructor
-		Sprite.apply( this, arguments );
-
-		// Add states
-
-		this.init( width, height, position, transformOrigin, rotate );
-
-		return this;
-
-	} else {
-
-		return new Character( width, height, position, transformOrigin, rotate );
-
-	}
-
-}
-
-// Create a Character.prototype object that inherits from Sprite.prototype
-Character.prototype = Object.create( Sprite.prototype );
-
-// Set the "constructor" property to refer to Character
-Character.prototype.constructor = Character;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- *	Object : Scene
- *  States:
- *		1. sprite
- *  Behaviors:
- *		1. Move
- *		2. Rotate
- *		3. FadeIn/FadeOut
- **/
-function SceneObject( width, height, position, transformOrigin, rotate ) {
-
-	if ( this instanceof SceneObject ) {
-
-		// Call the parent constructor
-		Sprite.apply( this, arguments );
-
-		// Add states
-
-		this.init( width, height, position, transformOrigin, rotate );
-
-		return this;
-
-	} else {
-
-		return new SceneObject( width, height, position, transformOrigin, rotate );
-
-	}
-
-}
-
-// Create a SceneObject.prototype object that inherits from Sprite.prototype
-SceneObject.prototype = Object.create( Sprite.prototype );
-
-// Set the "constructor" property to refer to SceneObject
-SceneObject.prototype.constructor = SceneObject;
-
-SceneObject.prototype.init = function init( width, height, position, transformOrigin, rotate ) {
-
-	var pos = {
-		x : position.x - 25,
-		y : position.z,
-		z : position.y
-	};
-	var trans = {
-		x : position.x + ( width / 2 ),
-		y : 0
 	};
 
-	var sceneObjectContainer = this.createSprite( 50, 50, pos, trans );
+	Sprite.prototype.fadeIn = function fadeIn( duration, from, to ) {
+		
+		var startOpacity = from && from > 0 ? from : 0;
+		var endOpacity = to && to > 0 ? to : 1;
+		
+		this.fade( startOpacity, endOpacity, duration );
 
-	sceneObjectContainer.addClassName( "sceneObjectContainer" );
-	
-	pos = {
-		x : -( width / 2 ) + 25,
-		y : -height,
-		z : 0
-	};
-	trans = {
-		x : 25,
-		y : 0,
-		z : 0
-	};
-	var rot = {
-		x : 90, //+ 20, // refactor
-		y : 0,
-		z : 0
 	};
 
-	var sceneObject = this.createSprite( width, height, pos, trans, rot );
-	sceneObject.addClassName( "sceneObject" ).update();
+	Sprite.prototype.fadeOut = function fadeOut( duration, from, to ) {
+		
+		var startOpacity = from && from > 0 ? from : 1;
+		var endOpacity = to && to > 0 ? to : 0;
+		
+		this.fade( startOpacity, endOpacity, duration );
 
-	// Add scene object ( perpendicular to floor )
-	// inside container ( parallel to floor )
-	// Note: to move object => move container
-	//       to rotate object => rotate object
-	sceneObjectContainer.addChild( sceneObject );
+	};
 
-	this.sprite = sceneObjectContainer;
 
-};
 
-SceneObject.prototype.setBackground = function setBackground( width, height, image, color ) {
 
-	// this.sprite => sceneObjectContainer
-	var sceneObject = this.sprite.children[ 0 ];
 
-	var bgSize = width && height ? "background-size:" + width + "px " + height + "px;" : "";
-	var bgImage = image ? "background-image:url('" + image + "');" : "";
-	var bgColor = color ? "background-color:" + color + ";" : "";
-	var preSemicolon = bgSize || bgImage || bgColor ? ";" : "";
 
-	sceneObject.style.cssText += preSemicolon + bgSize + bgImage + bgColor;
 
-};
 
-SceneObject.prototype.rotate = function rotate( axis, angle, loop, sprite ) {
 
-	// this.sprite => sceneObjectContainer
-	console.log( 'scene object rotate' );
-	var sceneObject = this.sprite.children[ 0 ];
 
-	Sprite.prototype.rotate.call( this, axis, angle, loop, sceneObject );
+	// Factory for creating objects
 
-};
+	function ObjectFactory( type ) {
 
-SceneObject.prototype.rotateTo = function rotateTo( axis, angle, duration, sprite ) {
+		var newObject = null;
+		
+		if ( type === "SceneObject" ) {
 
-	// this.sprite => sceneObjectContainer
-	var sceneObject = this.sprite.children[ 0 ];
+			newObject = SceneObject.apply( {}, [].slice.call( arguments, 1 ) );
 
-	Sprite.prototype.rotateTo.call( this, axis, angle, duration, sceneObject );
+		}
 
-};
+		if ( type === "Character" ) {
+
+			newObject = Character.apply( {}, [].slice.call( arguments, 1 ) );
+
+		}
+
+		if ( type === "SpriteContainer" ) {
+
+			// TODO: refactor into SpriteContainer class so ScreenBg can reuse it
+			newObject = new Spritely( arguments[ 1 ] );
+			newObject.addChild( Spritely.createCenteredContainer() );
+
+		}
+
+		if ( type === "ScreenBg" ) {
+
+			// TODO: refactor to create ScreenBg class
+			newObject = new Spritely( arguments[ 1 ] );
+			newObject.addChild( Spritely.createCenteredContainer() );
+
+			newObject.sprite = newObject;
+			newObject.timer = {};		
+			newObject.rotate = Sprite.prototype.rotate;
+			newObject.rotateTo = Sprite.prototype.rotateTo;
+			newObject.fade = Sprite.prototype.fade;
+			newObject.fadeIn = Sprite.prototype.fadeIn;
+			newObject.fadeOut = Sprite.prototype.fadeOut;
+
+		}
+
+		if ( type === "SceneFloor" ) {
+
+			var width = arguments[ 1 ];
+			var height = arguments[ 2 ];
+			var position = { x : -( width / 2 ), y : -( height / 2 ), z : -50 };
+			var transformOrigin = { x : 0, y : 0 };
+			var rotate = { x : -90, y : 0, z : 0 };
+			newObject = new Sprite(	width, height, position, transformOrigin, rotate );
+			newObject.sprite.addClassName( "sceneFloor" );
+
+		}
+
+		if ( type === "SceneFloorContainer" ) {
+
+			// TODO : refactor
+			newObject = new Spritely()
+				.setClassName( "sceneFloorContainer" )
+				.setZ( 0 )
+				// .rotateX( -20 )
+				.update();
+
+		}
+
+		return newObject;
+
+	}
+
+
+
+
+
+
+
+
+
+
+	/**
+	 *	Object : Character
+	 *  States:
+	 *		1. sprite
+	 *  Behaviors:
+	 *		1. Move
+	 *		2. Rotate
+	 *		3. FadeIn/FadeOut
+	 **/
+	function Character( width, height, position, transformOrigin, rotate ) {
+
+		if ( this instanceof Character ) {
+
+			// Call the parent constructor
+			Sprite.apply( this, arguments );
+
+			// Add states
+
+			this.init( width, height, position, transformOrigin, rotate );
+
+			return this;
+
+		} else {
+
+			return new Character( width, height, position, transformOrigin, rotate );
+
+		}
+
+	}
+
+	// Create a Character.prototype object that inherits from Sprite.prototype
+	Character.prototype = Object.create( Sprite.prototype );
+
+	// Set the "constructor" property to refer to Character
+	Character.prototype.constructor = Character;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 *	Object : Scene
+	 *  States:
+	 *		1. sprite
+	 *  Behaviors:
+	 *		1. Move
+	 *		2. Rotate
+	 *		3. FadeIn/FadeOut
+	 **/
+	function SceneObject( width, height, position, transformOrigin, rotate ) {
+
+		if ( this instanceof SceneObject ) {
+
+			// Call the parent constructor
+			Sprite.apply( this, arguments );
+
+			// Add states
+
+			this.init( width, height, position, transformOrigin, rotate );
+
+			return this;
+
+		} else {
+
+			return new SceneObject( width, height, position, transformOrigin, rotate );
+
+		}
+
+	}
+
+	// Create a SceneObject.prototype object that inherits from Sprite.prototype
+	SceneObject.prototype = Object.create( Sprite.prototype );
+
+	// Set the "constructor" property to refer to SceneObject
+	SceneObject.prototype.constructor = SceneObject;
+
+	SceneObject.prototype.init = function init( width, height, position, transformOrigin, rotate ) {
+
+		var pos = {
+			x : position.x - 25,
+			y : position.z,
+			z : position.y
+		};
+		var trans = {
+			x : position.x + ( width / 2 ),
+			y : 0
+		};
+
+		var sceneObjectContainer = this.createSprite( 50, 50, pos, trans );
+
+		sceneObjectContainer.addClassName( "sceneObjectContainer" );
+		
+		pos = {
+			x : -( width / 2 ) + 25,
+			y : -height,
+			z : 0
+		};
+		trans = {
+			x : 25,
+			y : 0,
+			z : 0
+		};
+		var rot = {
+			x : 90, //+ 20, // refactor
+			y : 0,
+			z : 0
+		};
+
+		var sceneObject = this.createSprite( width, height, pos, trans, rot );
+		sceneObject.addClassName( "sceneObject" ).update();
+
+		// Add scene object ( perpendicular to floor )
+		// inside container ( parallel to floor )
+		// Note: to move object => move container
+		//       to rotate object => rotate object
+		sceneObjectContainer.addChild( sceneObject );
+
+		this.sprite = sceneObjectContainer;
+
+	};
+
+	SceneObject.prototype.setBackground = function setBackground( width, height, image, color ) {
+
+		// this.sprite => sceneObjectContainer
+		var sceneObject = this.sprite.children[ 0 ];
+
+		var bgSize = width && height ? "background-size:" + width + "px " + height + "px;" : "";
+		var bgImage = image ? "background-image:url('" + image + "');" : "";
+		var bgColor = color ? "background-color:" + color + ";" : "";
+		var preSemicolon = bgSize || bgImage || bgColor ? ";" : "";
+
+		sceneObject.style.cssText += preSemicolon + bgSize + bgImage + bgColor;
+
+	};
+
+	SceneObject.prototype.rotate = function rotate( axis, angle, loop, sprite ) {
+
+		// this.sprite => sceneObjectContainer
+		console.log( 'scene object rotate' );
+		var sceneObject = this.sprite.children[ 0 ];
+
+		Sprite.prototype.rotate.call( this, axis, angle, loop, sceneObject );
+
+	};
+
+	SceneObject.prototype.rotateTo = function rotateTo( axis, angle, duration, sprite ) {
+
+		// this.sprite => sceneObjectContainer
+		var sceneObject = this.sprite.children[ 0 ];
+
+		Sprite.prototype.rotateTo.call( this, axis, angle, duration, sceneObject );
+
+	};
+
+
+
+
+
+
+	/**
+	 * Attach module to namespace
+	 */
+	 VN.prototype.objectFactory = ObjectFactory;
+
+} )( window.VisualNovel = window.VisualNovel || {} );
