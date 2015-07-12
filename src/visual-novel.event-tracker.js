@@ -99,13 +99,15 @@
 		var currentEventName = eventsInProgress[ eventsInProgress.length - 1 ];
 		var currentEventList = this.eventList[ currentEventName ];
 		var currentEventId = this.eventId[ currentEventName ];
-		var evt = currentEventList[ currentEventId ];
-		var type = evt.type;
-		var delay = evt.delay;
 
 		// Debug
 		// console.log( "start event: " + currentEventName + " " + currentEventId );
-		// console.log( currentEventList );
+		// console.log( "event list:", this.eventList );
+		// console.log( "current event list:", currentEventList );
+
+		var evt = currentEventList[ currentEventId ];
+		var type = evt.type;
+		var delay = evt.delay;
 
 		// Perform event
 		evt.event();
