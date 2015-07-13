@@ -222,6 +222,53 @@
 	/**
 	 * Attach module to namespace
 	 */
-	 VN.prototype.eventTracker = new EventTracker();
+	VN.prototype.eventTracker = new EventTracker();
+
+	/**
+	 * Function: pause
+	 *
+	 * Delay the execution of the next event
+	 *
+	 * @param delay = delay in milliseconds
+	 */
+	VN.prototype.pause = function pause( delay ) {
+
+		var self = this;
+
+		function eventToAdd() {
+			
+			setTimeout( function() {
+
+				self.eventTracker.nextEvent();
+
+			}, delay );
+
+		}
+
+		this.eventTracker.addEvent( "wait", eventToAdd );
+
+	};
+
+	/**
+	 * Function: repeatEvent
+	 *
+	 * Set to repeat the current event
+	 *
+	 * When the novel starts, the "main" event is called
+	 * An event is added when creating a choice
+	 */
+	VN.prototype.repeatEvent = function repeatEvent( ) {
+
+		var self = this;
+
+		function eventToAdd() {
+
+			self.eventTracker.doRepeatEvent = true;
+
+		}
+
+		this.eventTracker.addEvent( "nowait", eventToAdd );
+
+	};
 
 } )( window.VisualNovel = window.VisualNovel || {} );
