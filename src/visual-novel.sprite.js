@@ -1757,7 +1757,6 @@
 	SceneObject.prototype.rotate = function rotate( axis, angle, loop, sprite ) {
 
 		// this.sprite => sceneObjectContainer
-		console.log( 'scene object rotate' );
 		var sceneObject = this.sprite.children[ 0 ];
 
 		Sprite.prototype.rotate.call( this, axis, angle, loop, sceneObject );
