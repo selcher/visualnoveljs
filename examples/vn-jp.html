@@ -566,14 +566,10 @@
 
 					vn.loop( "lin", true, function() {
 						
-						requestAnimationFrame( function() {
-							vn.setCharacterImage( lin, "sleep" );
-						} );
-
+						vn.setCharacterImage( lin, "sleep" );
+						
 						setTimeout( function() {
-							requestAnimationFrame( function() {
-								vn.setCharacterImage( lin, "happy" );
-							} );
+							vn.setCharacterImage( lin, "happy" );
 						}, 200 );
 
 					}, 5000 );

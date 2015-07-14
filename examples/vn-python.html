@@ -222,14 +222,10 @@
 
 				novel.loop( "nao", true, function() {
 
-					requestAnimationFrame( function() {
-						novel.setCharacterImage( nao, "happy2" );
-					} );
+					novel.setCharacterImage( nao, "happy2" );
 
 					setTimeout( function() {
-						requestAnimationFrame( function() {
-							novel.setCharacterImage( nao, "happy" );
-						} );
+						novel.setCharacterImage( nao, "happy" );
 					}, 200 );
 
 				}, 4000 );

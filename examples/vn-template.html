@@ -238,14 +238,10 @@
 						// loop character image for blink eyes effect
 						novel.loop( "me", true, function() {
 
-							requestAnimationFrame( function() {
-								novel.setCharacterImage( me, "happy2" );
-							} );
+							novel.setCharacterImage( me, "happy2" );
 
 							setTimeout( function() {
-								requestAnimationFrame( function() {
-									novel.setCharacterImage( me, "happy" );
-								} );
+								novel.setCharacterImage( me, "happy" );
 							}, 200 );
 
 						}, 4000 );
