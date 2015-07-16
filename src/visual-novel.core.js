@@ -43,9 +43,10 @@ function VisualNovel( id, width, height, imgPath ) {
 		this.novelTitle = "";
 		this.novelSubtitle = "";
 		this.novelMode = "dialog"; // dialog or novel
-		this.imgPath = imgPath ? imgPath : "";
 
-		// store images for preloading
+		// store images for preloading, or let user handle it?
+		// preloading not yet implemented ( use preloadjs )
+		this.imgPath = imgPath ? imgPath : "";
 		this.images = [];
 
 		// div elements
@@ -56,26 +57,13 @@ function VisualNovel( id, width, height, imgPath ) {
 		this.screenStartId = null;
 		this.screenStartMenuButtonContainerId = null;
 		this.screenStartMenuStartButtonId = null;
-		this.novelModeId = null;
-		this.dialogModeId = null;
-		this.dialogButtonId = null;
-		this.dialogImageId = null;
-		this.dialogTextId = null;
-		this.dialogMenuId = null;
+		
 		this.screenCharacterId = null;
 		this.screenSceneId = null;
 		this.screenBgId = null;
 
 		// TODO: place default values here...
 		this.defaultVal = {};
-
-		// TODO : Check if used...
-		// TODO : implement one timer loop
-		this.timers = {
-			"dialog" : {
-				"text" : null
-			}
-		};
 
 		// scene
 		this.sceneContainer = null;
@@ -89,10 +77,6 @@ function VisualNovel( id, width, height, imgPath ) {
 		this.characterContainer = null;
 		this.characters = [];
 
-		// choice
-		this.menuChoicesTaken = {};
-		this.menuChoices = {};
-
 		// input
 		this.userInput = {};
 
@@ -100,100 +84,12 @@ function VisualNovel( id, width, height, imgPath ) {
 		this.screenWidth = width;
 		this.screenHeight = height;
 
-		// dialog
-		this.dialogWidth = width;
-		this.dialogHeight = 150;
-		this.dialogPadding = {
-			top : 10,
-			right : 10,
-			bottom : 10,
-			left : 10
-		};
-		this.dialogBorder = {
-			top : 10,
-			right : 50,
-			bottom : 10,
-			left : 50
-		};
-		this.dialogTextColor = "white";
-		this.dialogBgColor = "rgba(0,0,0,0.5)";
-		this.dialogButtonSize = {
-			width : 40,
-			height : 30
-		};
-		this.dialogButtonPos = {
-			left : width - this.dialogPadding.right - this.dialogButtonSize.width,
-			bottom : 0
-		};
-
-		// dialog character
-		this.dialogCharacter = null;
-
 		// scene
-		this.sceneHeight = this.screenHeight - this.dialogHeight;
 		this.sceneFloorHeight = height > width ? height : width;
 		this.sceneFloorWidth = height > width ? height : width;
 
-		// TODO : refactor calculations
-
-		this.templates = {
-
-			'novelcontainer' : [
-				"<div class='novel-container unSelectable'>",
-					"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
-					"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
-					"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
-					"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
-					"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
-					"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
-					"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
-				"</div>"
-			],
-			'startmenu' : [
-				"<div id='{novelId}-novelTitleContainer' class='novelTitleContainer'>",
-					"<div id='{novelId}-novelTitleText' class='novelTitleText'>{novelTitle}</div>",
-					"<div id='{novelId}-novelSubtitleText' class='novelSubtitleText'>{novelSubtitle}</div>",
-				"</div>",
-				"<div id='{novelId}-startMenuButtonContainer' class='startMenuButtonContainer'>",
-					"<button id='{novelId}-startMenuButton' class='startMenuButton' >",
-					"START</button>",
-				"</div>"
-			],
-			'say' : [
-				"<if={showDialogImage}><img id='{novelId}-dialog-dialogImage' src='{dialogImage}' style='{dialogImageStyle}' /></if>",
-				"<div id='{novelId}-dialog-dialogName' class='dialogName' style='{dialogNameStyle}'>{name}</div>",
-				"<div id='{novelId}-dialog-dialogText' class='dialogText'>{dialogLine}</div>",
-				"<if={showButtonText}><button id='{novelId}-dialog-dialogButton' class='dialogButton' >{dialogButtonText}</button></if>",
-				"<if={showButtonImage}><img id='{novelId}-dialog-dialogButton' class='dialogButton' src='{dialogButtonImage}' style='{dialogButtonImageStyle}' /></if>"
-			],
-			'userinput' : [
-				"<div id='userInputContainer' class='userInputContainer'>",
-					"<div id='userInputMessage' class='userInputMessage'>{message}</div><hr/><br/>",
-					"<input id='{novelId}-userInputText' class='userInputText' type='text' /><br/><br/>",
-					"<input type='button' id='{novelId}-userInputButton' class='userInputButton' value='OK' />",
-				"</div>"
-			],
-
-			// For choice menu:
-			// 1. build choice buttons
-			// 2. build choice image
-			// 3. insert buttons and image to menu container
-			'menuchoice' : [
-				"<div id='{novelId}-dialogMenuChoiceContainer' class='dialogMenuChoiceContainer'>",
-					"<div id='{novelId}-dialogMenuChoiceButtonsContainer' class='dialogMenuChoiceButtonsContainer'>",
-						"<foreach={choice in choices}>",
-							"<button class='dialogMenuChoiceButton' id='{novelId}-dialogMenuChoiceButton{index}' >",
-								"{choice.label}",
-							"</button><br/>",
-						"</foreach>",
-					"</div>",
-					"<div id='{novelId}-dialogMenuChoiceImageContainer' class='dialogMenuChoiceImageContainer'>",
-						"<if={imgPath}><img src='{imgPath}' style='width:{imgWidth}px;height:{imgHeight}px;' /></if>",
-					"</div>",
-				"</div>"
-			]
-
-		};
+		// timers
+		this.timers = {};
 
 		return this;
 
@@ -214,25 +110,9 @@ function VisualNovel( id, width, height, imgPath ) {
  */
 VisualNovel.prototype.init = function init() {
 
-	this.initObjects();
-
 	this.initContainers( this.novelId );
 
 	this.initScreenStart( this.novelId );
-
-};
-
-/**
- * Function: initObjects
- *
- * Initialize objects used for class
- */
-VisualNovel.prototype.initObjects = function initObjects() {
-
-	this.util = new Util();
-	this.parser = new Parser();
-	this.eventTracker = new EventTracker();
-	this.templates = new TemplateFactory( this.templates );
 
 };
 
@@ -247,58 +127,12 @@ VisualNovel.prototype.initContainers = function initContainers( novelId ) {
 	this.initNovelContainer( novelId );
 
 	this.initSceneContainer();
-	this.initDialogMenuContainer();
-	this.initNovelModeContainer();
-	this.initDialogModeContainer();
+	
+	this.initDialog( this.screenWidth, 150, 0, this.screenHeight - 150 );
+
 	this.initCharacterContainer();
+
 	this.initBGContainer();
-
-};
-
-/**
- * Function: pause
- *
- * Delay the execution of the next event
- *
- * @param delay = delay in milliseconds
- */
-VisualNovel.prototype.pause = function pause( delay ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		setTimeout( function() {
-
-			self.eventTracker.nextEvent();
-
-		}, delay );
-
-	}
-
-	this.eventTracker.addEvent( "wait", eventToAdd );
-
-};
-
-/**
- * Function: repeatEvent
- *
- * Set to repeat the current event
- *
- * When the novel starts, the "main" event is called
- * An event is added when creating a choice
- */
-VisualNovel.prototype.repeatEvent = function repeatEvent( ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		self.eventTracker.doRepeatEvent = true;
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
 
 };
 
@@ -331,7 +165,7 @@ VisualNovel.prototype.reset = function reset() {
 VisualNovel.prototype.resetNovel = function resetNovel() {
 
 	this.eventTracker.resetEventsInProgress();
-	this.resetMenuChoices();
+	this.dialog.resetMenuChoices();
 	this.resetCharacters();
 	this.resetScenes();
 	this.resetLoops();
@@ -410,52 +244,8 @@ VisualNovel.prototype.setNovelTitlePosition = function setNovelTitlePosition( x,
 	// but it does not consider reflow/repaint
 	// so cssText may be better...probably
 	var newStyle = ";left:" + pos.x + "px;top:" + pos.y + "px;";
+
 	this.novelTitleContainerId.style.cssText += newStyle;
-
-};
-
-/**
- * Function: setNovelMode
- * 
- * Set the mode of the novel : dialog/novel
- * set the size and position of the dialog
- * 
- * Convenient method for updating size & positon at the same time
- *
- * @param model
- * @param width
- * @param height
- * @param x
- * @param y
- *
- */
-VisualNovel.prototype.setNovelMode = function setNovelMode( mode, width, height, x, y ) {
-
-	var self = this;
-	var size = typeof width !== "undefined" && typeof height !== "undefined";
-	var pos = typeof x !== "undefined" && typeof y !== "undefined";
-
-	function eventToAdd() {
-
-		self.novelMode = mode ? mode : "dialog";
-
-		if ( size ) {
-
-			self.setDialogModeContainerSize( width, height );
-
-			self.setDialogButtonPosition( width - self.dialogPadding.right - self.dialogButtonSize.width );
-
-		}
-
-		if ( pos ) {
-
-			self.setDialogModeContainerPosition( x, y );
-
-		}
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
 
 };
 
@@ -530,9 +320,6 @@ VisualNovel.prototype.updateNovelContainerReference = function updateNovelContai
 	var doc = document;
 
 	this.screenStartId = doc.getElementById( novelId + "-screen-start" );
-	this.novelModeId = doc.getElementById( novelId + "-dialog-novelmode" );
-	this.dialogModeId = doc.getElementById( novelId + "-dialog-dialogmode" );
-	this.dialogMenuId = doc.getElementById( novelId + "-dialog-menu" );
 	this.screenCharacterId = doc.getElementById( novelId + "-screen-character" );
 	this.screenSceneId = doc.getElementById( novelId + "-screen-scene" );
 	this.screenBgId = doc.getElementById( novelId + "-screen-bg" );
@@ -553,8 +340,7 @@ VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( wi
 
 	var novelContainer = this.novelContainerId;
 	var containers = novelContainer ? novelContainer.getElementsByClassName( "novel" ) : [];
-	var newStyle = ";overflow:hidden;width:" + width +
-		"px;height:" + height + "px;";
+	var newStyle = ";overflow:hidden;width:" + width + "px;height:" + height + "px;";
 	
 	// novel container
 	novelContainer.style.cssText += newStyle;
@@ -757,13 +543,15 @@ VisualNovel.prototype.initSceneContainer = function initSceneContainer() {
  */
 VisualNovel.prototype.createSceneContainer = function createSceneContainer( element, width, height ) {
 
+	var objectFactory = this.objectFactory;
+
 	// build scene container
-	var sceneContainer = ObjectFactory( "SpriteContainer", element );
+	var sceneContainer = objectFactory( "SpriteContainer", element );
 	var stage = sceneContainer.children[ 0 ];
 
 	// build scene floor
-	var sceneFloor = ObjectFactory( "SceneFloor", width, height );
-	var sceneFloorContainer = ObjectFactory( "SceneFloorContainer" );
+	var sceneFloor = objectFactory( "SceneFloor", width, height );
+	var sceneFloorContainer = objectFactory( "SceneFloorContainer" );
 
 	sceneFloorContainer.addChild( sceneFloor.sprite );
 
@@ -844,297 +632,7 @@ VisualNovel.prototype.resetScenes = function resetScenes() {
 
 
 
-VisualNovel.prototype.initDialogMenuContainer = function initDialogMenuContainer() {
 
-	// Hide
-	this.dialogMenuId.style.display = "none";
-
-};
-
-VisualNovel.prototype.initNovelModeContainer = function initNovelModeContainer() {
-
-	// TODO : implement
-
-	// Hide
-	this.novelModeId.style.display = "none";
-
-};
-
-VisualNovel.prototype.initDialogModeContainer = function initDialogModeContainer() {
-
-	// TODO : refactor dialog into separate class / module
-
-	this.setSayDialogDisplay( false );
-	this.setDialogModeContainerSize( this.dialogWidth, this.dialogHeight );
-	this.setDialogModeContainerPosition( 0, this.sceneHeight );
-	this.setDialogTextColor( this.dialogTextColor );
-	this.setDialogBgColor( this.dialogBgColor );
-
-};
-
-VisualNovel.prototype.setDialogModeContainerSize = function setDialogModeContainerSize( width, height ) {
-
-	var newSize = this.calculateDialogModeContainerSize( width, height );
-	var newStyle = ";width:" + newSize.width + ";height:" + newSize.height + ";";
-
-	this.dialogModeId.style.cssText += newStyle;
-
-	// store new size
-	this.dialogWidth = width;
-	this.dialogHeight = height;
-
-};
-
-VisualNovel.prototype.calculateDialogModeContainerSize = function calculateDialogModeContainerSize( width, height ) {
-
-	var padding = this.dialogPadding;
-	var contWidth = width ? width : this.dialogWidth;
-	var contHeight = height ? height : this.dialogHeight;
-	
-	var size = {
-		width : ( contWidth - padding.left - padding.right ) + "px",
-		height : ( contHeight - padding.top - padding.bottom ) + "px"
-	};
-
-	return size;
-
-};
-
-VisualNovel.prototype.setDialogModeContainerPosition = function setDialogModeContainerPosition( x, y ) {
-
-	var newPos = this.util.scalePosition( 
-			{
-				x : x ? x : 0, 
-				y : y ? y : this.sceneHeight
-			},
-			{ 
-				x : this.screenWidth, 
-				y : this.screenHeight
-			} 
-		);
-
-	var newStyle = ";left:" + newPos.x + "px;top:" + newPos.y + "px;";
-
-	this.dialogModeId.style.cssText += newStyle;
-
-};
-
-VisualNovel.prototype.setDialogBgImage = function setDialogBgImage( img, width, height ) {
-
-	var bgImg = img ? ";background-image:url('" + this.imgPath + img + "');" : ";";
-	var bgSize = width && height ? 
-		"width:" + width + "px;height: " + height + "px;" : "";
-	var newStyle = bgImg + bgSize;
-
-	this.dialogModeId.style.cssText += newStyle;
-
-};
-
-VisualNovel.prototype.setDialogBgColor = function setDialogBgColor( color ) {
-
-	this.dialogModeId.style[ "background-color" ] = color ? color : "black";
-
-};
-
-VisualNovel.prototype.setDialogTextColor = function setDialogTextColor( color ) {
-
-	// TODO: refactor
-	// move to say dialog
-	// also add to set color of name in dialog
-	this.dialogModeId.style.color = color ? color : "white";
-
-};
-
-VisualNovel.prototype.setDialogBorderStyle = function setDialogBorderWidth( img, color, width, radius ) {
-
-	var padding = this.dialogPadding;
-
-	// not yet implemented
-	var borderImg = img ? "url('" + this.imgPath + img + "')" : "";
-
-	var borderWidth = width ? 
-		( typeof width === "string" ? width : width + "px" ) : "";
-		borderWidth = borderWidth === "" ? ";" : ";border-width:" + borderWidth + ";";
-	var borderStyle = "border-style:solid;";
-	var borderColor = color ? color : "rgba( 0, 0, 0, 0.5 )";
-		borderColor = "border-color:" + borderColor + ";";
-	var borderRadius = radius ? 
-		( typeof radius === "string" ? radius : radius + "px" ) : "";
-		borderRadius = borderRadius === "" ? "" : "border-radius:" + borderRadius + ";";
-
-	var newStyle = borderWidth + borderStyle + borderColor + borderRadius;
-
-	this.dialogModeId.style.cssText += newStyle;
-
-	// Update dialog container size
-	this.setDialogModeContainerSize( this.dialogWidth, this.dialogHeight );
-
-};
-
-VisualNovel.prototype.updateDialogBorderStyle = function updateDialogBorderStyle( img, color, width, radius ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		self.setDialogBorderStyle( img, color, width, radius );
-	
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-VisualNovel.prototype.setDialogButtonPosition = function setDialogButtonPosition( x, y ) {
-
-	// dialogButtonPos = { left : .., bottom : .. }
-	// position is stored in dialogButtonPos since the button is created dynamically
-	// on button creation, the position is obtained from dialogButtonPos
-	var buttonPos = this.dialogButtonPos;
-
-	if ( typeof x !== "undefined" ) {
-		buttonPos.left = x;
-	}
-
-	if ( typeof y !== "undefined" ) {
-		buttonPos.bottom = y;
-	}
-
-};
-
-VisualNovel.prototype.updateDialogButtonPosition = function updateDialogButtonPosition( character ) {
-
-	var characterObject = typeof character == "object" ? true : false;
-	var dialogButton = characterObject && character.dialog && character.dialog.button ?
-		character.dialog.button : null;
-	var updateButtonPosition = dialogButton && dialogButton.width;
-	
-	// Update button position based on image width
-	if ( updateButtonPosition ) {
-
-		var dialogPadding = this.dialogPadding;
-
-		this.setDialogButtonPosition( this.dialogWidth - 
-			dialogPadding.right - dialogPadding.left - dialogButton.width );
-
-	}
-
-};
-
-VisualNovel.prototype.refreshDialogButtonPositionView = function refreshDialogButtonPositionView( character ) {
-
-	var buttonPos = this.dialogButtonPos;
-	var newStyle = ";left:" + buttonPos.left + "px;bottom:" + buttonPos.bottom + "px;";
-
-	this.dialogButtonId.style.cssText += newStyle;
-
-};
-
-VisualNovel.prototype.updateDialogButtonListeners = function updateDialogButtonListeners( character, callback ) {
-
-	// TODO : refactor... too long
-	var self = this;
-	
-	var characterObject = typeof character == "object" ? true : false;
-	var characterDialog = characterObject && character.dialog ? character.dialog : null;
-	var dialogButton = characterDialog && character.dialog.button ?
-		character.dialog.button : null;
-
-	var dialogButtonElem = this.dialogButtonId;
-	var dialogImageElem = this.dialogImageId;
-
-	// check if bgColor for dialog button is provided
-	var hasDialogButtonBgColor = dialogButton && dialogButton.bgColor && dialogButton.bgColorHover;
-	var bgColorOnMouseOver = dialogButton && dialogButton.bgColorHover ?
-				dialogButton.bgColorHover : "transparent";
-	var callBgColorOnMouseOver = hasDialogButtonBgColor ?
-		function() { dialogButtonElem.style[ "background-color" ] = bgColorOnMouseOver; } : 
-		function() {};
-	var bgColorOnMouseLeave = dialogButton && dialogButton.bgColor ?
-				dialogButton.bgColor : "transparent";
-	var callBgColorOnMouseLeave = hasDialogButtonBgColor ?
-		function() { dialogButtonElem.style[ "background-color" ] = bgColorOnMouseLeave; } : 
-		function() {};
-	
-	// check if image for dialog button is provided
-	var hasDialogButtonImage = dialogButton && dialogButton.image && dialogButton.imageHover;
-	var imageOnMouseOver = dialogButton && dialogButton.imageHover ?
-		this.imgPath + dialogButton.imageHover : "";
-	var callImageOnMouseOver = hasDialogButtonImage ?
-		function() { dialogButtonElem.setAttribute( "src", imageOnMouseOver ); } : 
-		function() {};
-	var imageOnMouseLeave = dialogButton && dialogButton.image ? 
-		this.imgPath + dialogButton.image : "";
-	var callImageOnMouseLeave = hasDialogButtonImage ?
-		function() { dialogButtonElem.setAttribute( "src", imageOnMouseLeave ); } : 
-		function() {};
-
-	// TODO: create another function for adding handlers...
-	dialogButtonElem.onmouseover = function onMouseOverDialogButton( e ) {
-
-		callBgColorOnMouseOver();
-		callImageOnMouseOver();
-
-	};
-
-	dialogButtonElem.onmouseleave = function onMouseOverDialogButton( e ) {
-
-		callBgColorOnMouseLeave();
-		callImageOnMouseLeave();
-
-	};
-
-	// TODO: check for text
-
-	// check if nextImage for character image animation in dialog is provided
-	var clearDialogImageAnimation = function() {};
-	var dialogImageAnimationTimer = null;
-	var characterDialogImageInitial = characterDialog && characterDialog.image ?
-		this.imgPath + characterDialog.image : "";
-	var characterDialogImageNext = characterDialog && characterDialog.nextImage ?
-		this.imgPath + characterDialog.nextImage : "";
-	var dialogImageAnimationTimerDelay = characterDialog && characterDialog.imageDelay ?
-		characterDialog.imageDelay : 5000;
-
-	if ( characterDialog && characterDialog.nextImage ) {
-
-		// debug
-		// console.log( "start timer" );
-		
-		dialogImageAnimationTimer = setInterval( function() {
-
-			dialogImageElem.setAttribute( "src", characterDialogImageNext );
-
-			setTimeout( function() {
-				dialogImageElem.setAttribute( "src", characterDialogImageInitial );
-			}, 200 );
-
-		}, dialogImageAnimationTimerDelay );
-
-		clearDialogImageAnimation = function() {
-			
-			// debug
-			// console.log( "clear timer" );
-			window.clearInterval( dialogImageAnimationTimer );
-		
-		};
-
-	}
-
-	// Proceed to next event on click
-	this.dialogButtonId.onclick = function clickDialogButton( e ) {
-				
-		// perform passed callback when button is clicked
-		// e.g. clear timeout for showing line by each char
-		callback();
-
-		self.eventTracker.nextEvent();
-
-		clearDialogImageAnimation();
-
-	};
-
-};
 
 
 
@@ -1158,7 +656,7 @@ VisualNovel.prototype.initCharacterContainer = function initCharacterContainer()
 	screenCharacter.style.cssText += newStyle;
 
 	// create character sprite container
-	this.characterContainer = ObjectFactory( "SpriteContainer", screenCharacter );
+	this.characterContainer = this.objectFactory( "SpriteContainer", screenCharacter );
 
 };
 
@@ -1175,7 +673,7 @@ VisualNovel.prototype.initBGContainer = function initBGContainer() {
 
 	// create screen bg sprite container
 	// this.screenBgId = ObjectFactory( "SpriteContainer", this.screenBgId );
-	this.screenBgId = ObjectFactory( "ScreenBg", this.screenBgId );
+	this.screenBgId = this.objectFactory( "ScreenBg", this.screenBgId );
 
 };
 
@@ -1562,7 +1060,7 @@ VisualNovel.prototype.addObjectToScene = function addObjectToScene( name, bgInfo
 				{ x : self.sceneFloorWidth, y : -self.sceneFloorHeight, z : self.sceneFloorHeight }
 			);
 
-		var sceneObject = ObjectFactory( "SceneObject", width, height, pos );
+		var sceneObject = self.objectFactory( "SceneObject", width, height, pos );
 
 		sceneObject.setBackground( width, height, 
 			bgInfo.path ? self.imgPath + bgInfo.path : "", bgInfo.color );
@@ -1778,7 +1276,7 @@ VisualNovel.prototype.addTextToScene = function addTextToScene( name, text, info
 				{ x : self.sceneFloorWidth, y : -self.sceneFloorHeight, z : self.sceneFloorHeight }
 			);
 
-		var sceneObject = ObjectFactory( "SceneObject", width, height, pos );
+		var sceneObject = self.objectFactory( "SceneObject", width, height, pos );
 
 		sceneObject.sprite.children[ 0 ].setInnerHTML( text );
 
@@ -1957,7 +1455,7 @@ VisualNovel.prototype.addCharacter = function addCharacter( character, delay, fa
 			y : 0,
 			z : 0
 		};
-		var c = ObjectFactory( "Character", character.width, character.height, position, transformOrigin );
+		var c = self.objectFactory( "Character", character.width, character.height, position, transformOrigin );
 		c.setBackground( character.width, character.height, self.getCharacterImage( character ) );
 		
 		// To help us keep track of the character, use their name
@@ -2070,16 +1568,20 @@ VisualNovel.prototype.setCharacterImage = function setCharacterImage( character,
 	if ( typeof characterImage === "object" ) {
 
 		requestAnimationFrame( function() {
+
 			characterObject.sprite.setCSS( "background-image", 
 				"url('" + characterImage.src + "')" );
 			characterObject.sprite.setCSS( "background-position", characterImage.position );
+
 		} );
 
 	} else {
 
 		requestAnimationFrame( function() {
+
 			characterObject.sprite.setCSS( "background-image", 
 				"url('" + characterImage + "')" );
+
 		} );
 	
 	}
@@ -2142,767 +1644,6 @@ VisualNovel.prototype.resetCharacters = function resetCharacters() {
 	}
 
 	this.characters = [];
-
-};
-
-
-
-
-
-
-
-
-
-
-VisualNovel.prototype.showTextByChar = function showTextByChar( message, index, interval ) {
-	 	
- 	if ( index < message.length ) {
-
-    	this.setSayDialogText( message[ index++ ], true );
-
-    	this.timers.dialog.text = setTimeout( function () {
-
-    		this.showTextByChar( message, index, interval );
-
-    	}.bind( this ), interval );
-
-	} else {
-
-		this.timers.dialog.text = null;
-
-	}
-
-};
-
-VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
-
-	var self = this;
-	var showLineByEachChar = typeof delay === "object";
-	var delayTime = delay;
-	var showDialogButton = typeof delay === "undefined";
-
-	if ( showLineByEachChar ) {
-
-		delayTime = delay.interval * line.length + ( delay.delay ? delay.delay : 0 );
-		
-		if ( delay.button ) {
-			
-			delayTime = 0;
-			showDialogButton = true;
-		
-		}
-	}
-
-	function callSayLine() {
-
-		var mode = self.novelMode;
-
-		// Steps:
-		// 1. show say dialog container
-		// 2. build say dialog container
-		// 3. update references to divs and button in container
-		// 4. set text in container (TODO: add text later after building container)
-		self.setSayDialogDisplay( true, mode );
-
-		self.buildSayDialog( character, showLineByEachChar ? "" : line, delayTime, mode );
-
-		self.updateSayDialogReference( self.novelId );
-
-		// TODO : move ( inside condition ) to separate function
-		if ( showDialogButton ) {
-
-			self.updateSayDialogButtonReference( self.novelId );
-
-			// Set button position
-			self.updateDialogButtonPosition( character );
-			self.refreshDialogButtonPositionView( character );
-
-			self.updateDialogButtonListeners( character, function onDialogButtonClick() {
-				
-				var textTimer = self.timers.dialog.text;
-
-				if ( textTimer ) {
-
-					clearTimeout( textTimer );
-					textTimer = null;
-				
-				}
-
-			} );
-
-		}
-
-		if ( showLineByEachChar ) {
-
-			// replace variables in line
-			var dialogLine = self.parser.replaceVariablesInText( line, self.userInput );
-			
-			self.showTextByChar( dialogLine, 0, delay.interval );
-
-		}
-	}
-
-	this.eventTracker.addEvent( delayTime ? "nowait" : "wait", callSayLine, delayTime );
-
-};
-
-VisualNovel.prototype.sayLineExtend = function sayLineExtend( line, delay ) {
-
-	var self = this;
-
-	function callSayLineExtend() {
-
-		self.setSayDialogText( line, true );
-
-	}
-
-	this.eventTracker.addEvent( delay ? "nowait" : "wait" , callSayLineExtend, delay );
-
-};
-
-VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, line ) {
-
-	// TODO : refactor... too long...
-	// [ line, delay, includePrevLinesFlag ]
-	// line => sayLine
-	// line, delay => sayLine
-	// line, includePrevLinesFlag => sayLine ( include previous extend lines )
-	// line, delay, includePrevLinesFlag => sayLineExtend
-	// line, interval (object) => sayLine
-
-	var util = this.util;
-	var NoOfLines = line.length;
-	var lines = [];
-	var temp = [];
-	var nextIndex = null;
-
-	// build list of [ line, delay, includePrevLinesFlag ]
-	util.foreach( line, function( l, i ) {
-
-		if ( typeof l === "string" ) {
-			
-			temp.push( l );
-			nextIndex = i + 1;
-
-			// delay (number) passed
-			if ( nextIndex < NoOfLines && typeof line[ nextIndex ] === "number" ) {
-
-				temp.push( line[ nextIndex ] );
-			
-			}
-
-			// include previous line flag ( after line or delay argument ) passed
-			// if not passed, add the next line to the current dialog
-			if ( nextIndex < NoOfLines && typeof line[ nextIndex ] === "boolean" ) {
-
-				temp.push( 0, line[ nextIndex ] );
-
-			} else if ( nextIndex + 1 < NoOfLines && typeof line[ nextIndex + 1 ] === "boolean" ) {
-
-				temp.push( line[ nextIndex + 1 ] );	
-
-			}
-
-			// interval per character passed
-			if ( nextIndex < NoOfLines && typeof line[ nextIndex ] == "object" ) {
-
-				temp.push( line[ nextIndex ] );
-
-			}
-
-			lines.push( temp );
-		}
-
-		temp = [];
-	
-	} );
-
-	util.foreach( lines, function( l, i ) {
-
-		// TODO: add comments!! =3
-		// 0 = line, 1 = delay / interval, 2 = include previous lines flag
-
-		// last parameter is inclue previous line flag
-		if ( typeof l[ l.length -1 ] === "boolean" ) {
-
-			if ( l[ 1 ] === 0 ) {
-
-				// delay is 0, so sayLine to show OK button
-				// including previous lines
-				var content = temp.join( "" ) + l[ 0 ];
-				temp = [];
-				this.sayLine( character, content );
-
-			} else {
-
-				temp.push( l[ 0 ] );
-				this.sayLineExtend.apply( this, l );
-
-			}
-
-		} else if ( typeof l[ 1 ] === "object" ) {
-
-			// interval (object) passed
-			this.sayLine( character, l[ 0 ], l[ 1 ] );
-
-		} else {
-
-			if ( l[ 1 ] ) {
-
-				// delay provided, so store to include
-				// in the next say if includePrevLinesFlag
-				temp.push( l[ 0 ] );
-
-			} else {
-
-				temp = [];
-			
-			}
-
-			l.unshift( character );
-			this.sayLine.apply( this, l );
-
-		}
-
-	}.bind( this ) );
-
-};
-
-VisualNovel.prototype.say = function say( character, line, delay ) {
-
-	var length = arguments.length;
-	var isCharObj = typeof character === "object";
-	var isCharStr = typeof character === "string";
-	var isCharObjStr = isCharObj || isCharStr;
-
-	// say( "me", "hello" )
-	// say( charObj, "hello" )
-	if ( isCharObjStr && typeof line === "string" ) {
-		
-		this.dialogCharacter = character;
-		this.sayLine( character, line, delay );
-	
-	}
-
-	// say( charObj, [ "hello", "world" ] )
-	if ( isCharObjStr && this.util.isArray( line ) ) {
-
-		this.dialogCharacter = character;
-		this.sayMultipleLines( character, line );
-
-	}
-
-	// say( "hello" )
-	// say( "hello", 1000 )
-	if ( isCharStr && ( length === 1 || 
-		( length === 2  && typeof line === "number" ) ) ) {
-
-		this.sayLine( this.dialogCharacter, character, line );
-
-	}
-
-};
-
-VisualNovel.prototype.buildSayDialog = function buildSayDialog( character, line, delay, novelMode ) {
-
-	var sayTemplate = this.getSayTemplate( character, line, delay );
-
-	this.setSayDialogContainer( sayTemplate, novelMode );
-
-};
-
-VisualNovel.prototype.getSayTemplate = function getSayTemplate( character, line, delay ) {
-
-	// variables to replace in template
-	var templateVariables = this.getSayTemplateVariables( character, line, delay );
-
-	// get template
-	var sayTemplate = this.templates.get( "say" );
-	sayTemplate = this.parser.parseTemplate( sayTemplate, templateVariables );
-
-	// debug
-	// console.log( templateVariables );
-	// console.log( sayTemplate );
-
-	return sayTemplate;
-
-};
-
-VisualNovel.prototype.getSayTemplateVariables = function getSayTemplateVariables( character, line, delay ) {
-
-	var name = typeof character === "object" ? character.name : character;
-	var dialogNameStyle = typeof character === "object" ? character.nameStyle : "";
-	var dialogLine = this.parser.replaceVariablesInText( line, this.userInput );
-
-	var characterDialogSettings = character.dialog;
-	var dialogSettings = characterDialogSettings ? true : false;
-
-	var dialogImage = "";
-	var dialogImageWidth = "";
-	var dialogImageHeight = "";
-	var dialogImageLocation = "";
-	var dialogImageBorder = "";
-
-	var showButtonText = delay ? false : true;
-	var dialogButtonText = "OK";
-
-	var showButtonImage = false;
-	var dialogButtonImage = "";
-	var dialogButtonImageWidth = "";
-	var dialogButtonImageHeight = "";
-
-	if ( dialogSettings ) {
-
-		// TODO: refactor getting total img path??
-		// e.g. this.imgPath + character.dialogImage => this.getImgPath( character.dialogImage )
-
-		dialogImage = characterDialogSettings.image ?
-			this.imgPath + characterDialogSettings.image : "";
-		dialogImageWidth = characterDialogSettings.width ?
-			"width:" + characterDialogSettings.width + "px;" : "";
-		dialogImageHeight = characterDialogSettings.height ?
-			"height:" + characterDialogSettings.height + "px;" : "";
-		dialogImageLocation = characterDialogSettings.location ?
-				"float:" + characterDialogSettings.location + ";" : "";
-		dialogImageBorder = dialogImageLocation ? 
-			( dialogImageLocation == "left" ? "margin-right:10px;" : "margin-left:10px;" ) :
-			"";
-		var dialogButton = characterDialogSettings.button;
-		
-		// dialogButtonImage
-		showButtonImage = delay ? false : 
-			dialogButton && dialogButton.image ? dialogButton.image : false;
-		dialogButtonImage = showButtonImage ? 
-			this.imgPath + dialogButton.image : "";
-		dialogButtonImageWidth = showButtonImage ? 
-			"width:" + dialogButton.width + "px;" : "";
-		dialogButtonImageHeight = showButtonImage ? 
-			"height:" + dialogButton.height + "px;" : "";
-		
-		// dialogButtonText
-		showButtonText = delay || showButtonImage ? false :
-			dialogButton && dialogButton.text ? dialogButton.text : true;
-		dialogButtonText = dialogButton && dialogButton.text ? dialogButton.text : "OK";
-
-	}
-
-	// TODO : build style here instead of replacing it in the template!! only style variable in template...
-	
-	var templateVariables = {
-		"novelId" : this.novelId,
-		"name" : name,
-		"dialogNameStyle" : dialogNameStyle,
-		"dialogLine" : dialogLine,
-
-		"showDialogImage" : dialogSettings,
-		"dialogImage" : dialogImage,
-		"dialogImageStyle" : dialogImageLocation + dialogImageWidth + dialogImageHeight + dialogImageBorder,
-
-		"showButtonText" : showButtonText,
-		"dialogButtonText" : dialogButtonText,
-
-		"showButtonImage" : showButtonImage,
-		"dialogButtonImage" : dialogButtonImage,
-		"dialogButtonImageStyle" : dialogButtonImageWidth + dialogButtonImageHeight
-	};
-
-	return templateVariables;
-
-};
-
-VisualNovel.prototype.setSayDialogContainer = function setSayDialogContainer( template, novelMode ) {
-
-	// Default : dialogModeId
-	var mode = novelMode ? novelMode : this.novelMode;
-	var containerId = mode == "novel" ? "novelModeId" : "dialogModeId";
-
-	this[ containerId ].innerHTML = template;
-
-};
-
-VisualNovel.prototype.setSayDialogText = function setSayDialogText( line, isAppend ) {
-
-	this.dialogTextId.innerHTML = isAppend ? this.dialogTextId.innerHTML + line : line;
-
-};
-
-VisualNovel.prototype.updateSayDialogReference = function updateSayDialogReference( novelId ) {
-
-	var doc = document;
-
-	this.dialogImageId = doc.getElementById( novelId + "-dialog-dialogImage" );
-
-	this.dialogTextId = doc.getElementById( novelId + "-dialog-dialogText" );
-
-};
-
-VisualNovel.prototype.updateSayDialogButtonReference = function updateSayDialogButtonReference( novelId ) {
-
-	this.dialogButtonId = document.getElementById( novelId + "-dialog-dialogButton" );
-
-};
-
-VisualNovel.prototype.setSayDialogDisplay = function setSayDialogDisplay( show, novelMode ) {
-
-	var mode = novelMode ? novelMode : this.novelMode;
-	var display = show ? "block" : "none";
-
-	if ( mode == "dialog" ) {
-		this.dialogModeId.style.display = display;
-		this.novelModeId.style.display = "none";
-	}
-
-	if ( mode == "novel" ) {
-		this.dialogModeId.style.display = "none";
-		this.novelModeId.style.display = display;
-	}
-
-};
-
-VisualNovel.prototype.showSayDialog = function showSayDialog( show ) {
-
-	var self = this;
-
-	function callShowSayDialog() {
-
-		self.setSayDialogDisplay( show, self.novelMode );
-
-	}
-
-	this.eventTracker.addEvent( "nowait", callShowSayDialog );
-
-};
-
-VisualNovel.prototype.input = function input( storeInputKey, message ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		// Show
-		self.dialogMenuId.style.display = "block";
-
-		self.buildUserInputContainer( message );
-
-		self.updateUserInputReference( self.novelId );
-
-		self.userInputButtonId.onclick = function clickUserInputButton() {
-			self.getInput( storeInputKey );
-		};
-	}
-
-	this.eventTracker.addEvent( "wait", eventToAdd );
-
-};
-
-VisualNovel.prototype.buildUserInputContainer = function buildUserInputContainer( message ) {
-
-	this.dialogMenuId.innerHTML = this.getUserInputTemplate( message );
-
-};
-
-VisualNovel.prototype.getUserInputTemplate = function getUserInputTemplate( message ) {
-
-	// variables to replace in template
-	var toReplace = {
-		novelId : this.novelId,
-		message : message
-	};
-
-	// get template
-	var userInputTemplate = this.templates.get( "userinput" );
-	userInputTemplate = this.parser.parseTemplate( userInputTemplate, toReplace );
-
-	return userInputTemplate;
-
-};
-
-VisualNovel.prototype.updateUserInputReference = function updateUserInputReference( novelId ) {
-
-	var doc = document;
-
-	this.userInputTextId = doc.getElementById( novelId + "-userInputText" );
-	this.userInputButtonId = doc.getElementById( novelId + "-userInputButton" );
-
-};
-
-VisualNovel.prototype.getInput = function getInput( storeInputKey ) {
-
-	var userInput = this.userInputTextId;
-
-	this.userInput[ storeInputKey ] = userInput.value;
-
-	this.dialogMenuId.style.display = "none";
-
-	this.eventTracker.nextEvent();
-
-};
-
-VisualNovel.prototype.setInput = function setInput( key, value ) {
-
-	if ( key ) {
-
-		this.userInput[ key ] = value;
-
-	}
-
-};
-
-VisualNovel.prototype.setValue = function setValue( key, value ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		self.setInput( key, value );
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-VisualNovel.prototype.getValue = function getValue( key ) {
-
-	return this.userInput[ key ];
-
-};
-
-VisualNovel.prototype.resetNovelDialogText = function resetNovelDialogText() {
-
-	this.novelModeId.innerHTML = "";
-	this.dialogModeId.innerHTML = "";
-
-};
-
-VisualNovel.prototype.addCondition = function addCondition( var1, operator, var2, successCallback, failCallback ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		var conditionResult = false;
-		var userInput = self.userInput;
-
-		if ( operator == "=" ) {
-			conditionResult = userInput[ var1 ] == var2;
-		}
-
-		if ( operator == ">" ) {
-			conditionResult = userInput[ var1 ] > var2;
-		}
-
-		if ( operator == "<" ) {
-			conditionResult = userInput[ var1 ] < var2;
-		}
-
-		if ( operator == "!=" ) {
-			conditionResult = userInput[ var1 ] != var2;
-		}
-
-		var eventTracker = self.eventTracker;
-		var totalEventsInProgress = eventTracker.eventsInProgress.length;
-		var choiceEventId = eventTracker.eventsInProgress[ totalEventsInProgress - 1 ] + 
-							"-condition-" + totalEventsInProgress;
-
-		// add new event
-		eventTracker.addNewEventInProgress( choiceEventId );
-
-		// register success or fail events
-		if ( conditionResult ) {
-			successCallback();
-		} else {
-			failCallback();
-		}
-
-		// call success or fail events
-		self.eventTracker.startEvent();
-
-	}
-
-	// wait for condition success or fail events to register
-	// then call startEvent
-	this.eventTracker.addEvent( "wait", eventToAdd );
-
-};
-
-VisualNovel.prototype.choice = function choice( choiceEventId, listOfChoices, menuPos, menuImg ) {
-
-	// choiceId = to track the choice event
-
-	var self = this;
-
-	function eventToAdd() {
-
-		// show
-		self.dialogMenuId.style.display = "block";
-
-		var totalChoices = listOfChoices.length;
-
-		for ( var i = totalChoices, tmp = []; i--; ) {
-
-			// store choice in self.menuChoices
-			// so that it can be called later on button click
-			tmp.unshift( listOfChoices[ i ] );
-
-		}
-
-		// init event to menu choices 
-		// and store the choices 
-		// to perform the choices on button click
-		self.menuChoices[ choiceEventId ] = tmp;
-
-		// For choice menu:
-		// 1. build choice buttons
-		// 2. build choice image
-		// 3. insert buttons and image to menu container
-		self.buildMenuChoices( listOfChoices, menuImg );
-
-		self.updateMenuChoicesReference( self.novelId );
-
-		// Attach click events to dialog menu choice buttons
-		self.addMenuChoicesHandler( choiceEventId, totalChoices );
-
-		// position choice menu
-		if ( menuPos ) {
-
-			self.setMenuChoicesPosition( menuPos.x, menuPos.y );
-
-		}
-
-		// add new event
-		self.eventTracker.addNewEventInProgress( choiceEventId );
-
-		// Debug
-		// console.log( "choice: " + choiceEventId );
-		// console.log( self.eventsInProgress );
-		// console.log( self.eventList );
-		// console.log( self.eventId );
-		
-	}
-
-	this.eventTracker.addEvent( "wait", eventToAdd );
-
-};
-
-VisualNovel.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImage ) {
-
-	// Get menu choices template
-	var menuImg = menuImage ? menuImage : { image : "", width : 0, height : 0 };
-	var imgPath = menuImage ? this.imgPath + menuImg.image : "";
-	var menuChoiceTemplate = this.getMenuChoicesTemplate( listOfChoices, imgPath, 
-		menuImg.width, menuImg.height );
-
-	this.dialogMenuId.innerHTML = menuChoiceTemplate;
-
-};
-
-VisualNovel.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, imgPath, imgWidth, imgHeight ) {
-
-	// variables to replace in template
-	var toReplace = {
-		novelId : this.novelId,
-		choices : choices,
-		imgPath : imgPath,
-		imgWidth : imgWidth,
-		imgHeight : imgHeight
-	};
-
-	// get template
-	var menuChoiceTemplate = this.templates.get( "menuchoice" );
-	
-	menuChoiceTemplate = this.parser.parseTemplate( menuChoiceTemplate, toReplace );
-
-	return menuChoiceTemplate;
-
-};
-
-VisualNovel.prototype.updateMenuChoicesReference = function updateMenuChoicesReference( novelId ) {
-
-	this.dialogMenuChoiceContainerId = document.getElementById( this.novelId + "-dialogMenuChoiceContainer" );
-
-};
-
-VisualNovel.prototype.addMenuChoicesHandler = function addMenuChoicesHandler( choiceEventId, totalChoices ) {
-
-	var self = this;
-	var novelId = this.novelId;
-	var onMenuChoiceClick = function( i ) {
-
-		var index = i;
-
-		return function clickDialogMenuChoiceButton() {
-
-			// hide menu
-			self.dialogMenuId.style.display = "none";
-
-			self.performMenuChoice( choiceEventId, index );
-
-		};
-
-	};
-
-	for ( var i = totalChoices; i--; ) {
-
-		// TODO: add event delegation to menu choice container
-		document.getElementById( novelId + "-dialogMenuChoiceButton" + i ).onclick = onMenuChoiceClick( i );
-
-	}
-
-};
-
-VisualNovel.prototype.performMenuChoice = function performMenuChoice( choiceEventId, indexInListOfChoices ) {
-
-	var choiceTaken = this.menuChoices[ choiceEventId ][ indexInListOfChoices ];
-
-	// store choice taken
-	this.menuChoicesTaken[ choiceEventId ] = choiceTaken;
-
-	var action = choiceTaken.action;
-
-	// register events in menu choice action
-	action();
-
-	// add event to reset menu choices so that
-	// it only gets called after all
-	// menu choice actions are done
-	this.resetMenuChoicesForEvent( choiceEventId );
-
-	// start events in menu choice action
-	this.eventTracker.startEvent();
-
-};
-
-VisualNovel.prototype.setMenuChoicesPosition = function setMenuChoicesPosition( x, y ) {
-
-	var pos = this.util.scalePosition(
-			{ x : x, y : y },
-			{ x : this.screenWidth, y : this.screenHeight }
-		);
-
-	this.dialogMenuChoiceContainerId.style.cssText += ";left:" + pos.x + "px;top:" +
-		pos.y + "px;";
-
-};
-
-VisualNovel.prototype.resetMenuChoicesForEvent = function resetMenuChoicesForEvent( choiceEventId ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		self.menuChoices[ choiceEventId ] = [];
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-VisualNovel.prototype.resetMenuChoices = function resetMenuChoices() {
-
-	this.menuChoices = {};
-	this.menuChoicesTaken = {};
 
 };
 
