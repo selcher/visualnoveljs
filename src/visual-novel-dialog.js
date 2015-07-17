@@ -1,5 +1,8 @@
 ( function( VN ) {
 
+	// TODO: separate dialog and menu
+	//		 create module for menu
+
 	// Use in config
 	VisualNovel.prototype.setDialogBgImage = function setDialogBgImage( img, width, height ) {
 
