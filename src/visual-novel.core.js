@@ -51,12 +51,6 @@ function VisualNovel( id, width, height, imgPath ) {
 
 		// div elements
 		this.novelContainerId = null;
-		this.novelTitleContainerId = null;
-		this.novelTitleTextId = null;
-		this.novelSubtitleTextId = null;
-		this.screenStartId = null;
-		this.screenStartMenuButtonContainerId = null;
-		this.screenStartMenuStartButtonId = null;
 		
 		this.screenCharacterId = null;
 		this.screenSceneId = null;
@@ -172,82 +166,6 @@ VisualNovel.prototype.resetNovel = function resetNovel() {
 
 };
 
-/**
- * Function: setNovelTitle
- *
- * Set the novel title in the model and view
- *
- * @param title = new novel title
- * @param subtitle = new novel subtitle
- */
-VisualNovel.prototype.setNovelTitle = function setNovelTitle( title, subtitle ) {
-
-	this.updateNovelTitleModel( title, subtitle );
-	this.updateNovelTitleView( title, subtitle );
-
-};
-
-/**
- * Function: updateNovelTitleModel
- *
- * Set the novel title in the model
- *
- * @param title = new novel title
- * @param subtitle = new novel subtitle
- */
-VisualNovel.prototype.updateNovelTitleModel = function updateNovelTitleModel( title, subtitle ) {
-
-	this.novelTitle = title;
-	this.novelSubtitle = subtitle;
-
-};
-
-/**
- * Function: updateNovelTitleView
- *
- * Set the novel title in the view
- *
- * @param title = new novel title
- * @param subtitle = new novel subtitle
- */
-VisualNovel.prototype.updateNovelTitleView = function updateNovelTitleView( title, subtitle ) {
-
-	this.novelTitleTextId.innerHTML = title;
-	this.novelSubtitleTextId.innerHTML = subtitle;
-
-};
-
-/**
- * Function: setNovelTitlePosition
- *
- * Set the position of the novel title on the start screen
- *
- * @param x = distance from left
- * @param y = distance from top
- */
-VisualNovel.prototype.setNovelTitlePosition = function setNovelTitlePosition( x, y ) {
-
-	var pos = this.util.scalePosition(
-			{
-				x : x,
-				y : y
-			},
-			{
-				x : this.screenWidth,
-				y : this.screenHeight
-			}
-		);
-
-	// TODO: minimize reflows
-	// http://jsperf.com/csstext-vs-multiple-css-rules/4
-	// Using multiple style rule is efficient than cssText
-	// but it does not consider reflow/repaint
-	// so cssText may be better...probably
-	var newStyle = ";left:" + pos.x + "px;top:" + pos.y + "px;";
-
-	this.novelTitleContainerId.style.cssText += newStyle;
-
-};
 
 
 
@@ -319,7 +237,6 @@ VisualNovel.prototype.updateNovelContainerReference = function updateNovelContai
 
 	var doc = document;
 
-	this.screenStartId = doc.getElementById( novelId + "-screen-start" );
 	this.screenCharacterId = doc.getElementById( novelId + "-screen-character" );
 	this.screenSceneId = doc.getElementById( novelId + "-screen-scene" );
 	this.screenBgId = doc.getElementById( novelId + "-screen-bg" );
@@ -364,147 +281,6 @@ VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( wi
 
 
 
-/**
- * Function: initScreenStart
- *
- * Initialize the start screen
- *
- * @param novelId = id of the novel div, and instance reference
- */
-VisualNovel.prototype.initScreenStart = function initScreenStart( novelId ) {
-
-	var self = this;
-	
-	this.buildStartMenu( novelId );
-	this.updateStartMenuReference( novelId );
-	this.showStartScreen( true );
-
-	this.addStartMenuButtonHandler();
-
-};
-
-/**
- * Function: addStartMenuButtonHandler
- *
- * Add the event handlers for the start menu
- */
-VisualNovel.prototype.addStartMenuButtonHandler = function addStartMenuButtonHandler() {
-
-	// TODO: refactor...event delegation
-	var self = this;
-
-	this.screenStartMenuStartButtonId.onclick = function clickStartMenuButton() {
-		self.startNovel();
-	};
-
-};
-
-/**
- * Function: startNovel
- *
- * Hide the start screen, and start the added events in the novel
- */
-VisualNovel.prototype.startNovel = function startNovel() {
-
-	// hide start main menu
-	this.showStartScreen( false );
-	
-	this.eventTracker.startEvent();
-
-};
-
-/**
- * Function: buildStartMenu
- *
- * Build the html for the start menu
- *
- * @param novelId = id of the novel div, and instance reference
- */
-VisualNovel.prototype.buildStartMenu = function builStartMenu( novelId ) {
-
-	var screenStart = this.screenStartId;
-
-	var startMenuTemplate = this.templates.get( "startmenu" );
-	var parseVariables = {
-		novelId : novelId,
-		novelTitle : this.novelTitle,
-		novelSubtitle : this.novelSubtitle
-	};
-
-	startMenuTemplate = this.parser.parseTemplate( startMenuTemplate, parseVariables );
-
-	screenStart.innerHTML = startMenuTemplate;	
-
-};
-
-/**
- * Function: updateStartMenuReference
- *
- * Update refences to html elements on the start screen
- *
- * @param novelId = id of the novel div, and instance reference
- */
-VisualNovel.prototype.updateStartMenuReference = function updateStartMenuReference( novelId ) {
-
-	var doc = document;
-
-	this.novelTitleContainerId = doc.getElementById( novelId + "-novelTitleContainer" );
-	this.novelTitleTextId = doc.getElementById( novelId + "-novelTitleText" );
-	this.novelSubtitleTextId = doc.getElementById( novelId + "-novelSubtitleText" );
-	this.screenStartMenuButtonContainerId = doc.getElementById( novelId + "-startMenuButtonContainer" );
-	this.screenStartMenuStartButtonId = doc.getElementById( novelId + "-startMenuButton" );
-	
-};
-
-VisualNovel.prototype.showStartScreen = function showStartScreen( show ) {
-
-	var display = show ? "block" : "none";
-
-	this.screenStartId.style.display = display;
-
-};
-
-VisualNovel.prototype.setStartScreenBgImage = function setStartScreenBgImage( imgPath, width, height ) {
-
-	var image = this.imgPath + imgPath;
-	var newStyle = ";background-image:url('" + image + "');" +
-		"background-size:" + width + "px " + height + "px;";
-
-	this.screenStartId.style.cssText += newStyle;
-
-};
-
-VisualNovel.prototype.setStartScreenBgColor = function setStartScreenBgColor( color ) {
-
-	this.screenStartId.style[ "background-color" ] = color;
-
-};
-
-VisualNovel.prototype.setStartScreenMenuBgImage = function setStartScreenMenuBgImage( imgPath, width, height ) {
-
-	var newStyle = ";background-image:url('" + this.imgPath + imgPath + "');" + 
-		"background-size:" + width + "px " + height + "px;";
-
-	this.screenStartMenuButtonContainerId.style.cssText += newStyle;
-
-};
-
-VisualNovel.prototype.setStartScreenMenuBgColor = function setStartScreenMenuBgColor( color ) {
-
-	this.screenStartMenuButtonContainerId.style[ "background-color" ] = color;
-
-};
-
-VisualNovel.prototype.setStartScreenMenuPos = function setStartScreenMenuPos( x, y ) {
-
-	var posX = x > 1 ? x : x * this.screenHeight;
-	var posY = y > 1 ? y : y * this.screenWidth;
-	var newStyle = ";left:" + posX + "px;top:" +
-		posY + "px;";
-
-	this.screenStartMenuButtonContainerId.style.cssText += newStyle;
-
-};
 
 
 
