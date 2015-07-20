@@ -4,34 +4,34 @@
 	//		 create module for menu
 
 	// Use in config
-	VisualNovel.prototype.setDialogBgImage = function setDialogBgImage( img, width, height ) {
+	VN.prototype.setDialogBgImage = function setDialogBgImage( img, width, height ) {
 
 		this.dialog.setDialogBgImage( this.imgPath + img, width, height );
 
 	};
 
 	// Use in config
-	VisualNovel.prototype.setDialogBgColor = function setDialogBgColor( color ) {
+	VN.prototype.setDialogBgColor = function setDialogBgColor( color ) {
 
 		this.dialog.setDialogBgColor( color );
 
 	};
 
 	// Use in config
-	VisualNovel.prototype.setDialogTextColor = function setDialogTextColor( color ) {
+	VN.prototype.setDialogTextColor = function setDialogTextColor( color ) {
 
 		this.dialog.setDialogTextColor( color );
 
 	};
 
 	// Use in config
-	VisualNovel.prototype.setDialogBorderStyle = function setDialogBorderStyle( img, color, width, radius ) {
+	VN.prototype.setDialogBorderStyle = function setDialogBorderStyle( img, color, width, radius ) {
 
 		this.dialog.setDialogBorderStyle( this.imgPath + img, color, width, radius );
 
 	};
 
-	VisualNovel.prototype.updateDialogBorderStyle = function updateDialogBorderStyle( img, color, width, radius ) {
+	VN.prototype.updateDialogBorderStyle = function updateDialogBorderStyle( img, color, width, radius ) {
 
 		var self = this;
 		var imgUrl = this.imgPath + img;
@@ -61,7 +61,7 @@
 	 * @param y
 	 *
 	 */
-	VisualNovel.prototype.setNovelMode = function setNovelMode( mode, width, height, x, y ) {
+	VN.prototype.setNovelMode = function setNovelMode( mode, width, height, x, y ) {
 
 		var self = this;
 		var newPos = this.util.scalePosition( 
@@ -85,7 +85,7 @@
 
 	};
 
-	VisualNovel.prototype.buildSayDialog = function buildSayDialog( character, line, delay, novelMode ) {
+	VN.prototype.buildSayDialog = function buildSayDialog( character, line, delay, novelMode ) {
 
 		var sayTemplate = this.getSayTemplate( character, line, delay );
 
@@ -93,7 +93,7 @@
 
 	};
 
-	VisualNovel.prototype.getSayTemplate = function getSayTemplate( character, line, delay ) {
+	VN.prototype.getSayTemplate = function getSayTemplate( character, line, delay ) {
 
 		// variables to replace in template
 		var templateVariables = this.getSayTemplateVariables( character, line, delay );
@@ -110,7 +110,7 @@
 
 	};
 
-	VisualNovel.prototype.getSayTemplateVariables = function getSayTemplateVariables( character, line, delay ) {
+	VN.prototype.getSayTemplateVariables = function getSayTemplateVariables( character, line, delay ) {
 
 		var name = typeof character === "object" ? character.name : character;
 		var dialogNameStyle = typeof character === "object" ? character.nameStyle : "";
@@ -192,7 +192,7 @@
 
 	};
 
-	VisualNovel.prototype.showSayDialog = function showSayDialog( show ) {
+	VN.prototype.showSayDialog = function showSayDialog( show ) {
 
 		var self = this;
 
@@ -206,7 +206,7 @@
 
 	};
 
-	VisualNovel.prototype.input = function input( storeInputKey, message ) {
+	VN.prototype.input = function input( storeInputKey, message ) {
 
 		var self = this;
 
@@ -235,7 +235,7 @@
 
 	};
 
-	VisualNovel.prototype.getUserInputTemplate = function getUserInputTemplate( message ) {
+	VN.prototype.getUserInputTemplate = function getUserInputTemplate( message ) {
 
 		// variables to replace in template
 		var toReplace = {
@@ -252,7 +252,7 @@
 
 	};
 
-	VisualNovel.prototype.setInput = function setInput( key, value ) {
+	VN.prototype.setInput = function setInput( key, value ) {
 
 		if ( key ) {
 
@@ -262,7 +262,7 @@
 
 	};
 
-	VisualNovel.prototype.setValue = function setValue( key, value ) {
+	VN.prototype.setValue = function setValue( key, value ) {
 
 		var self = this;
 
@@ -276,13 +276,13 @@
 
 	};
 
-	VisualNovel.prototype.getValue = function getValue( key ) {
+	VN.prototype.getValue = function getValue( key ) {
 
 		return this.userInput[ key ];
 
 	};
 
-	VisualNovel.prototype.addCondition = function addCondition( var1, operator, var2, successCallback, failCallback ) {
+	VN.prototype.addCondition = function addCondition( var1, operator, var2, successCallback, failCallback ) {
 
 		var self = this;
 
@@ -333,7 +333,7 @@
 
 	};
 
-	VisualNovel.prototype.choice = function choice( choiceEventId, listOfChoices, menuPos, menuImg ) {
+	VN.prototype.choice = function choice( choiceEventId, listOfChoices, menuPos, menuImg ) {
 
 		// choiceEventId = to track the choice event
 
@@ -406,7 +406,7 @@
 
 	};
 
-	VisualNovel.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImage ) {
+	VN.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImage ) {
 
 		// Get menu choices template
 		var menuImg = menuImage ? menuImage : { image : "", width : 0, height : 0 };
@@ -418,7 +418,7 @@
 
 	};
 
-	VisualNovel.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, imgPath, imgWidth, imgHeight ) {
+	VN.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, imgPath, imgWidth, imgHeight ) {
 
 		// variables to replace in template
 		var toReplace = {
@@ -438,7 +438,7 @@
 
 	};
 
-	VisualNovel.prototype.resetMenuChoicesForEvent = function resetMenuChoicesForEvent( choiceEventId ) {
+	VN.prototype.resetMenuChoicesForEvent = function resetMenuChoicesForEvent( choiceEventId ) {
 
 		var self = this;
 
@@ -452,7 +452,7 @@
 
 	};	
 
-	VisualNovel.prototype.sayLine = function sayLine( character, line, delay ) {
+	VN.prototype.sayLine = function sayLine( character, line, delay ) {
 
 		var self = this;
 		var imgPath = this.imgPath;
@@ -520,7 +520,7 @@
 
 	};
 
-	VisualNovel.prototype.sayLineExtend = function sayLineExtend( line, delay ) {
+	VN.prototype.sayLineExtend = function sayLineExtend( line, delay ) {
 
 		var self = this;
 
@@ -534,7 +534,7 @@
 
 	};
 
-	VisualNovel.prototype.sayMultipleLines = function sayMultipleLines( character, line ) {
+	VN.prototype.sayMultipleLines = function sayMultipleLines( character, line ) {
 
 		// TODO : refactor... too long...
 		// [ line, delay, includePrevLinesFlag ]
@@ -642,7 +642,7 @@
 
 	};
 
-	VisualNovel.prototype.say = function say( character, line, delay ) {
+	VN.prototype.say = function say( character, line, delay ) {
 
 		var length = arguments.length;
 		var isCharObj = typeof character === "object";
@@ -687,7 +687,7 @@
 
 
 
-	VisualNovel.prototype.initDialog = function initDialog( width, height, x, y ) {
+	VN.prototype.initDialog = function initDialog( width, height, x, y ) {
 
 		var dialog = this.dialog = new Dialog( this.novelId, width, height, x, y );
 
