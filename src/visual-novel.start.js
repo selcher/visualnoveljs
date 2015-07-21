@@ -7,7 +7,7 @@
 	 *
 	 * @param novelId = id of the novel div, and instance reference
 	 */
-	VisualNovel.prototype.initScreenStart = function initScreenStart( novelId ) {
+	VN.prototype.initScreenStart = function initScreenStart( novelId ) {
 
 		var self = this;
 		var screenStart = this.screenStart = new ScreenStart( novelId );
@@ -30,7 +30,7 @@
 	 *
 	 * Hide the start screen, and start the added events in the novel
 	 */
-	VisualNovel.prototype.startNovel = function startNovel() {
+	VN.prototype.startNovel = function startNovel() {
 
 		// hide start main menu
 		this.screenStart.showStartScreen( false );
@@ -46,7 +46,7 @@
 	 *
 	 * @param novelId = id of the novel div, and instance reference
 	 */
-	VisualNovel.prototype.buildStartMenu = function builStartMenu( novelId ) {
+	VN.prototype.buildStartMenu = function builStartMenu( novelId ) {
 
 		var screenStart = this.screenStart.screenStartId;
 
@@ -63,37 +63,37 @@
 
 	};
 
-	VisualNovel.prototype.showStartScreen = function showStartScreen( show ) {
+	VN.prototype.showStartScreen = function showStartScreen( show ) {
 
 		this.screenStart.showStartScreen( show );
 
 	};
 
-	VisualNovel.prototype.setStartScreenBgImage = function setStartScreenBgImage( imgPath, width, height ) {
+	VN.prototype.setStartScreenBgImage = function setStartScreenBgImage( imgPath, width, height ) {
 
 		this.screenStart.setStartScreenBgImage( this.imgPath + imgPath, width, height );
 
 	};
 
-	VisualNovel.prototype.setStartScreenBgColor = function setStartScreenBgColor( color ) {
+	VN.prototype.setStartScreenBgColor = function setStartScreenBgColor( color ) {
 
 		this.screenStart.setStartScreenBgColor( color );
 
 	};
 
-	VisualNovel.prototype.setStartScreenMenuBgImage = function setStartScreenMenuBgImage( imgPath, width, height ) {
+	VN.prototype.setStartScreenMenuBgImage = function setStartScreenMenuBgImage( imgPath, width, height ) {
 
 		this.screenStart.setStartScreenBgImage( this.imgPath + imgPath, width, height );
 
 	};
 
-	VisualNovel.prototype.setStartScreenMenuBgColor = function setStartScreenMenuBgColor( color ) {
+	VN.prototype.setStartScreenMenuBgColor = function setStartScreenMenuBgColor( color ) {
 
 		this.screenStart.setStartScreenMenuBgColor( color );
 
 	};
 
-	VisualNovel.prototype.setStartScreenMenuPos = function setStartScreenMenuPos( x, y ) {
+	VN.prototype.setStartScreenMenuPos = function setStartScreenMenuPos( x, y ) {
 
 		var posX = x > 1 ? x : x * this.screenHeight;
 		var posY = y > 1 ? y : y * this.screenWidth;
@@ -110,7 +110,7 @@
 	 * @param title = new novel title
 	 * @param subtitle = new novel subtitle
 	 */
-	VisualNovel.prototype.setNovelTitle = function setNovelTitle( title, subtitle ) {
+	VN.prototype.setNovelTitle = function setNovelTitle( title, subtitle ) {
 
 		this.updateNovelTitleModel( title, subtitle );
 		this.updateNovelTitleView( title, subtitle );
@@ -125,7 +125,7 @@
 	 * @param title = new novel title
 	 * @param subtitle = new novel subtitle
 	 */
-	VisualNovel.prototype.updateNovelTitleModel = function updateNovelTitleModel( title, subtitle ) {
+	VN.prototype.updateNovelTitleModel = function updateNovelTitleModel( title, subtitle ) {
 
 		this.novelTitle = title;
 		this.novelSubtitle = subtitle;
@@ -140,7 +140,7 @@
 	 * @param title = new novel title
 	 * @param subtitle = new novel subtitle
 	 */
-	VisualNovel.prototype.updateNovelTitleView = function updateNovelTitleView( title, subtitle ) {
+	VN.prototype.updateNovelTitleView = function updateNovelTitleView( title, subtitle ) {
 
 		this.screenStart.updateNovelTitleView( title, subtitle );
 
@@ -154,7 +154,7 @@
 	 * @param x = distance from left
 	 * @param y = distance from top
 	 */
-	VisualNovel.prototype.setNovelTitlePosition = function setNovelTitlePosition( x, y ) {
+	VN.prototype.setNovelTitlePosition = function setNovelTitlePosition( x, y ) {
 
 		var pos = this.util.scalePosition(
 				{
