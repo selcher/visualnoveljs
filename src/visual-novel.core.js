@@ -53,15 +53,11 @@ function VisualNovel( id, width, height, imgPath ) {
 		this.novelContainerId = null;
 		
 		this.screenCharacterId = null;
-		this.screenSceneId = null;
-		this.screenBgId = null;
 
 		// TODO: place default values here...
 		this.defaultVal = {};
 
 		// scene
-		this.sceneContainer = null;
-		this.sceneFloor = null;
 		this.scenes = {
 			text : [],
 			object : []
@@ -81,9 +77,6 @@ function VisualNovel( id, width, height, imgPath ) {
 		// scene
 		this.sceneFloorHeight = height > width ? height : width;
 		this.sceneFloorWidth = height > width ? height : width;
-
-		// timers
-		this.timers = {};
 
 		return this;
 
@@ -164,6 +157,11 @@ VisualNovel.prototype.resetNovel = function resetNovel() {
 	this.resetScenes();
 	this.resetLoops();
 
+	this.scenes = {
+		"text": [],
+		"object": []
+	};
+
 };
 
 
@@ -190,7 +188,6 @@ VisualNovel.prototype.initNovelContainer = function initNovelContainer( novelId 
 
 	var content = this.buildNovelContainerContent( novelId );
 	this.setNovelContainerContent( content );
-	this.updateNovelContainerReference( novelId );
 	this.setNovelContainerSize( this.screenWidth, this.screenHeight );
 
 };
@@ -222,24 +219,6 @@ VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerC
 VisualNovel.prototype.setNovelContainerContent = function setNovelContainerContent( content ) {
 
 	this.novelContainerId.innerHTML = content;
-
-};
-
-/**
- * Function: updateNovelContainerReference
- *
- * Update html references to the start screen, dialog, choice menu,
- * character container, scene container, bg container
- *
- * @param novelId = id of visual novel div, and instance reference
- */
-VisualNovel.prototype.updateNovelContainerReference = function updateNovelContainerReference( novelId ) {
-
-	var doc = document;
-
-	this.screenCharacterId = doc.getElementById( novelId + "-screen-character" );
-	this.screenSceneId = doc.getElementById( novelId + "-screen-scene" );
-	this.screenBgId = doc.getElementById( novelId + "-screen-bg" );
 
 };
 
@@ -284,520 +263,6 @@ VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( wi
 
 
 
-
-
-
-
-
-
-
-/**
- * Function: initSceneContainer
- *
- * Initialize the container for the scenes
- */
-VisualNovel.prototype.initSceneContainer = function initSceneContainer() {
-
-	// TODO : needs refactoring
-
-	var result = this.createSceneContainer( this.screenSceneId, this.sceneFloorWidth, this.sceneFloorHeight );
-	
-	// Store for reference
-	this.sceneContainer = result.floorContainer;
-	this.sceneFloor = result.floor;
-
-};
-
-/**
- * Function: createSceneContainer
- *
- * Create the container for the scenes
- *
- * @param element = dom container for scenes
- * @param width = width of container
- * @param height = height of container
- */
-VisualNovel.prototype.createSceneContainer = function createSceneContainer( element, width, height ) {
-
-	var objectFactory = this.objectFactory;
-
-	// build scene container
-	var sceneContainer = objectFactory( "SpriteContainer", element );
-	var stage = sceneContainer.children[ 0 ];
-
-	// build scene floor
-	var sceneFloor = objectFactory( "SceneFloor", width, height );
-	var sceneFloorContainer = objectFactory( "SceneFloorContainer" );
-
-	sceneFloorContainer.addChild( sceneFloor.sprite );
-
-	stage.addChild( sceneFloorContainer );
-
-	// Return floor container and floor
-	var result = {
-		floorContainer : sceneFloorContainer,
-		floor : sceneFloor
-	};
-
-	return result;
-
-};
-
-VisualNovel.prototype.rotateScene = function rotateScene( axis, angle, speed, loop ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		self.sceneFloor.rotate( axis, angle, speed, loop );
-	
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-};
-
-VisualNovel.prototype.moveScene = function moveScene( x, y, z, speed ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		self.sceneFloor.move( x, y, z, speed );
-	
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-};
-
-VisualNovel.prototype.resetScenes = function resetScenes() {
-
-	var scenes = this.sceneContainer ? this.sceneContainer.children : [];
-	var totalScenes = scenes.length;
-
-	// Don't include 0 since it is the scene floor
-	// for( var i = totalScenes - 1; i >= 1; i-- ) {
-
-	// 	this.sceneContainer.removeChildAt( i );
-
-	// }
-
-	if ( totalScenes > 1 ) {
-		
-		for( var i = totalScenes - 1; i--; ) {
-			
-			// Don't include 0 since it is the scene floor
-			this.sceneContainer.removeChildAt( i + 1 );
-
-		}
-
-	}
-
-	this.scenes = {
-		text : [],
-		object : []
-	};
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-VisualNovel.prototype.initCharacterContainer = function initCharacterContainer() {
-
-	// TODO: refactor
-
-	var screenCharacter = this.screenCharacterId;
-
-	// set character container size and hide it
-	var newStyle = ";display:none;width:" + this.screenWidth + 
-		"px;height:" + this.screenHeight + "px;";
-		
-	screenCharacter.style.cssText += newStyle;
-
-	// create character sprite container
-	this.characterContainer = this.objectFactory( "SpriteContainer", screenCharacter );
-
-};
-
-
-
-
-
-
-
-
-
-
-VisualNovel.prototype.initBGContainer = function initBGContainer() {
-
-	// create screen bg sprite container
-	// this.screenBgId = ObjectFactory( "SpriteContainer", this.screenBgId );
-	this.screenBgId = this.objectFactory( "ScreenBg", this.screenBgId );
-
-};
-
-VisualNovel.prototype.setBgImage = function setBgImage( bgImg, width, height, repeat, widthSize, heightSize ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		var screenBg = self.screenBgId;
-
-		// TODO : check how Sprite3D updates css...
-		screenBg.setPosition( 0, 0, 0 ).setSize( width, height ).setCSS(
-			"background-image", "url('" + self.imgPath + bgImg + "')" );
-
-		if ( widthSize && heightSize ) {
-
-			screenBg.setCSS( "background-size", widthSize + "px " + heightSize + "px" );
-
-		}
-
-		// Update bg at start of frame
-		requestAnimationFrame( function() {
-			screenBg.update();
-		} );
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-VisualNovel.prototype.setBgColor = function setBgColor( bgColor ) {
-
-	var self = this;
-
-	function eventToAdd() {
-		self.screenBgId.style[ "background-color" ] = bgColor;
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-VisualNovel.prototype.setBgSize = function setBgSize( width, height, duration, delay ) {
-
-	// TODO : implement as zoom?
-	//		  duration, delay
-	// Note: for animation: use setBGScale instead
-
-	var self = this;
-
-	function eventToAdd() {
-		
-		if ( duration ) {
-
-			var previousSize = self.getBgSize();
-			var distance = {
-				"width": width - previousSize.width,
-				"height": height - previousSize.height
-			};
-
-			var animationStartTime = Date.now();
-			var animationDuration = duration;
-
-			var bgSizeUpdate = function() {
-
-				var currentTime = Date.now();
-				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
-
-				self.setBgSizeTo(
-					previousSize.width + ( timeDifference * distance.width ),
-					previousSize.height + ( timeDifference * distance.height )
-				);
-
-				if ( timeDifference <= 1 ) {
-
-					requestAnimationFrame( bgSizeUpdate );
-				
-				}
-
-			};
-
-			requestAnimationFrame( bgSizeUpdate );
-
-		} else {
-
-			self.setBgSizeTo( width, height );
-
-		}
-
-		self.screenBgId.update();
-
-		// debug
-		// console.log( "set bg size : " + width + "," + height );
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
-
-};
-
-VisualNovel.prototype.getBgSize = function getBgSize() {
-
-	var screenBg = this.screenBgId;
-	
-	return {
-		width : screenBg.width,
-		height : screenBg.height
-	};
-
-};
-
-VisualNovel.prototype.setBgSizeTo = function setBgSizeTo( width, height ) {
-
-	this.screenBgId.setSize( width, height )
-				.setCSS( "background-size", width + "px " + height + "px" );
-
-};
-
-VisualNovel.prototype.setBgScale = function setBgScale( scaleWidth, scaleHeight, duration, delay ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		var sprite = self.screenBgId;
-		
-		if ( duration ) {
-
-			var previousScaleWidth = sprite.scaleX;
-			var previousScaleHeight = sprite.scaleY;
-			var distance = {
-				"width": scaleWidth - previousScaleWidth,
-				"height": scaleHeight - previousScaleHeight
-			};
-
-			var animationStartTime = Date.now();
-			var animationDuration = duration;
-
-			var bgScaleUpdate = function() {
-
-				var currentTime = Date.now();
-				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
-
-				if ( timeDifference <= 1 ) {
-
-					sprite.setScale(
-						previousScaleWidth + ( timeDifference * distance.width ),
-						previousScaleHeight + ( timeDifference * distance.height ),
-						1
-					).update();
-
-					requestAnimationFrame( bgScaleUpdate );
-				
-				}
-
-			};
-
-			requestAnimationFrame( bgScaleUpdate );
-
-		} else {
-
-			sprite.setScale( scaleWidth, scaleHeight, 1 ).update();
-
-		}
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
-
-};
-
-VisualNovel.prototype.setBgPosition = function setBgPosition( x, y, duration, delay ) {
-
-	// TODO : refactor for smoother animation
-	//		  look for better method or optimization techniques
-	//		  using requestAimationFrame
-
-	var self = this;
-
-	function eventToAdd() {
-
-		var previousPosition = self.getBgPosition();
-		var distance = {
-			"x": x - previousPosition.x,
-			"y": y - previousPosition.y
-		};
-
-		var sprite = self.screenBgId;
-
-		if ( duration ) {
-
-			var animationStartTime = Date.now();
-			var animationDuration = duration;
-
-			var bgPositionUpdate = function() {
-
-				var currentTime = Date.now();
-				var timeDifference = ( currentTime - animationStartTime ) / animationDuration;
-
-				sprite.x = previousPosition.x + ( timeDifference * distance.x );
-				sprite.y = previousPosition.y + ( timeDifference * distance.y );
-				sprite.update();
-
-				if ( timeDifference <= 1 ) {
-
-					requestAnimationFrame( bgPositionUpdate );
-				
-				}
-
-			};
-
-			requestAnimationFrame( bgPositionUpdate );
-
-		} else {
-
-			requestAnimationFrame( function() {
-
-				sprite.x = previousPosition.x + distance.x;
-				sprite.y = previousPosition.y + distance.y;
-				sprite.update();
-
-			} );
-
-		}
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
-
-};
-
-VisualNovel.prototype.getBgPosition = function getBgPosition() {
-
-	var screenBgId = this.screenBgId;
-	var position = {
-		x : screenBgId.x,
-		y : screenBgId.y
-	};
-
-	return position;
-
-};
-
-VisualNovel.prototype.rotateBg = function rotateBg( axis, angle, speed, loop, sprite ) {
-
-	// Test : Rotate bg
-	// vn.rotateBg( "z", 1, 25, true );
-	// vn.pause( 5000 );
-	// vn.stopRotateBg( 1000 );
-	// vn.resetBg( "rotate" );
-
-	var self = this;
-
-	function eventToAdd() {
-
-		self.screenBgId.rotate( axis, angle, speed, loop, sprite );
-		self.screenBgId.update();
-		// self.screenBgId.rotate( 0, 0, angle ).update();
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, 0 );	
-
-};
-
-VisualNovel.prototype.rotateBgTo = function rotateBgTo( axis, angle, speed, loop, sprite ) {
-
-	// Test : Rotate bg to
-	// vn.rotateBgTo( "z", -45, 25 );
-	// vn.pause( 2000 );
-	// vn.rotateBgTo( "z", 0, 25 );
-	// vn.pause( 2000 );
-	// vn.resetBg( "rotate" );
-
-	var self = this;
-
-	function eventToAdd() {
-
-		self.screenBgId.rotateTo( axis, angle, speed, loop, sprite );
-		self.screenBgId.update();
-		// self.screenBgId.rotate( 0, 0, angle ).update();
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, 0 );	
-
-};
-
-VisualNovel.prototype.stopRotateBg = function stopRotateBg( delay ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		window.clearInterval( self.screenBgId.timer.rotate );
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
-
-};
-
-VisualNovel.prototype.fadeBg = function fadeBg( type, fadeSpeed ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		var sceneObject = self.screenBgId;
-
-		if ( type === "in" ) {
-			sceneObject.fadeIn( fadeSpeed );
-		}
-
-		if ( type === "out" ) {
-			sceneObject.fadeOut( fadeSpeed );
-		}
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-VisualNovel.prototype.resetBg = function resetBg( action, delay ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		var screenBg = self.screenBgId;
-
-		if ( action == "rotate" ) {
-			window.clearInterval( screenBg.timer.rotate );
-			screenBg.setRotation( 0, 0, 0 ).update();
-		}
-
-		if ( action == "fade" ) {
-			screenBg.fadeIn( 0 );
-		}
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd, delay );
-
-};
 
 
 
@@ -1131,6 +596,25 @@ VisualNovel.prototype.removeSceneText = function removeSceneText( name ) {
 
 
 
+VisualNovel.prototype.initCharacterContainer = function initCharacterContainer() {
+
+	// TODO: refactor
+
+	this.screenCharacterId = document.getElementById( this.novelId + "-screen-character" );
+
+	var screenCharacter = this.screenCharacterId;
+
+	// set character container size and hide it
+	var newStyle = ";display:none;width:" + this.screenWidth + 
+		"px;height:" + this.screenHeight + "px;";
+		
+	screenCharacter.style.cssText += newStyle;
+
+	// create character sprite container
+	this.characterContainer = this.objectFactory( "SpriteContainer", screenCharacter );
+
+};
+
 VisualNovel.prototype.moveCharacter = function moveCharacter( character, x, y, delay ) {
 
 	var self = this;
@@ -1420,169 +904,5 @@ VisualNovel.prototype.resetCharacters = function resetCharacters() {
 	}
 
 	this.characters = [];
-
-};
-
-
-
-
-
-
-
-
-
-/**
- * Function: loop
- *
- * Repeat the action passed a number of times or infinitely
- *
- * @param id = reference to loop so it can cleared later
- * @param repeat = no of times to repeat or repeat infinitely
- * @param action = action to perform
- * @param delay = delay before repeating the action
- */
-VisualNovel.prototype.loop = function loop( id, repeat, action, delay ) {
-
-	// repeat = true : repeat infinitely
-	// repeat = number : repeat number of times
-	// repeat = null/undefined : no repeat, perform action once
-
-	if ( action ) {
-
-		var self = this;
-		var timerDelay = delay ? delay : 100;
-
-		var eventToAdd = function eventToAdd() {
-
-			// check if loop exists, and clear if it does
-			if ( self.timers[ id ] ) {
-
-				self.clearLoop( id );
-				self.timers[ id ] = null;
-			
-			}
-
-			if ( repeat === true ) {
-
-				// repeat infinitely
-				self.timers[ id ] = {
-					type : "interval",
-					timer : setInterval( function() {
-						action();
-					}, timerDelay )
-				};
-
-			} else if ( repeat > 0 ) {
-
-				// repeat a number of times
-				var repeatTimes = repeat;
-				var repeatTimeout = function() {
-					action();
-					repeatTimes--;
-					checkRepeat();
-				};
-				var checkRepeat = function() {
-					
-					if ( repeatTimes ) {
-						self.timers[ id ].timer = setTimeout( repeatTimeout, timerDelay );
-					} else {
-						self.timers[ id ].timer = null;
-					}
-
-				};
-
-				self.timers[ id ] = {
-					type : "timeout",
-					timer : null
-				};
-
-				checkRepeat();
-
-			} else {
-
-				action();
-			
-			}
-
-		};
-
-		this.eventTracker.addEvent( "nowait", eventToAdd );
-
-	}
-
-};
-
-/**
- * Function: clearLoop
- *
- * Clear the loop stored in timers
- *
- * @param id = reference to loop timer
- */
-VisualNovel.prototype.clearLoop = function clearLoop( id ) {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		self.clearTimer( id );
-
-	}
-
-	this.eventTracker.addEvent( "nowait", eventToAdd );
-
-};
-
-/**
- * Function: clearTimer
- *
- * Clear a timer by checking it in timers
- *
- * @param id = reference to the timer
- */
-VisualNovel.prototype.clearTimer = function clearTimer( id ) {
-
-	var timerInfo = this.timers[ id ];
-
-	if ( timerInfo ) {
-
-		if ( timerInfo.type === "timeout" ) {
-
-			clearTimeout( timerInfo.timer );
-
-		} else if ( timerInfo.type === "interval" ) {
-
-			clearInterval( timerInfo.timer );
-
-		}
-
-		this.timers[ id ] = null;
-
-	}
-
-};
-
-/**
- * Function: resetLoops
- *
- * Reset all loops that have not been cleared
- * Loops are stored in timers
- */
-VisualNovel.prototype.resetLoops = function resetLoops() {
-
-	var loops = this.timers;
-	var loopType = null;
-
-	for ( var loopId in loops ) {
-
-		loopType = loops[ loopId ] ? loops[ loopId ].type : null;
-
-		if ( loopType && ( loopType === "timeout" || loopType === "interval" ) ) {
-
-			this.clearTimer( loopId );
-		
-		}
-
-	}
 
 };
