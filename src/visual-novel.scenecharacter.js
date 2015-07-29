@@ -1,5 +1,5 @@
 ( function( VN ) {
-
+	
 	VN.prototype.initCharacterContainer = function initCharacterContainer() {
 
 		// TODO: refactor
@@ -15,13 +15,14 @@
 		screenCharacter.style.cssText += newStyle;
 
 		// create character sprite container
-		this.characterContainer = this.objectFactory( "SpriteContainer", screenCharacter );
+		var spritely = this.spritely;
+		var characterContainer = new spritely( screenCharacter );
+
+		characterContainer.addChild( spritely.createCenteredContainer() );
+
+		this.characterContainer = characterContainer;
 
 	};
-
-	
-
-
 
 	VN.prototype.addCharacter = function addCharacter( character, delay, fadeIn ) {
 
@@ -32,9 +33,12 @@
 			// show
 			self.screenCharacterId.style.display = "block";
 
-			var transformX = character.width / 2;
+			var characterWidth = character.width;
+			var characterHeight = character.height;
 
-			var posY = ( self.screenHeight - character.height ) + 
+			var transformX = characterWidth / 2;
+
+			var posY = ( self.screenHeight - characterHeight ) + 
 					   ( self.screenHeight * character.pos.y );
 			var posX = ( self.screenWidth * character.pos.x );
 
@@ -48,8 +52,13 @@
 				y : 0,
 				z : 0
 			};
-			var c = self.objectFactory( "Character", character.width, character.height, position, transformOrigin );
-			c.setBackground( character.width, character.height, self.getCharacterImage( character ) );
+
+			
+			var c = getCharacterConstructor( self );
+			
+			c = c( characterWidth, characterHeight, position, transformOrigin );
+
+			c.setBackground( characterWidth, characterHeight, self.getCharacterImage( character ) );
 			
 			// To help us keep track of the character, use their name
 			c.name = character.name;
@@ -316,6 +325,61 @@
 		}
 
 		this.eventTracker.addEvent( "nowait", eventToAdd );
+
+	};
+
+
+
+
+
+
+	var getCharacterConstructor = function( novel ) {
+
+		var Sprite = novel.sprite;
+
+		/**
+		 *	Object : Character
+		 *  States:
+		 *		1. sprite
+		 *  Behaviors:
+		 *		1. Move
+		 *		2. Rotate
+		 *		3. FadeIn/FadeOut
+		 **/
+		function Character( width, height, position, transformOrigin, rotate ) {
+
+			if ( this instanceof Character ) {
+
+				// Call the parent constructor
+				Sprite.apply( this, arguments );
+
+				// Add states
+
+				this.init( width, height, position, transformOrigin, rotate );
+
+				return this;
+
+			} else {
+
+				return new Character( width, height, position, transformOrigin, rotate );
+
+			}
+
+		}
+
+		// Create a Character.prototype object that inherits from Sprite.prototype
+		Character.prototype = Object.create( Sprite.prototype );
+
+		// Set the "constructor" property to refer to Character
+		Character.prototype.constructor = Character;
+
+		getCharacterConstructor = function() {
+
+			return Character;
+
+		};
+
+		return Character;
 
 	};
 
