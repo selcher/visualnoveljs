@@ -68,14 +68,15 @@
 
 				function() {
 
-					initVN();
-					preload();
+					preload( function() {
+						initVN();
+					} );
 					
 				}
 
 			);
 
-			function preload() {
+			function preload( loadComplete ) {
 
 				var queue = new createjs.LoadQueue( true );
 				var path = 'img/js/';
@@ -98,6 +99,8 @@
 						src : path + 'character/yu2_base0.png'
 					}
 				] );
+
+				queue.on( "complete", loadComplete );
 
 				queue.load();
 
@@ -247,6 +250,9 @@
 				// fade out bg
 				vn.fadeBg( "out", 1000 );
 				vn.pause( 1000 );
+
+				vn.fadeBg( "in", 2000 );
+				vn.pause( 2000 );
 
 			}
 

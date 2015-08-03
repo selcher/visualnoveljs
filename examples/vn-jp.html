@@ -66,14 +66,15 @@
 
 				function() {
 
-					initVN();
-					preload();
+					preload( function() {
+						initVN();
+					} );
 					
 				}
 
 			);
 
-			function preload() {
+			function preload( loadComplete ) {
 
 				var queue = new createjs.LoadQueue( true );
 				var path = 'img/jp/';
@@ -108,6 +109,8 @@
 						src : path + 'character/angry.png'
 					}
 				] );
+
+				queue.on( "complete", loadComplete );
 
 				queue.load();
 
@@ -144,9 +147,8 @@
 					novel.removeSceneText( "jp" );
 				}
 			
-				novel.setBgImage( "", 800, 600 );
-
-				novel.fadeBg( "in", 1000 );
+				novel.setBgImage( "bg/jpbg.png", 800, 600, false, 800, 600 );
+				novel.fadeBg( "out", 1000 );
 				novel.pause( 1000 );
 
 				novel.addTextToScene( "jp",
@@ -160,9 +162,9 @@
 					textSetting, 500
 				);
 				removeText();
-
-				novel.fadeBg( "out", 1000 );
+				
 				novel.pause( 1000 );
+
 				novel.setBgImage( "bg/stare.jpg", 800, 600 );
 				novel.fadeBg( "in", 1000 );
 
@@ -696,6 +698,10 @@
 				novel.pause( 1000 );
 
 				novel.removeSceneText( "thanks" );
+
+				novel.setBgImage( "bg/jpbg.png", 800, 600, false, 800, 600 );
+				novel.fadeBg( "in", 2000 );
+				novel.pause( 2000 );
 
 			}
 
