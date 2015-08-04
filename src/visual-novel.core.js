@@ -94,12 +94,20 @@ function VisualNovel( id, width, height, imgPath ) {
  * Initialize visualize novel
  * when creating a new VisualNovel instance
  *
+ * @param callback = function to perform after initialization
+ *					 ( e.g. add effects to start screen )
  */
-VisualNovel.prototype.init = function init() {
+VisualNovel.prototype.init = function init( callback ) {
 
 	this.initContainers( this.novelId );
 
 	this.initScreenStart( this.novelId );
+
+	if ( callback ) {
+		
+		setTimeout( callback );
+	
+	}
 
 };
 

@@ -271,4 +271,35 @@
 
 	};
 
+	/**
+	 * Function: createEvent
+	 *
+	 * Create a custom event
+	 *
+	 * @param event = event (function) to perform
+	 * @param type = type of event (wait / nowait)
+	 */
+	VN.prototype.createEvent = function createEvent( event, type ) {
+
+		if ( event ) {
+
+			this.eventTracker.addEvent( type && typeof type === "string" ? type : "nowait", event );
+
+		}
+
+	};
+
+	/**
+	 * Function: nextEvent
+	 *
+	 * Perform the next event.
+	 * Used with custom events ( type = wait ) to trigger next event.
+	 *
+	 */
+	VN.prototype.nextEvent = function nextEvent() {
+
+		this.eventTracker.nextEvent();
+
+	};
+
 } )( window.VisualNovel = window.VisualNovel || {} );
