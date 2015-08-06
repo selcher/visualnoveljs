@@ -65,14 +65,15 @@
 
 				function() {
 
-					initVN();
-					preload();
+					preload( function() {
+						initVN();
+					} );
 					
 				}
 
 			);
 
-			function preload() {
+			function preload( loadComplete ) {
 
 				var queue = new createjs.LoadQueue( true );
 				var path = 'img/persona/';
@@ -183,6 +184,8 @@
 						src : path + 'tarot/world.png'
 					}
 				] );
+
+				queue.on( "complete", loadComplete );
 
 				queue.load();
 
@@ -614,6 +617,10 @@
 				vn.pause( 500 );
 				vn.resetBg( "fade" );
 				vn.setBgScale( 1, 1 );
+
+				vn.setBgImage( "bg/night.jpg", 800, 600, false, 800, 600 );
+				vn.fadeBg( "in", 2000 );
+				vn.pause( 2000 );
 
 			}
 

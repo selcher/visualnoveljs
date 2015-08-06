@@ -78,14 +78,15 @@
 
 				function() {
 
-					initVN();
-					preload();
+					preload( function() {
+						initVN();
+					} );
 					
 				}
 
 			);
 
-			function preload() {
+			function preload( loadComplete ) {
 
 				var queue = new createjs.LoadQueue( true );
 				var path = 'img/python/';
@@ -128,6 +129,8 @@
 						src : path + 'icon/play2.png'
 					}
 				] );
+
+				queue.on( "complete", loadComplete );
 
 				queue.load();
 
@@ -310,6 +313,10 @@
 				// fade out bg
 				novel.fadeBg( "out", 1000 );
 				novel.pause( 1000 );
+
+				novel.setBgImage( "bg/logo.png", 800, 600, false, 800, 600 );
+				novel.fadeBg( "in", 2000 );
+				novel.pause( 2000 );
 
 			}
 
