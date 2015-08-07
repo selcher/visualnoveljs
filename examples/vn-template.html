@@ -89,7 +89,7 @@
 					 * Preload
 					 */
 
-					function preload() {
+					function preload( loadComplete ) {
 
 						var queue = new createjs.LoadQueue( true );
 						var path = '../examples/' + imgPath;
@@ -116,6 +116,8 @@
 								src : path + vnDlgImage2
 							}
 						] );
+
+						queue.on( "complete", loadComplete );
 
 						queue.load();
 
@@ -164,11 +166,18 @@
 
 					function intro( novel ) {
 
-						var textSetting = { x: 0.55, y: 0, z: 0.4, 
-							width : 300, height : 50,
-							color: "white", size : 30,
-							bgColor : "transparent", bgImage : "",
-							fade: 500 };
+						var textSetting = {
+							x: 0.55,
+							y: 0,
+							z: 0.4, 
+							width : 300,
+							height : 50,
+							color: "white",
+							size : 30,
+							bgColor : "transparent",
+							bgImage : "",
+							fade: 500 
+						};
 
 						function removeText() {
 							novel.pause( 2000 );
@@ -231,9 +240,9 @@
 						// add character
 						novel.addCharacter( me );
 
-						novel.moveCharacter( me, 0.2, 0, 1000 );
-						novel.fadeCharacter( me, "in", 1000 );
-						novel.pause( 1000 );
+						novel.moveCharacter( me, 0.2, 0, 500 );
+						novel.fadeCharacter( me, "in", 500 );
+						novel.pause( 500 );
 
 						// loop character image for blink eyes effect
 						novel.loop( "me", true, function() {
@@ -301,11 +310,13 @@
 					}
 
 					// Preload all images
-					preload();
+					preload( function() {
 
-					// Initialize visual novel
-					initVN();
-					
+						// Initialize visual novel
+						initVN();
+
+					} );
+
 				}
 
 			);
