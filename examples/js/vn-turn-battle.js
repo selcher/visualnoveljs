@@ -62,14 +62,17 @@ function TurnBattle( playerStatus, enemyStatus ) {
 
 
 	function TurnBattle( turn, player, enemy ) {
+		
 		this.turn = turn;
 		this.end = false;
 
 		this.player = player;
 		this.enemy = enemy;
+
 	}
 
 	TurnBattle.prototype.next = function next() {
+
 		console.log( 'turn: ' + this.turn );
 
 		if ( this.turn === 'player' ) {
@@ -104,6 +107,7 @@ function TurnBattle( playerStatus, enemyStatus ) {
 	};
 
 	TurnBattle.prototype.updateScreen = function updateScreen() {
+
 		console.log( 'update screen' );
 
 		var self = this;
@@ -130,11 +134,13 @@ function TurnBattle( playerStatus, enemyStatus ) {
 
 		document.getElementById( 'tbb' ).innerHTML = screen;
 		document.getElementById( 'player-action-attack' ).onclick = function onPlayerAttack() {
+
 			console.log( 'click: attack' );
 			self.player.attack( self.enemy );
 
 			self.turn = 'enemy';
 			self.next();
+			
 		};
 	};
 
