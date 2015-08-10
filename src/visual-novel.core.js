@@ -1,7 +1,6 @@
 /*!
  * Visual Novel JS
  * version: 1.0-2014.06.15
- * Requires jQuery v1.5 or later and sprite3D.js
  * Copyright (c) 2014 Yuki selcher123@gmail.com
  * 
  * Permission is hereby granted, free of charge, to any person
@@ -92,7 +91,7 @@ function VisualNovel( id, width, height, imgPath ) {
  * Function: init
  *
  * Initialize visualize novel
- * when creating a new VisualNovel instance
+ * when creating a new VisualNovel instance.
  *
  * @param callback = function to perform after initialization
  *					 ( e.g. add effects to start screen )
@@ -115,7 +114,9 @@ VisualNovel.prototype.init = function init( callback ) {
  * Function: initContainers
  *
  * Add the dialog, character, scene and other containers
- * to the visual novel div
+ * to the main visual novel div container.
+ *
+ * @param novelId = id of visual novel div, and instance reference
  */
 VisualNovel.prototype.initContainers = function initContainers( novelId ) {
 
@@ -134,7 +135,7 @@ VisualNovel.prototype.initContainers = function initContainers( novelId ) {
 /**
  * Function: reset
  *
- * Reset novel to return to the start screen
+ * Reset novel to return to the start screen.
  */
 VisualNovel.prototype.reset = function reset() {
 
@@ -154,8 +155,8 @@ VisualNovel.prototype.reset = function reset() {
 /**
  * Function: resetNovel
  *
- * Called when resetting the novel
- * reset events, menu choices, characters, scenes
+ * Called when resetting the novel.
+ * ( reset events, menu choices, characters, scenes )
  */
 VisualNovel.prototype.resetNovel = function resetNovel() {
 
@@ -185,7 +186,7 @@ VisualNovel.prototype.resetNovel = function resetNovel() {
 /**
  * Function: initNovelContainer
  *
- * Initialize novel container template, size, and references
+ * Initialize novel container template, size, and references.
  *
  * @param novelId = id of visual novel div, and instance reference
  *
@@ -203,7 +204,7 @@ VisualNovel.prototype.initNovelContainer = function initNovelContainer( novelId 
 /**
  * Function: buildNovelContainer
  *
- * Build the html content for the novel container
+ * Build the html content for the novel container.
  *
  * @param novelId = id of visual novel div, and instance reference
  */
@@ -220,7 +221,7 @@ VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerC
 /**
  * Function: setNovelContainerContent
  *
- * Set the html content of the novel container
+ * Set the html content of the novel container.
  *
  * @param content = content of the novel container
  */
@@ -233,7 +234,7 @@ VisualNovel.prototype.setNovelContainerContent = function setNovelContainerConte
 /**
  * Function: setNovelContainerSize
  *
- * Set the size of the main novel container, and the containers inside
+ * Set the size of the main novel container, and the containers inside.
  *
  * @param width = new width
  * @param height = new height
@@ -242,14 +243,15 @@ VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( wi
 
 	// TODO : may need refactoring
 
+	// novel container
 	var novelContainer = this.novelContainerId;
-	var containers = novelContainer ? novelContainer.getElementsByClassName( "novel" ) : [];
 	var newStyle = ";overflow:hidden;width:" + width + "px;height:" + height + "px;";
 	
-	// novel container
 	novelContainer.style.cssText += newStyle;
 
 	// containers ( scene, character, dialog, menu, ... )
+	var containers = novelContainer.getElementsByClassName( "novel" );
+
 	this.util.foreach( containers, function( container ) {
 
 		newStyle = ";width:" + width + "px;height:" + height + "px;";
