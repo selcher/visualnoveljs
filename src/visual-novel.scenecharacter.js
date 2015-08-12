@@ -1,10 +1,16 @@
 ( function( VN ) {
 	
+	VN.prototype.screenCharacterId = null;
+	VN.prototype.characterContainer = null;
+	VN.prototype.characters = [];
+
 	VN.prototype.initCharacterContainer = function initCharacterContainer() {
 
 		// TODO: refactor
 
 		this.screenCharacterId = document.getElementById( this.novelId + "-screen-character" );
+		this.characterContainer = null;
+		this.characters = [];
 
 		var screenCharacter = this.screenCharacterId;
 
@@ -169,22 +175,14 @@
 
 		if ( typeof characterImage === "object" ) {
 
-			requestAnimationFrame( function() {
-
+				characterObject.sprite.setCSS( "background-position", characterImage.position );
 				characterObject.sprite.setCSS( "background-image", 
 					"url('" + characterImage.src + "')" );
-				characterObject.sprite.setCSS( "background-position", characterImage.position );
-
-			} );
 
 		} else {
 
-			requestAnimationFrame( function() {
-
 				characterObject.sprite.setCSS( "background-image", 
 					"url('" + characterImage + "')" );
-
-			} );
 		
 		}
 
