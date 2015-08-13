@@ -1,5 +1,14 @@
 ( function( VN ) {
 
+	VN.prototype.initSceneObjects = function initSceneObjects() {
+
+		this.scenes = {
+			"text": [],
+			"object": []
+		};
+		
+	};
+
 	VN.prototype.addObjectToScene = function addObjectToScene( name, bgInfo, position, delay, fadeInfo ) {
 
 		var self = this;
