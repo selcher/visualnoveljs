@@ -66,12 +66,12 @@
 		var self = this;
 		var newPos = this.util.scalePosition( 
 			{
-				x : x ? x : 0, 
-				y : y ? y : self.sceneHeight
+				"x": x ? x : 0, 
+				"y": y ? y : self.sceneHeight
 			},
 			{ 
-				x : self.screenWidth, 
-				y : self.screenHeight
+				"x": self.screenWidth, 
+				"y": self.screenHeight
 			}
 		);
 
@@ -112,8 +112,9 @@
 
 	VN.prototype.getSayTemplateVariables = function getSayTemplateVariables( character, line, delay ) {
 
-		var name = typeof character === "object" ? character.name : character;
-		var dialogNameStyle = typeof character === "object" ? character.nameStyle : "";
+		var isCharacterObject = typeof character === "object";
+		var name = isCharacterObject ? character.name : character;
+		var dialogNameStyle = isCharacterObject ? character.nameStyle : "";
 		var dialogLine = this.parser.replaceVariablesInText( line, this.userInput );
 
 		var characterDialogSettings = character.dialog;
@@ -171,21 +172,21 @@
 		// TODO : build style here instead of replacing it in the template!! only style variable in template...
 		
 		var templateVariables = {
-			"novelId" : this.novelId,
-			"name" : name,
-			"dialogNameStyle" : dialogNameStyle,
-			"dialogLine" : dialogLine,
+			"novelId": this.novelId,
+			"name": name,
+			"dialogNameStyle": dialogNameStyle,
+			"dialogLine": dialogLine,
 
-			"showDialogImage" : dialogSettings,
-			"dialogImage" : dialogImage,
-			"dialogImageStyle" : dialogImageLocation + dialogImageWidth + dialogImageHeight + dialogImageBorder,
+			"showDialogImage": dialogSettings,
+			"dialogImage": dialogImage,
+			"dialogImageStyle": dialogImageLocation + dialogImageWidth + dialogImageHeight + dialogImageBorder,
 
-			"showButtonText" : showButtonText,
-			"dialogButtonText" : dialogButtonText,
+			"showButtonText": showButtonText,
+			"dialogButtonText": dialogButtonText,
 
-			"showButtonImage" : showButtonImage,
-			"dialogButtonImage" : dialogButtonImage,
-			"dialogButtonImageStyle" : dialogButtonImageWidth + dialogButtonImageHeight
+			"showButtonImage": showButtonImage,
+			"dialogButtonImage": dialogButtonImage,
+			"dialogButtonImageStyle": dialogButtonImageWidth + dialogButtonImageHeight
 		};
 
 		return templateVariables;
@@ -239,8 +240,8 @@
 
 		// variables to replace in template
 		var toReplace = {
-			novelId : this.novelId,
-			message : message
+			"novelId": this.novelId,
+			"message": message
 		};
 
 		// get template
@@ -285,27 +286,27 @@
 	VN.prototype.addCondition = function addCondition( var1, operator, var2, successCallback, failCallback ) {
 
 		var self = this;
+		var operations = {
+			"=": function( value1, value2 ) {
+				return value1 === value2;
+			},
+			">": function( value1, value2 ) {
+				return value1 > value2;
+			},
+			"<": function( value1, value2 ) {
+				return value1 < value2;
+			},
+			"!=": function( value1, value2 ) {
+				return value1 != value2;
+			}
+		};
+		var operation = operations[ operator ];
 
 		function eventToAdd() {
 
-			var conditionResult = false;
 			var userInput = self.userInput;
-
-			if ( operator == "=" ) {
-				conditionResult = userInput[ var1 ] == var2;
-			}
-
-			if ( operator == ">" ) {
-				conditionResult = userInput[ var1 ] > var2;
-			}
-
-			if ( operator == "<" ) {
-				conditionResult = userInput[ var1 ] < var2;
-			}
-
-			if ( operator == "!=" ) {
-				conditionResult = userInput[ var1 ] != var2;
-			}
+			var conditionResult = operation ?
+				operation( userInput[ var1 ], var2 ) : false;
 
 			var eventTracker = self.eventTracker;
 			var totalEventsInProgress = eventTracker.eventsInProgress.length;
@@ -323,7 +324,7 @@
 			}
 
 			// call success or fail events
-			self.eventTracker.startEvent();
+			eventTracker.startEvent();
 
 		}
 
@@ -409,7 +410,7 @@
 	VN.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImage ) {
 
 		// Get menu choices template
-		var menuImg = menuImage ? menuImage : { image : "", width : 0, height : 0 };
+		var menuImg = menuImage ? menuImage : { "image": "", "width": 0, "height": 0 };
 		var imgPath = menuImage ? this.imgPath + menuImg.image : "";
 		var menuChoiceTemplate = this.getMenuChoicesTemplate( listOfChoices, imgPath, 
 			menuImg.width, menuImg.height );
@@ -422,11 +423,11 @@
 
 		// variables to replace in template
 		var toReplace = {
-			novelId : this.novelId,
-			choices : choices,
-			imgPath : imgPath,
-			imgWidth : imgWidth,
-			imgHeight : imgHeight
+			"novelId": this.novelId,
+			"choices": choices,
+			"imgPath": imgPath,
+			"imgWidth": imgWidth,
+			"imgHeight": imgHeight
 		};
 
 		// get template
@@ -457,7 +458,7 @@
 		var self = this;
 		var imgPath = this.imgPath;
 
-		var characterObject = typeof character === "object" ? true : false;
+		var characterObject = typeof character === "object";
 		var characterDialog = characterObject && character.dialog ? character.dialog : null;
 		var dialogButton = characterDialog && characterDialog.button ? characterDialog.button : null;
 
@@ -832,8 +833,8 @@
 		var contHeight = height ? height : this.dialogHeight;
 		
 		var size = {
-			width : ( contWidth - padding.left - padding.right ) + "px",
-			height : ( contHeight - padding.top - padding.bottom ) + "px"
+			"width": ( contWidth - padding.left - padding.right ) + "px",
+			"height": ( contHeight - padding.top - padding.bottom ) + "px"
 		};
 
 		return size;
