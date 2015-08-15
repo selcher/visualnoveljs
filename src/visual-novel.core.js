@@ -25,238 +25,227 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/**
- * Class: VisualNovel
- *
- * @param id = id of visual novel div
- *             used as reference for novel instance
- * @param width = width
- * @param height = height
- * @param imgPath = path to image folder
- */
-function VisualNovel( id, width, height, imgPath ) {
+( function( w ) {
 
-	if ( this instanceof VisualNovel ) {
+	/**
+	 * Class: VisualNovel
+	 *
+	 * @param id = id of visual novel div
+	 *             used as reference for novel instance
+	 * @param width = width
+	 * @param height = height
+	 * @param imgPath = path to image folder
+	 */
+	function VisualNovel( id, width, height, imgPath ) {
 
-		this.novelId = id;
-		this.novelTitle = "";
-		this.novelSubtitle = "";
-		this.novelMode = "dialog"; // dialog or novel
+		if ( this instanceof VisualNovel ) {
 
-		// store images for preloading, or let user handle it?
-		// preloading not yet implemented ( use preloadjs )
-		this.imgPath = imgPath ? imgPath : "";
-		this.images = [];
+			this.novelId = id;
+			this.novelTitle = "";
+			this.novelSubtitle = "";
+			this.novelMode = "dialog"; // dialog or novel
 
-		// div elements
-		this.novelContainerId = null;
+			// store images for preloading, or let user handle it?
+			// preloading not yet implemented ( use preloadjs )
+			this.imgPath = imgPath ? imgPath : "";
+			this.images = [];
+
+			// div elements
+			this.novelContainerId = null;
+
+			// TODO: place default values here...
+			this.defaultVal = {};
+
+			// TODO: move to dialog module
+			// input
+			this.userInput = {};
+
+			// screen
+			this.screenWidth = width;
+			this.screenHeight = height;
+
+			// scene
+			this.sceneFloorHeight = this.sceneFloorWidth =
+				height > width ? height : width;
+
+			return this;
+
+		} else {
+
+			return new VisualNovel( width, height, imgPath );
+
+		}
+
+	}
+
+	/**
+	 * Function: init
+	 *
+	 * Initialize visualize novel
+	 * when creating a new VisualNovel instance.
+	 *
+	 * @param callback = function to perform after initialization
+	 *					 ( e.g. add effects to start screen )
+	 */
+	VisualNovel.prototype.init = function init( callback ) {
+
+		this.initContainers( this.novelId );
+
+		this.initScreenStart( this.novelId );
+
+		if ( callback ) {
+			
+			setTimeout( callback );
 		
-		this.screenCharacterId = null;
+		}
 
-		// TODO: place default values here...
-		this.defaultVal = {};
-
-		// scene
-		this.scenes = {
-			text : [],
-			object : []
-		};
-
-		// character
-		this.characterContainer = null;
-		this.characters = [];
-
-		// input
-		this.userInput = {};
-
-		// screen
-		this.screenWidth = width;
-		this.screenHeight = height;
-
-		// scene
-		this.sceneFloorHeight = height > width ? height : width;
-		this.sceneFloorWidth = height > width ? height : width;
-
-		return this;
-
-	} else {
-
-		return new VisualNovel( width, height, imgPath );
-
-	}
-
-}
-
-/**
- * Function: init
- *
- * Initialize visualize novel
- * when creating a new VisualNovel instance.
- *
- * @param callback = function to perform after initialization
- *					 ( e.g. add effects to start screen )
- */
-VisualNovel.prototype.init = function init( callback ) {
-
-	this.initContainers( this.novelId );
-
-	this.initScreenStart( this.novelId );
-
-	if ( callback ) {
-		
-		setTimeout( callback );
-	
-	}
-
-};
-
-/**
- * Function: initContainers
- *
- * Add the dialog, character, scene and other containers
- * to the main visual novel div container.
- *
- * @param novelId = id of visual novel div, and instance reference
- */
-VisualNovel.prototype.initContainers = function initContainers( novelId ) {
-
-	this.initNovelContainer( novelId );
-
-	this.initSceneContainer();
-	
-	this.initDialog( this.screenWidth, 150, 0, this.screenHeight - 150 );
-
-	this.initCharacterContainer();
-
-	this.initBGContainer();
-
-};
-
-/**
- * Function: reset
- *
- * Reset novel to return to the start screen.
- */
-VisualNovel.prototype.reset = function reset() {
-
-	var self = this;
-
-	function eventToAdd() {
-
-		self.resetNovel();
-		self.showStartScreen( true );
-
-	}
-
-	this.eventTracker.addEvent( "wait", eventToAdd );
-
-};
-
-/**
- * Function: resetNovel
- *
- * Called when resetting the novel.
- * ( reset events, menu choices, characters, scenes )
- */
-VisualNovel.prototype.resetNovel = function resetNovel() {
-
-	this.eventTracker.resetEventsInProgress();
-	this.dialog.resetMenuChoices();
-	this.resetCharacters();
-	this.resetScenes();
-	this.resetLoops();
-
-	this.scenes = {
-		"text": [],
-		"object": []
 	};
 
-};
+	/**
+	 * Function: initContainers
+	 *
+	 * Add the dialog, character, scene and other containers
+	 * to the main visual novel div container.
+	 *
+	 * @param novelId = id of visual novel div, and instance reference
+	 */
+	VisualNovel.prototype.initContainers = function initContainers( novelId ) {
+
+		this.initNovelContainer( novelId );
+
+		this.initSceneContainer();
+
+		this.initSceneObjects();
+		
+		this.initDialog( this.screenWidth, 150, 0, this.screenHeight - 150 );
+
+		this.initCharacterContainer();
+
+		this.initBGContainer();
+
+	};
+
+	/**
+	 * Function: reset
+	 *
+	 * Reset novel to return to the start screen.
+	 */
+	VisualNovel.prototype.reset = function reset() {
+
+		var self = this;
+
+		function eventToAdd() {
+
+			self.resetNovel();
+			self.showStartScreen( true );
+
+		}
+
+		this.eventTracker.addEvent( "wait", eventToAdd );
+
+	};
+
+	/**
+	 * Function: resetNovel
+	 *
+	 * Called when resetting the novel.
+	 * ( reset events, menu choices, characters, scenes )
+	 */
+	VisualNovel.prototype.resetNovel = function resetNovel() {
+
+		this.eventTracker.resetEventsInProgress();
+		this.dialog.resetMenuChoices();
+		this.resetCharacters();
+		this.resetScenes();
+		this.resetLoops();
+
+		this.initSceneObjects();
+
+	};
 
 
 
 
 
+	/**
+	 * Function: initNovelContainer
+	 *
+	 * Initialize novel container template, size, and references.
+	 *
+	 * @param novelId = id of visual novel div, and instance reference
+	 *
+	 */
+	VisualNovel.prototype.initNovelContainer = function initNovelContainer( novelId ) {
 
+		this.novelContainerId = document.getElementById( novelId );
 
+		var content = this.buildNovelContainerContent( novelId );
+		this.setNovelContainerContent( content );
+		this.setNovelContainerSize( this.screenWidth, this.screenHeight );
 
+	};
 
+	/**
+	 * Function: buildNovelContainer
+	 *
+	 * Build the html content for the novel container.
+	 *
+	 * @param novelId = id of visual novel div, and instance reference
+	 */
+	VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerContent( novelId ) {
 
+		var novelContainer = this.templates.get( "novelcontainer" );
+		
+		novelContainer = this.parser.parseTemplate( novelContainer, { "novelId": novelId } );
 
-/**
- * Function: initNovelContainer
- *
- * Initialize novel container template, size, and references.
- *
- * @param novelId = id of visual novel div, and instance reference
- *
- */
-VisualNovel.prototype.initNovelContainer = function initNovelContainer( novelId ) {
+		return novelContainer;
 
-	this.novelContainerId = document.getElementById( novelId );
+	};
 
-	var content = this.buildNovelContainerContent( novelId );
-	this.setNovelContainerContent( content );
-	this.setNovelContainerSize( this.screenWidth, this.screenHeight );
+	/**
+	 * Function: setNovelContainerContent
+	 *
+	 * Set the html content of the novel container.
+	 *
+	 * @param content = content of the novel container
+	 */
+	VisualNovel.prototype.setNovelContainerContent = function setNovelContainerContent( content ) {
 
-};
+		this.novelContainerId.innerHTML = content;
 
-/**
- * Function: buildNovelContainer
- *
- * Build the html content for the novel container.
- *
- * @param novelId = id of visual novel div, and instance reference
- */
-VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerContent( novelId ) {
+	};
 
-	var novelContainer = this.templates.get( "novelcontainer" );
+	/**
+	 * Function: setNovelContainerSize
+	 *
+	 * Set the size of the main novel container, and the containers inside.
+	 *
+	 * @param width = new width
+	 * @param height = new height
+	 */
+	VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( width, height ) {
 
-	novelContainer = this.parser.parseTemplate( novelContainer, { novelId : novelId } );
+		// TODO : may need refactoring
 
-	return novelContainer;
+		// novel container
+		var novelContainer = this.novelContainerId;
+		var sizeStyle = ";width:" + width + "px;height:" + height + "px;";
+		var newStyle = ";overflow:hidden" + sizeStyle;
+		
+		novelContainer.style.cssText += newStyle;
 
-};
+		// containers ( scene, character, dialog, menu, ... )
+		var containers = novelContainer.getElementsByClassName( "novel" );
 
-/**
- * Function: setNovelContainerContent
- *
- * Set the html content of the novel container.
- *
- * @param content = content of the novel container
- */
-VisualNovel.prototype.setNovelContainerContent = function setNovelContainerContent( content ) {
+		this.util.foreach( containers, function( container ) {
 
-	this.novelContainerId.innerHTML = content;
+			container.style.cssText += sizeStyle;
+		
+		} );
 
-};
+	};
 
-/**
- * Function: setNovelContainerSize
- *
- * Set the size of the main novel container, and the containers inside.
- *
- * @param width = new width
- * @param height = new height
- */
-VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( width, height ) {
+	// Add as global namespace
+	w.VisualNovel = VisualNovel;
 
-	// TODO : may need refactoring
-
-	// novel container
-	var novelContainer = this.novelContainerId;
-	var newStyle = ";overflow:hidden;width:" + width + "px;height:" + height + "px;";
-	
-	novelContainer.style.cssText += newStyle;
-
-	// containers ( scene, character, dialog, menu, ... )
-	var containers = novelContainer.getElementsByClassName( "novel" );
-
-	this.util.foreach( containers, function( container ) {
-
-		newStyle = ";width:" + width + "px;height:" + height + "px;";
-		container.style.cssText += newStyle;
-	
-	} );
-
-};
+} )( window );
