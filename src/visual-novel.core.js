@@ -186,6 +186,23 @@
 	};
 
 	/**
+	 * Variable: novelContainerTemplate
+	 *
+	 * Template for novel container.
+	 */
+	VisualNovel.prototype.novelContainerTemplate = [
+		"<div class='novel-container unSelectable'>",
+			"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
+			"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
+			"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
+			"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
+			"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
+			"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
+			"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
+		"</div>"
+	].join( "" );
+
+	/**
 	 * Function: buildNovelContainer
 	 *
 	 * Build the html content for the novel container.
@@ -194,11 +211,7 @@
 	 */
 	VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerContent( novelId ) {
 
-		var novelContainer = this.templates.get( "novelcontainer" );
-		
-		novelContainer = this.parser.parseTemplate( novelContainer, { "novelId": novelId } );
-
-		return novelContainer;
+		return this.parser.parseTemplate( this.novelContainerTemplate, { "novelId": novelId } );
 
 	};
 
