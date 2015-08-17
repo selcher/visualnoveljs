@@ -40,6 +40,22 @@
 	};
 
 	/**
+	 * Variable: novelContainerTemplate
+	 *
+	 * Template for novel container.
+	 */
+	VN.prototype.startMenuTemplate = [
+		"<div id='{novelId}-novelTitleContainer' class='novelTitleContainer'>",
+			"<div id='{novelId}-novelTitleText' class='novelTitleText'>{novelTitle}</div>",
+			"<div id='{novelId}-novelSubtitleText' class='novelSubtitleText'>{novelSubtitle}</div>",
+		"</div>",
+		"<div id='{novelId}-startMenuButtonContainer' class='startMenuButtonContainer'>",
+			"<button id='{novelId}-startMenuButton' class='startMenuButton' >",
+			"START</button>",
+		"</div>"
+	].join( "" );
+
+	/**
 	 * Function: buildStartMenu
 	 *
 	 * Build the html for the start menu
@@ -49,15 +65,13 @@
 	VN.prototype.buildStartMenu = function builStartMenu( novelId ) {
 
 		var screenStart = this.screenStart.screenStartId;
-
-		var startMenuTemplate = this.templates.get( "startmenu" );
 		var parseVariables = {
 			"novelId": novelId,
 			"novelTitle": this.novelTitle,
 			"novelSubtitle": this.novelSubtitle
 		};
 
-		startMenuTemplate = this.parser.parseTemplate( startMenuTemplate, parseVariables );
+		startMenuTemplate = this.parser.parseTemplate( this.startMenuTemplate, parseVariables );
 
 		screenStart.innerHTML = startMenuTemplate;	
 
