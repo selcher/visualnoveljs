@@ -40,9 +40,9 @@
 	};
 
 	/**
-	 * Variable: novelContainerTemplate
+	 * Variable: startMenuTemplate
 	 *
-	 * Template for novel container.
+	 * Template for start menu.
 	 */
 	VN.prototype.startMenuTemplate = [
 		"<div id='{novelId}-novelTitleContainer' class='novelTitleContainer'>",
@@ -71,7 +71,7 @@
 			"novelSubtitle": this.novelSubtitle
 		};
 
-		startMenuTemplate = this.parser.parseTemplate( this.startMenuTemplate, parseVariables );
+		var startMenuTemplate = this.parser.parseTemplate( this.startMenuTemplate, parseVariables );
 
 		screenStart.innerHTML = startMenuTemplate;	
 
