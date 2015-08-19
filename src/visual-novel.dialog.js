@@ -93,14 +93,26 @@
 
 	};
 
+	/**
+	 * Variable: sayTemplate
+	 *
+	 * Template for say lines.
+	 */
+	VN.prototype.sayTemplate = [
+		"<if={showDialogImage}><img id='{novelId}-dialog-dialogImage' src='{dialogImage}' style='{dialogImageStyle}' /></if>",
+		"<div id='{novelId}-dialog-dialogName' class='dialogName' style='{dialogNameStyle}'>{name}</div>",
+		"<div id='{novelId}-dialog-dialogText' class='dialogText'>{dialogLine}</div>",
+		"<if={showButtonText}><button id='{novelId}-dialog-dialogButton' class='dialogButton' >{dialogButtonText}</button></if>",
+		"<if={showButtonImage}><img id='{novelId}-dialog-dialogButton' class='dialogButton' src='{dialogButtonImage}' style='{dialogButtonImageStyle}' /></if>"
+	].join( "" );
+
 	VN.prototype.getSayTemplate = function getSayTemplate( character, line, delay ) {
 
 		// variables to replace in template
 		var templateVariables = this.getSayTemplateVariables( character, line, delay );
 
 		// get template
-		var sayTemplate = this.templates.get( "say" );
-		sayTemplate = this.parser.parseTemplate( sayTemplate, templateVariables );
+		var sayTemplate = this.parser.parseTemplate( this.sayTemplate, templateVariables );
 
 		// debug
 		// console.log( templateVariables );
@@ -207,6 +219,16 @@
 
 	};
 
+
+
+
+
+
+
+
+
+
+
 	VN.prototype.input = function input( storeInputKey, message ) {
 
 		var self = this;
@@ -236,6 +258,21 @@
 
 	};
 
+	/**
+	 * Variable: userInputTemplate
+	 *
+	 * Template for user input.
+	 */
+	VN.prototype.userInputTemplate = [
+		"<div id='userInputContainer' class='userInputContainer'>",
+			"<div id='userInputMessage' class='userInputMessage'>{message}</div>",
+			"<hr/><br/>",
+			"<input id='{novelId}-userInputText' class='userInputText' type='text' />",
+			"<br/><br/>",
+			"<input type='button' id='{novelId}-userInputButton' class='userInputButton' value='OK' />",
+		"</div>"
+	].join( "" );
+
 	VN.prototype.getUserInputTemplate = function getUserInputTemplate( message ) {
 
 		// variables to replace in template
@@ -245,9 +282,7 @@
 		};
 
 		// get template
-		// TODO: move template to dialog module ?
-		var userInputTemplate = this.templates.get( "userinput" );
-		userInputTemplate = this.parser.parseTemplate( userInputTemplate, toReplace );
+		var userInputTemplate = this.parser.parseTemplate( this.userInputTemplate, toReplace );
 
 		return userInputTemplate;
 
@@ -282,6 +317,16 @@
 		return this.userInput[ key ];
 
 	};
+
+
+
+
+
+
+
+
+
+
 
 	VN.prototype.addCondition = function addCondition( var1, operator, var2, successCallback, failCallback ) {
 
@@ -333,6 +378,16 @@
 		this.eventTracker.addEvent( "wait", eventToAdd );
 
 	};
+
+
+
+
+
+
+
+
+
+
 
 	VN.prototype.choice = function choice( choiceEventId, listOfChoices, menuPos, menuImg ) {
 
@@ -419,6 +474,26 @@
 
 	};
 
+	/**
+	 * Variable: menuChoiceTemplate
+	 *
+	 * Template for menu choice.
+	 */
+	VN.prototype.menuChoiceTemplate = [
+		"<div id='{novelId}-dialogMenuChoiceContainer' class='dialogMenuChoiceContainer'>",
+			"<div id='{novelId}-dialogMenuChoiceButtonsContainer' class='dialogMenuChoiceButtonsContainer'>",
+				"<foreach={choice in choices}>",
+					"<button class='dialogMenuChoiceButton' id='{novelId}-dialogMenuChoiceButton{index}' >",
+						"{choice.label}",
+					"</button><br/>",
+				"</foreach>",
+			"</div>",
+			"<div id='{novelId}-dialogMenuChoiceImageContainer' class='dialogMenuChoiceImageContainer'>",
+				"<if={imgPath}><img src='{imgPath}' style='width:{imgWidth}px;height:{imgHeight}px;' /></if>",
+			"</div>",
+		"</div>"
+	].join( "" );
+
 	VN.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, imgPath, imgWidth, imgHeight ) {
 
 		// variables to replace in template
@@ -431,9 +506,7 @@
 		};
 
 		// get template
-		var menuChoiceTemplate = this.templates.get( "menuchoice" );
-		
-		menuChoiceTemplate = this.parser.parseTemplate( menuChoiceTemplate, toReplace );
+		var menuChoiceTemplate = this.parser.parseTemplate( this.menuChoiceTemplate, toReplace );
 
 		return menuChoiceTemplate;
 
@@ -452,6 +525,16 @@
 		this.eventTracker.addEvent( "nowait", eventToAdd );
 
 	};	
+
+
+
+
+
+
+
+
+
+
 
 	VN.prototype.sayLine = function sayLine( character, line, delay ) {
 
