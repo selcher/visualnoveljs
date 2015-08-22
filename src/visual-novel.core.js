@@ -56,10 +56,6 @@
 			// TODO: place default values here...
 			this.defaultVal = {};
 
-			// TODO: move to dialog module
-			// input
-			this.userInput = {};
-
 			// screen
 			this.screenWidth = width;
 			this.screenHeight = height;

@@ -229,6 +229,8 @@
 
 
 
+	VN.prototype.userInput = {};
+	
 	VN.prototype.input = function input( storeInputKey, message ) {
 
 		var self = this;
