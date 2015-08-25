@@ -20,7 +20,8 @@
 	z-index: 4;
 }
 
-.dialog-menu {
+.dialog-menu,
+.dialog-input {
 	z-index: 5;
 }
 
