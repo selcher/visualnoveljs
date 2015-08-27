@@ -115,6 +115,8 @@
 		
 		this.initDialog( this.screenWidth, 150, 0, this.screenHeight - 150 );
 
+		this.initInputDialog( novelId );
+
 		this.initCharacterContainer();
 
 		this.initBGContainer();
@@ -190,6 +192,7 @@
 		"<div class='novel-container unSelectable'>",
 			"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
 			"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
+			"<div id='{novelId}-dialog-input' class='novel dialog-input'></div>",
 			"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
 			"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
 			"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
