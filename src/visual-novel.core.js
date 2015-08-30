@@ -117,6 +117,8 @@
 
 		this.initInputDialog( novelId );
 
+		this.initMenuChoicesDialog( novelId );
+
 		this.initCharacterContainer();
 
 		this.initBGContainer();
@@ -152,7 +154,7 @@
 	VisualNovel.prototype.resetNovel = function resetNovel() {
 
 		this.eventTracker.resetEventsInProgress();
-		this.dialog.resetMenuChoices();
+		this.menuChoicesDialog.resetMenuChoices();
 		this.resetCharacters();
 		this.resetScenes();
 		this.resetLoops();
