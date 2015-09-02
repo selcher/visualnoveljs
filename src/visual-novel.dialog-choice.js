@@ -146,13 +146,23 @@
 
 
 
-	VN.prototype.initMenuChoicesDialog = function initMenuChoicesDialog( novelId ) {
+	// Add module
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
 
-		this.menuChoicesDialog = new MenuChoicesDialog( novelId );
+				this.menuChoicesDialog = new MenuChoicesDialog( novelId );
 
-		this.menuChoicesDialog.init();
+				this.menuChoicesDialog.init();
 
-	};
+			},
+			"reset": function reset() {
+
+				this.menuChoicesDialog.resetMenuChoices();
+
+			}
+		}
+	);
 
 	function MenuChoicesDialog( novelId ) {
 
