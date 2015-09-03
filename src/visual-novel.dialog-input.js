@@ -94,13 +94,19 @@
 
 
 
-	VN.prototype.initInputDialog = function initInputDialog( novelId ) {
+	// Add module
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
 
-		this.inputDialog = new InputDialog( novelId );
+				this.inputDialog = new InputDialog( novelId );
 
-		this.inputDialog.init();
+				this.inputDialog.init();
 
-	};
+			},
+			"reset": function reset() {}
+		}
+	);
 
 	function InputDialog( novelId ) {
 
