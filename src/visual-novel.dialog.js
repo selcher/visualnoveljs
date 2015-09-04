@@ -522,13 +522,25 @@
 
 
 
-	VN.prototype.initDialog = function initDialog( width, height, x, y ) {
+	// Add module
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
 
-		var dialog = this.dialog = new Dialog( this.novelId, width, height, x, y );
+				var dialog = this.dialog = new Dialog(
+					novelId,
+					this.screenWidth,
+					150,
+					0,
+					this.screenHeight - 150
+				);
 
-		dialog.init();
+				dialog.init();
 
-	};
+			},
+			"reset": function reset() {}
+		}
+	);
 
 	/**
 	 * Class Dialog
