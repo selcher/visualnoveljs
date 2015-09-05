@@ -222,7 +222,20 @@
 	/**
 	 * Attach module to namespace
 	 */
-	VN.prototype.eventTracker = new EventTracker();
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
+
+				this.eventTracker = new EventTracker();
+
+			},
+			"reset": function reset() {
+
+				this.eventTracker.resetEventsInProgress();
+
+			}
+		}
+	);
 
 	/**
 	 * Function: pause
