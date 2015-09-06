@@ -75,6 +75,14 @@
 	}
 
 	/**
+	 * Variable: modules
+	 *
+	 * Holds the modules.
+	 * Each module has an init and reset method.
+	 */
+	VisualNovel.prototype.modules = [];
+
+	/**
 	 * Function: init
 	 *
 	 * Initialize visualize novel
@@ -112,16 +120,17 @@
 		this.initSceneContainer();
 
 		this.initSceneObjects();
-		
-		this.initDialog( this.screenWidth, 150, 0, this.screenHeight - 150 );
-
-		this.initInputDialog( novelId );
-
-		this.initMenuChoicesDialog( novelId );
 
 		this.initCharacterContainer();
 
 		this.initBGContainer();
+
+		// Initialize modules
+		var modules = this.modules;
+		
+		for ( var i = modules.length; i--; ) {
+			modules[ i ].init.call( this, novelId );
+		}
 
 	};
 
@@ -153,13 +162,18 @@
 	 */
 	VisualNovel.prototype.resetNovel = function resetNovel() {
 
-		this.eventTracker.resetEventsInProgress();
-		this.menuChoicesDialog.resetMenuChoices();
 		this.resetCharacters();
 		this.resetScenes();
 		this.resetLoops();
 
 		this.initSceneObjects();
+
+		// Reset modules
+		var modules = this.modules;
+		
+		for ( var i = modules.length; i--; ) {
+			modules[ i ].reset.call( this );
+		}
 
 	};
 
