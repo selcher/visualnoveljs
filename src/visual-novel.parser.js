@@ -219,6 +219,16 @@
 	/**
 	 * Attach module to namespace
 	 */
-	 VN.prototype.parser = new Parser();
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
+
+				this.parser = new Parser();
+
+			},
+			"reset": function reset() {}
+		}
+	);
+
 
 } )( window.VisualNovel = window.VisualNovel || {} );
