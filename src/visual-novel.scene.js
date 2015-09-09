@@ -1,25 +1,6 @@
 ( function( VN ) {
 
 	/**
-	 * Function: initSceneContainer
-	 *
-	 * Initialize the container for the scenes
-	 */
-	VN.prototype.initSceneContainer = function initSceneContainer() {
-
-		// TODO : needs refactoring
-
-		this.screenSceneId = document.getElementById( this.novelId + "-screen-scene" );
-
-		var result = this.createSceneContainer( this.screenSceneId, this.sceneFloorWidth, this.sceneFloorHeight );
-		
-		// Store for reference
-		this.sceneContainer = result.floorContainer;
-		this.sceneFloor = result.floor;
-
-	};
-
-	/**
 	 * Function: createSceneContainer
 	 *
 	 * Create the container for the scenes
@@ -80,22 +61,41 @@
 		this.eventTracker.addEvent( "nowait", eventToAdd );
 	};
 
-	VN.prototype.resetScenes = function resetScenes() {
 
-		var scenes = this.sceneContainer ? this.sceneContainer.children : [];
-		var totalScenes = scenes.length;
+	/**
+	 * Attach module to namespace
+	 */
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
 
-		if ( totalScenes > 1 ) {
-			
-			for( var i = totalScenes - 1; i--; ) {
+				this.screenSceneId = document.getElementById( this.novelId + "-screen-scene" );
+
+				var result = this.createSceneContainer( this.screenSceneId, this.sceneFloorWidth, this.sceneFloorHeight );
 				
-				// Don't include 0 since it is the scene floor
-				this.sceneContainer.removeChildAt( i + 1 );
+				// Store for reference
+				this.sceneContainer = result.floorContainer;
+				this.sceneFloor = result.floor;
 
+			},
+			"reset": function reset() {
+
+				var scenes = this.sceneContainer ? this.sceneContainer.children : [];
+				var totalScenes = scenes.length;
+
+				if ( totalScenes > 1 ) {
+					
+					for( var i = totalScenes - 1; i--; ) {
+						
+						// Don't include 0 since it is the scene floor
+						this.sceneContainer.removeChildAt( i + 1 );
+
+					}
+
+				}
+				
 			}
-
 		}
-
-	};
+	);
 
 } )( window.VisualNovel = window.VisualNovel || {} );
