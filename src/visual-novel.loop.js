@@ -163,4 +163,18 @@
 
 	};
 
+	/**
+	 * Attach module to namespace
+	 */
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {},
+			"reset": function reset() {
+
+				this.resetLoops();
+
+			}
+		}
+	);
+
 } )( window.VisualNovel = window.VisualNovel || {} );
