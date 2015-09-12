@@ -190,6 +190,20 @@
 
 
 	/**
+	 * Attach module to namespace
+	 */
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
+
+				this.initScreenStart( novelId );
+
+			},
+			"reset": function reset() {}
+		}
+	);
+
+	/**
 	 * Start
 	 */
 	function ScreenStart( novelId ) {
