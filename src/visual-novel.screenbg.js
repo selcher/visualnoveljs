@@ -1,16 +1,4 @@
 ( function( VN ) {
-	
-	VN.prototype.initBGContainer = function initBGContainer() {
-
-		// create screen bg sprite container
-		this.screenBgId = new ScreenBg(
-			this.objectFactory(
-				"ScreenBg",
-				document.getElementById( this.novelId + "-screen-bg" )
-			)
-		);
-
-	};
 
 	VN.prototype.setBgImage = function setBgImage( bgImg, width, height, repeat, widthSize, heightSize ) {
 
@@ -196,6 +184,26 @@
 
 
 
+
+	/**
+	 * Attach module to namespace
+	 */
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
+
+				// create screen bg sprite container
+				this.screenBgId = new ScreenBg(
+					this.objectFactory(
+						"ScreenBg",
+						document.getElementById( novelId + "-screen-bg" )
+					)
+				);
+
+			},
+			"reset": function reset() {}
+		}
+	);
 
 	/**
 	 * Screen Background
