@@ -4,32 +4,6 @@
 	VN.prototype.characterContainer = null;
 	VN.prototype.characters = [];
 
-	VN.prototype.initCharacterContainer = function initCharacterContainer() {
-
-		// TODO: refactor
-
-		this.screenCharacterId = document.getElementById( this.novelId + "-screen-character" );
-		this.characterContainer = null;
-		this.characters = [];
-
-		var screenCharacter = this.screenCharacterId;
-
-		// set character container size and hide it
-		var newStyle = ";display:none;width:" + this.screenWidth + 
-			"px;height:" + this.screenHeight + "px;";
-			
-		screenCharacter.style.cssText += newStyle;
-
-		// create character sprite container
-		var spritely = this.spritely;
-		var characterContainer = new spritely( screenCharacter );
-
-		characterContainer.addChild( spritely.createCenteredContainer() );
-
-		this.characterContainer = characterContainer;
-
-	};
-
 	VN.prototype.addCharacter = function addCharacter( character, delay, fadeIn ) {
 
 		var self = this;
@@ -330,6 +304,44 @@
 
 
 
+
+	/**
+	 * Attach module to namespace
+	 */
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
+
+				// TODO: refactor
+
+				this.screenCharacterId = document.getElementById( this.novelId + "-screen-character" );
+				this.characterContainer = null;
+				this.characters = [];
+
+				var screenCharacter = this.screenCharacterId;
+
+				// set character container size and hide it
+				var newStyle = ";display:none;width:" + this.screenWidth + 
+					"px;height:" + this.screenHeight + "px;";
+					
+				screenCharacter.style.cssText += newStyle;
+
+				// create character sprite container
+				var spritely = this.spritely;
+				var characterContainer = new spritely( screenCharacter );
+
+				characterContainer.addChild( spritely.createCenteredContainer() );
+
+				this.characterContainer = characterContainer;
+
+			},
+			"reset": function reset() {
+
+				this.resetCharacters();				
+				
+			}
+		}
+	);
 
 	var getCharacterConstructor = function( novel ) {
 
