@@ -1,14 +1,5 @@
 ( function( VN ) {
 
-	VN.prototype.initSceneObjects = function initSceneObjects() {
-
-		this.scenes = {
-			"text": [],
-			"object": []
-		};
-		
-	};
-
 	VN.prototype.addObjectToScene = function addObjectToScene( name, bgInfo, position, delay, fadeInfo ) {
 
 		var self = this;
@@ -328,6 +319,30 @@
 
 
 
+
+	/**
+	 * Attach module to namespace
+	 */
+	VN.prototype.modules.push(
+		{
+			"init": function init( novelId ) {
+
+				this.scenes = {
+					"text": [],
+					"object": []
+				};
+
+			},
+			"reset": function reset() {
+
+				this.scenes = {
+					"text": [],
+					"object": []
+				};				
+				
+			}
+		}
+	);
 
 	var getSceneObjectConstructor = function( novel ) {
 
