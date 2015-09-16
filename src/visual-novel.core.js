@@ -93,43 +93,16 @@
 	 */
 	VisualNovel.prototype.init = function init( callback ) {
 
-		this.initContainers( this.novelId );
+		var novelId = this.novelId;
+		
+		this.initNovelContainer( novelId );
 
-		this.initScreenStart( this.novelId );
+		this.initModules( novelId );
 
 		if ( callback ) {
 			
 			setTimeout( callback );
 		
-		}
-
-	};
-
-	/**
-	 * Function: initContainers
-	 *
-	 * Add the dialog, character, scene and other containers
-	 * to the main visual novel div container.
-	 *
-	 * @param novelId = id of visual novel div, and instance reference
-	 */
-	VisualNovel.prototype.initContainers = function initContainers( novelId ) {
-
-		this.initNovelContainer( novelId );
-
-		this.initSceneContainer();
-
-		this.initSceneObjects();
-
-		this.initCharacterContainer();
-
-		this.initBGContainer();
-
-		// Initialize modules
-		var modules = this.modules;
-		
-		for ( var i = modules.length; i--; ) {
-			modules[ i ].init.call( this, novelId );
 		}
 
 	};
@@ -145,7 +118,7 @@
 
 		function eventToAdd() {
 
-			self.resetNovel();
+			self.resetModules();
 			self.showStartScreen( true );
 
 		}
@@ -155,24 +128,37 @@
 	};
 
 	/**
-	 * Function: resetNovel
+	 * Function: initModules
 	 *
-	 * Called when resetting the novel.
-	 * ( reset events, menu choices, characters, scenes )
+	 * Call init method of modules.
+	 *
+	 * @param novelId = id of visual novel div, and instance reference
 	 */
-	VisualNovel.prototype.resetNovel = function resetNovel() {
+	VisualNovel.prototype.initModules = function initModules( novelId ) {
 
-		this.resetCharacters();
-		this.resetScenes();
-		this.resetLoops();
-
-		this.initSceneObjects();
-
-		// Reset modules
 		var modules = this.modules;
 		
 		for ( var i = modules.length; i--; ) {
+
+			modules[ i ].init.call( this, novelId );
+		
+		}
+
+	};
+
+	/**
+	 * Function: resetModules
+	 *
+	 * Call reset method of modules.
+	 */
+	VisualNovel.prototype.resetModules = function resetModules() {
+
+		var modules = this.modules;
+		
+		for ( var i = modules.length; i--; ) {
+
 			modules[ i ].reset.call( this );
+
 		}
 
 	};
