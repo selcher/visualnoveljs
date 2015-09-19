@@ -212,6 +212,7 @@
 	 */
 	VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerContent( novelId ) {
 
+		// TODO: integrate parse module as part of core module?
 		return this.parser.parseTemplate( this.novelContainerTemplate, { "novelId": novelId } );
 
 	};
