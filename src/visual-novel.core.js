@@ -114,16 +114,14 @@
 	 */
 	VisualNovel.prototype.reset = function reset() {
 
-		var self = this;
-
 		function eventToAdd() {
 
-			self.resetModules();
-			self.showStartScreen( true );
+			this.resetModules();
+			this.showStartScreen( true );
 
 		}
 
-		this.eventTracker.addEvent( "wait", eventToAdd );
+		this.eventTracker.addEvent( "wait", eventToAdd.bind( this ) );
 
 	};
 
@@ -180,6 +178,7 @@
 		this.novelContainerId = document.getElementById( novelId );
 
 		var content = this.buildNovelContainerContent( novelId );
+
 		this.setNovelContainerContent( content );
 		this.setNovelContainerSize( this.screenWidth, this.screenHeight );
 
@@ -252,11 +251,11 @@
 		// containers ( scene, character, dialog, menu, ... )
 		var containers = novelContainer.getElementsByClassName( "novel" );
 
-		this.util.foreach( containers, function( container ) {
+		for ( var i = containers.length; i--; ) {
 
-			container.style.cssText += sizeStyle;
-		
-		} );
+			containers[ i ].style.cssText += sizeStyle;
+
+		}
 
 	};
 
