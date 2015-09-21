@@ -211,8 +211,19 @@
 	 */
 	VisualNovel.prototype.buildNovelContainerContent = function buildNovelContainerContent( novelId ) {
 
-		// TODO: integrate parse module as part of core module?
-		return this.parser.parseTemplate( this.novelContainerTemplate, { "novelId": novelId } );
+		var content = "";
+
+		if ( this.parser ) {
+
+			content = this.parser.parseTemplate( this.novelContainerTemplate, { "novelId": novelId } );
+
+		} else {
+
+			this.log( "[core]VisualNovelJS Error: parser module not found" );
+
+		}
+
+		return content;
 
 	};
 
@@ -256,6 +267,19 @@
 			containers[ i ].style.cssText += sizeStyle;
 
 		}
+
+	};
+
+	/**
+	 * Function: log
+	 *
+	 * Log error message.
+	 *
+	 * @param msg = error message
+	 */
+	VisualNovel.prototype.log = function log( msg ) {
+
+		console.log( msg );
 
 	};
 
