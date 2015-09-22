@@ -71,7 +71,17 @@
 			"novelSubtitle": this.novelSubtitle
 		};
 
-		var startMenuTemplate = this.parser.parseTemplate( this.startMenuTemplate, parseVariables );
+		var startMenuTemplate = "";
+
+		if ( this.parser ) {
+
+			startMenuTemplate = this.parser.parseTemplate( this.startMenuTemplate, parseVariables );
+
+		} else {
+
+			this.log( "[start]VisualNovelJS Error: parser module not found" );
+
+		}
 
 		screenStart.innerHTML = startMenuTemplate;	
 
