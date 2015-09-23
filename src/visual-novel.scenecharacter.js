@@ -149,15 +149,23 @@
 
 		if ( typeof characterImage === "object" ) {
 
-				characterObject.sprite.setCSS( "background-position", characterImage.position );
-				characterObject.sprite.setCSS( "background-image", 
-					"url('" + characterImage.src + "')" );
+				requestAnimationFrame( function() {
+
+					characterObject.sprite.setCSS( "background-position", characterImage.position );
+					characterObject.sprite.setCSS( "background-image", 
+						"url('" + characterImage.src + "')" );
+
+				} );
 
 		} else {
 
-				characterObject.sprite.setCSS( "background-image", 
-					"url('" + characterImage + "')" );
-		
+				requestAnimationFrame( function() {
+
+					characterObject.sprite.setCSS( "background-image", 
+						"url('" + characterImage + "')" );
+
+				} );
+
 		}
 
 	};
