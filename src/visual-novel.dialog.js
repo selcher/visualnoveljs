@@ -109,7 +109,17 @@
 		var templateVariables = this.getSayTemplateVariables( character, line, delay );
 
 		// get template
-		var sayTemplate = this.parser.parseTemplate( this.sayTemplate, templateVariables );
+		var sayTemplate = "";
+
+		if ( this.parser ) {
+
+			sayTemplate = this.parser.parseTemplate( this.sayTemplate, templateVariables );
+
+		} else {
+
+			this.log( "[dialog]VisualNovelJS Error: parser module not found" );
+
+		}
 
 		// debug
 		// console.log( templateVariables );
