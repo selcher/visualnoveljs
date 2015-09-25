@@ -117,7 +117,17 @@
 		};
 
 		// get template
-		var menuChoiceTemplate = this.parser.parseTemplate( this.menuChoiceTemplate, toReplace );
+		var menuChoiceTemplate = "";
+
+		if ( this.parser ) {
+
+			menuChoiceTemplate = this.parser.parseTemplate( this.menuChoiceTemplate, toReplace );
+
+		} else {
+
+			this.log( "[dialog-choice]VisualNovelJS Error: parser module not found" );
+
+		}
 
 		return menuChoiceTemplate;
 
