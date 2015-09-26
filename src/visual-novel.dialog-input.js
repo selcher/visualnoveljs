@@ -54,7 +54,17 @@
 		};
 
 		// get template
-		var userInputTemplate = this.parser.parseTemplate( this.userInputTemplate, toReplace );
+		var userInputTemplate = "";
+
+		if ( this.parser ) {
+
+			userInputTemplate = this.parser.parseTemplate( this.userInputTemplate, toReplace );
+
+		} else {
+
+			this.log( "[dialog-input]VisualNovelJS Error: parser module not found" );
+
+		}
 
 		return userInputTemplate;
 
