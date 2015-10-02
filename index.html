@@ -30,7 +30,7 @@
 
 			<div id="getting-started" class="hideDisplay">
 
-				<b>Get Started in 5 steps:</b><br/><br/><br/>
+				<b>Get Started in 5 steps:</b><br/><br/>
 
 				1. Download the VisualNovelJS files<br/>
 					<div class="container linkContainer">
@@ -47,47 +47,51 @@
 
 				2. Add the files to your webpage
 					<div class="container codeContainer">
-
-						&lt;link rel="stylesheet" type="text/css" href="visaul-novel.min.css" />
-						<br/>
-						&lt;script src="visual-novel.min.js" type="text/javascript"></script>
-
+						<pre class="prettyprint lang-js">
+&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;visaul-novel.min.css&quot; /&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;visual-novel.min.js&quot; &gt;&lt;/script&gt;
+						</pre>
 					</div>
 					<br/>
 
 				3. Create the file "myVisualNovel.js" and add it to your webpage
 					<div class="container codeContainer">
-						&lt;script src="myVisualNovel.js" type="text/javascript"></script>
+						<pre class="prettyprint lang-js">
+&lt;script type=&quot;text/javascript&quot; src=&quot;myVisualNovel.js&quot; &gt;&lt;/script&gt;
+						</pre>
 					</div>
 					<br/>
 
 				4. Open the javascript file (myVisualNovel.js) and create your visual novel
 					<div class="container codeContainer">
-						// getting-started-vn = div id<br/>
-						// 800 = width<br/>
-						// 600 = height<br/>
-						// img/ = path to your images<br/>
-						var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );<br/><br/>
-						
-						vn.init();<br/><br/>
-						
-						vn.setNovelTitle( "Visual Novel JS", "getting started" );<br/>
-						vn.setStartScreenBgColor( "black" );<br/>
-						vn.setStartScreenMenuPos( 550, 500 );<br/>
-						vn.setBgColor( "black" );<br/>
-						vn.setDialogBgColor( "white" );<br/>
-						vn.setDialogTextColor( "black" );<br/><br/>
+						<pre class="prettyprint lang-js">
+// getting-started-vn = div id
+// 800 = width
+// 600 = height
+// img/ = path to your images
+var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );
 
-						vn.say( "Me", "Hello World" );<br/>
-						vn.say( "World", "Hi Me" );<br/><br/>
+vn.init();
 
-						vn.reset();
+vn.setNovelTitle( "Visual Novel JS", "getting started" );
+vn.setStartScreenBgColor( "black" );
+vn.setStartScreenMenuPos( 550, 500 );
+vn.setBgColor( "black" );
+vn.setDialogBgColor( "white" );
+vn.setDialogTextColor( "black" );
+
+vn.say( "Me", "Hello World" );
+vn.say( "World", "Hi Me" );
+
+vn.reset();
+						</pre>
 					</div>
-					<br/>
 
 				5. Add the div for your novel on the webpage
 					<div class="container codeContainer">
-						&lt;div id="getting-started-vn"&gt;&lt;/div&gt;
+						<pre class="prettyprint lang-js">
+&lt;div id="getting-started-vn"&gt;&lt;/div&gt;
+						</pre>
 					</div>
 
 				<br/>
@@ -116,45 +120,71 @@
 				<div id="docs-config" class="docTabContent showDisplay">
 					Create a visual novel instance:
 					<div class="container docCodeContainer">
-						var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );
+						<pre class="prettyprint lang-js">
+var vn = new VisualNovel(
+	"getting-started-vn", // id of div html element
+	800, 600,	      // width, height
+	"img/"		      // location of images
+);
+						</pre>
 					</div>
 					<br/><br/>
 							
 					Set the novel title:
 					<div class="container docCodeContainer">
-						vn.setNovelTitle( "Visual Novel JS", "getting started" );
+						<pre class="prettyprint lang-js">
+vn.setNovelTitle( "Visual Novel JS", "getting started" );
+						</pre>
 					</div>
 					<br/><br/>
 					
 					Set the start screen background color / image:
 					<div class="container docCodeContainer">
-						vn.setStartScreenBgColor( "black" );<br/>
-						vn.setStartScreenBgImage( "bg/market.jpg", 800, 600 );
+						<pre class="prettyprint lang-js">
+vn.setStartScreenBgColor( "black" );
+vn.setStartScreenBgImage(
+	"bg/market.jpg", // path to image
+	800, 600	 // width, height
+);
+						</pre>
 					</div>
 					<br/><br/>
 
 					Set the start screen menu position:
 					<div class="container docCodeContainer">
-						vn.setStartScreenMenuPos( 400, 400 );
+						<pre class="prettyprint lang-js">
+vn.setStartScreenMenuPos( 400, 400 ); // x, y position
+						</pre>
 					</div>
 					<br/><br/>
 
 					Set the novel background color / image:
 					<div class="container docCodeContainer">
-						vn.setBgColor( "black" );<br/>
-						vn.setBgImage( "bg/market.jpg", 800, 600, "no-repeat", 800, 600 );
+						<pre class="prettyprint lang-js">
+vn.setBgColor( "black" );
+vn.setBgImage(
+	"bg/market.jpg", // path to image
+	800, 600,	 // background width, height
+	"no-repeat",
+	800, 600	 // background size css
+);
+						</pre>
 					</div>
 					<br/><br/>
 
 					Set the dialog background color:
 					<div class="container docCodeContainer">
-						vn.setDialogBgColor( "white" );
+						<pre class="prettyprint lang-js">
+vn.setDialogBgColor( "white" );
+						</pre>
 					</div>
 					<br/><br/>
 
 					Set the dialog text color:
 					<div class="container docCodeContainer">
-						vn.setDialogTextColor( "black" );
+						<pre class="prettyprint lang-js">
+vn.setDialogTextColor( "black" );
+						</pre>
 					</div>
 					<br/><br/>
 				</div>
@@ -163,7 +193,7 @@
 
 					Define a Character:
 					<div class="container docCodeContainer">
-						<pre>
+						<pre class="prettyprint lang-js">
 var nao = {
 	name: "Naoto Shirogane",
 	nameStyle: "color: darkblue;",
@@ -244,48 +274,48 @@ var nao = {
 
 				Say line/s:
 				<div class="container docCodeContainer">
-					<pre>
------------------------------------------------------
- say line,
- and show button ( to go to next line )
------------------------------------------------------
+					<pre class="prettyprint lang-js">
+/**
+ * say line,
+ * and show button ( to go to next line )
+ */
 vn.say( "Me", "Hello World" );
 
 
------------------------------------------------------
- say line,
- and add delay before saying next line
------------------------------------------------------
+/**
+ * say line,
+ * and add delay before saying next line
+ */
 vn.say( "Me", "Hello World", 1000 );
 
 
------------------------------------------------------
- say multiple lines, 
- show button for each line
------------------------------------------------------
+/**
+ * say multiple lines, 
+ * show button for each line
+ */
 vn.say( "Me", [ 
 	"Hello",
 	"World" 
 ] );
 
 
------------------------------------------------------
- say multiple lines, 
- add delay before saying 2nd line
- show button on 2nd line
------------------------------------------------------
+/**
+ * say multiple lines, 
+ * add delay before saying 2nd line
+ * show button on 2nd line
+ */
 vn.say( "Me", [
 	"Hello", 1000,
 	"World"
 ] );
 
 
------------------------------------------------------
- say multiple lines, 
- add delay before saying 2nd line
- include previous line when showing 2nd line
- show button on 2nd line
------------------------------------------------------
+/**
+ * say multiple lines, 
+ * add delay before saying 2nd line
+ * include previous line when showing 2nd line
+ * show button on 2nd line
+ */
 vn.say( "Me", [
 	"Hello", 1000,
 	"World", true
@@ -300,15 +330,15 @@ vn.say( "Me", [
 
 				Menu:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 var choices = [
 	{
 		label : "Choice 1",
 		action : function() {
-			...
+			// add code here
 		}
 	},
-	...
+	// add more choices here
 ];
 
 vn.choice( 
@@ -327,7 +357,7 @@ vn.choice(
 
 				Add a condition ( =, >, <, != ):
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 vn.setValue( "answer", "true" );
 
 vn.addCondition( "answer", "=", "true",
@@ -352,10 +382,10 @@ vn.addCondition( "answer", "=", "true",
 
 				Add loop:
 				<div class="container docCodeContainer">
-					<pre>
------------------------------------------------------
-Character animation
------------------------------------------------------
+					<pre class="prettyprint lang-js">
+/**
+ * Character animation
+ */
 vn.loop( "lin", true, function() {
 
 	vn.setCharacterImage( lin, "sleep" );
@@ -366,9 +396,10 @@ vn.loop( "lin", true, function() {
 
 }, 5000 );
 
------------------------------------------------------
-Scene object animation
------------------------------------------------------
+
+/**
+ * Scene object animation
+ */
 vn.addObjectToScene( "s1",
 	{ width: 10, height: 10, color: "blue" },
 	{ x: 0.5, y: 0.2, z: 0 }, 0
@@ -376,14 +407,42 @@ vn.addObjectToScene( "s1",
 
 vn.loop( "object1", true, function() {
 
-	vn.setSceneObjectPosition( "s1", 0, 0.1, 0, 3000 );
-	vn.setSceneObjectFade( "s1", "out", 3000 );
-	vn.setSceneObjectRotation( "s1", 'y', 45, 10, false );
+	vn.setSceneObjectPosition( "s1",
+		0, 0.1, 0, // x, y, z position
+		3000	   // duration
+	);
+
+	vn.setSceneObjectFade( "s1",
+		"out",	// fade out
+		3000	// duration
+	);
+	
+	vn.setSceneObjectRotation( "s1",
+		"y",	// axis
+		45,	// angle
+		10,	// duration
+		false	// rotate continuously
+	);
 
 	setTimeout( function() {
-		vn.setSceneObjectPosition( "s1", 0, -0.1, 0, 3000 );
-		vn.setSceneObjectFade( "s1", "in", 3000 );
-		vn.setSceneObjectRotation( "s1", 'y', -45, 10, false );
+
+		vn.setSceneObjectPosition( "s1",
+			0, -0.1, 0, // x, y, z position
+			3000	    // duration
+		);
+
+		vn.setSceneObjectFade( "s1",
+			"in",	// fade in
+			3000	// duration
+		);
+
+		vn.setSceneObjectRotation( "s1",
+			"y",	// axis
+			-45,	// angle
+			10,	// duration
+			false	// rotate continuously
+		);
+	
 	}, 5000 );
 
 }, 10000 );
@@ -393,7 +452,7 @@ vn.loop( "object1", true, function() {
 
 				Clear loop:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 vn.clearLoop( "lin" );
 					</pre>
 				</div>
@@ -405,7 +464,7 @@ vn.clearLoop( "lin" );
 
 					Move Scene:
 					<div class="container docCodeContainer">
-						<pre>
+						<pre class="prettyprint lang-js">
 // x, y, z, duration
 vn.moveScene( 0, 0, 100, 1000 );
 						</pre>
@@ -413,9 +472,9 @@ vn.moveScene( 0, 0, 100, 1000 );
 
 					Rotate Scene:
 					<div class="container docCodeContainer">
-						<pre>
+						<pre class="prettyprint lang-js">
 // axis, angle, speed, loop rotation
-vn.rotateScene( 'z', 45, 100, false );
+vn.rotateScene( "z", 45, 100, false );
 						</pre>
 					</div>
 
@@ -425,7 +484,7 @@ vn.rotateScene( 'z', 45, 100, false );
 
 				Add scene text:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 vn.addTextToScene( "thanks",
 	"Thanks for watching",
 	{
@@ -441,9 +500,11 @@ vn.addTextToScene( "thanks",
 
 				Fade in/out scene text:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
+// text, fade in, duration
 vn.fadeSceneText( "thanks", "in", 500 );
 
+// text, fade out, duration
 vn.fadeSceneText( "thanks", "out", 500 );
 					</pre>
 				</div>
@@ -451,7 +512,7 @@ vn.fadeSceneText( "thanks", "out", 500 );
 
 				Remove scene text:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 vn.removeSceneText( "thanks" );
 					</pre>
 				</div>
@@ -463,9 +524,10 @@ vn.removeSceneText( "thanks" );
 
 				Add scene object:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 // name, imageInfo, position, delay, fadeInfo
-vn.addObjectToScene( "fool",
+vn.addObjectToScene(
+	"fool",
 	{ width: 100, height: 200, path: "tarot/fool.png" },
 	{ x: 0.5, y: 0, z: 0.15 },
 	500,
@@ -477,9 +539,11 @@ vn.addObjectToScene( "fool",
 
 				Fade in/out scene object:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
+// scene object, fade in, duration
 vn.fadeSceneObject( "fool", "in", 500 );
 
+// scene object, fade out, duration
 vn.fadeSceneObject( "fool", "out", 500 );
 					</pre>
 				</div>
@@ -487,7 +551,7 @@ vn.fadeSceneObject( "fool", "out", 500 );
 
 				Move scene object:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 // object name, x, y, z, move duration, delay before next event
 vn.moveSceneObject( "fool", 0.5, 0.1, 0, 1000, 0 );
 					</pre>
@@ -496,7 +560,7 @@ vn.moveSceneObject( "fool", 0.5, 0.1, 0, 1000, 0 );
 
 				Rotate scene object:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 // object name, axis, angle, duration, rotate continuously
 vn.rotateSceneObject( "fool", "y", 1, 0, true );
 
@@ -508,7 +572,7 @@ vn.resetSceneObject( "fool", "rotate" );
 
 				Remove scene object:
 				<div class="container docCodeContainer">
-					<pre>
+					<pre class="prettyprint lang-js">
 vn.removeSceneObject( "fool" );
 					</pre>
 				</div>
