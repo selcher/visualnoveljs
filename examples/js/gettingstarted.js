@@ -6,6 +6,7 @@ $( "document" ).ready(
 
 		initMenu();
 		initGettingStarted();
+		prettyPrint();
 
 	}
 
