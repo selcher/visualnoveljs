@@ -22,6 +22,7 @@ The aim of this project is to:
 - custom menus
 - more animations
 - music
+- custom events
 
 #### Contribute ####
 All contributions for the project are welcome.
