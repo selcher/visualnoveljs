@@ -47,7 +47,7 @@
 
 				2. Add the files to your webpage
 					<div class="container codeContainer">
-						<pre class="prettyprint lang-js">
+						<pre class="prettyprint">
 &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;visaul-novel.min.css&quot; /&gt;
 &lt;script type=&quot;text/javascript&quot; src=&quot;visual-novel.min.js&quot; &gt;&lt;/script&gt;
 						</pre>
@@ -56,7 +56,7 @@
 
 				3. Create the file "myVisualNovel.js" and add it to your webpage
 					<div class="container codeContainer">
-						<pre class="prettyprint lang-js">
+						<pre class="prettyprint">
 &lt;script type=&quot;text/javascript&quot; src=&quot;myVisualNovel.js&quot; &gt;&lt;/script&gt;
 						</pre>
 					</div>
@@ -89,7 +89,7 @@ vn.reset();
 
 				5. Add the div for your novel on the webpage
 					<div class="container codeContainer">
-						<pre class="prettyprint lang-js">
+						<pre class="prettyprint">
 &lt;div id="getting-started-vn"&gt;&lt;/div&gt;
 						</pre>
 					</div>
@@ -98,6 +98,37 @@ vn.reset();
 				That's it! To learn more, view the examples or read the docs<br/><br/>
 
 				<div id="getting-started-vn"></div>
+
+				<br/><br/><br/>
+
+				<div class="container codeContainer">
+
+					<pre class="prettyprint">
+&lt;script&gt;
+
+	var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );
+
+	vn.init();
+
+	vn.setNovelTitle( "Visual Novel JS", "getting started", 300, 100 );
+	
+	vn.setStartScreenBgColor( "black" );
+	vn.setStartScreenMenuPos( 550, 500 );
+	
+	vn.setBgColor( "black" );
+	
+	vn.setDialogBgColor( "white" );
+	vn.setDialogTextColor( "black" );
+
+	vn.say( "Me", "Hello World" );
+	vn.say( "World", "Hi Me");
+
+	vn.reset();
+
+&lt;/script&gt;
+					</pre>
+
+				</div>
 
 			</div>
 
