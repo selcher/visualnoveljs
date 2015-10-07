@@ -65,24 +65,33 @@
 				4. Open the javascript file (myVisualNovel.js) and create your visual novel
 					<div class="container codeContainer">
 						<pre class="prettyprint lang-js">
-// getting-started-vn = div id
-// 800 = width
-// 600 = height
-// img/ = path to your images
+// Create Visual Novel:
+// HTML element id = getting-started-vn
+// Width = 800
+// Height = 600
+// Images location = img/
 var vn = new VisualNovel( "getting-started-vn", 800, 600, "img/" );
 
 vn.init();
 
+// Title
 vn.setNovelTitle( "Visual Novel JS", "getting started" );
+
+// Start screen settings
 vn.setStartScreenBgColor( "black" );
 vn.setStartScreenMenuPos( 550, 500 );
+
+// Background
 vn.setBgColor( "black" );
+
+// Dialog settings
 vn.setDialogBgColor( "white" );
 vn.setDialogTextColor( "black" );
 
 vn.say( "Me", "Hello World" );
 vn.say( "World", "Hi Me" );
 
+// Go back to start screen
 vn.reset();
 						</pre>
 					</div>
@@ -617,7 +626,9 @@ vn.removeSceneObject( "fool" );
 
 			<div id="examples" class="hideDisplay cf">
 			
-				<p>Basic examples:</p>
+				<p>
+					<b>Basic examples:</b>
+				</p>
 
 				<p>
 
@@ -659,7 +670,9 @@ vn.removeSceneObject( "fool" );
 				<div class="cf"></div>
 				<br/>
 
-				<p>Full Examples:</p>
+				<p>
+					<b>Full Examples:</b>
+				</p>
 
 				<p>
 					<ul>
@@ -694,7 +707,11 @@ vn.removeSceneObject( "fool" );
 				<br/>
 
 				<p class="clear-float">
-					Resources:<br/>
+					
+					<b>Resources:</b>
+					
+					<br/>
+					
 					<ul class="no-list-style">
 						<li>
 							<a href="http://www.spriters-resource.com/" target="blank">
@@ -702,6 +719,7 @@ vn.removeSceneObject( "fool" );
 							</a>
 						</li>
 					</ul>
+
 				</p>
 
 			</div>
@@ -710,15 +728,8 @@ vn.removeSceneObject( "fool" );
 
 				<p>
 					<b>Goal:</b>
-					<ul>
-						<li>to simplify visual novel creation on a webpage</li>
-					</ul>
-				</p>
-
-				<br/>
-
-				<p>
-					Current version : alpha
+					&nbsp;
+					simplify visual novel creation on a webpage
 				</p>
 
 				<p>
@@ -732,12 +743,6 @@ vn.removeSceneObject( "fool" );
 					</ul>
 				</p>
 
-				<br/>
-
-				<p>
-					Next version: beta
-				</p>
-
 				<p>
 					<b>Proposed features:</b><br/>
 					<ul>
@@ -746,6 +751,15 @@ vn.removeSceneObject( "fool" );
 						<li>text animations</li>
 						<li>music</li>
 					</ul>
+				</p>
+
+				<br/>
+
+				<p>
+					<b>Available on </b>
+					<a href="https://github.com/selcher/visualnoveljs">
+						github
+					</a>
 				</p>
 
 			</div>
