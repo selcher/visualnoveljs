@@ -31,6 +31,22 @@ body {
 	color: white;
 }
 
+.selected-button#showGettingStarted {
+	border-top: 2px solid yellow;
+}
+
+.selected-button#showDocs {
+	border-top: 2px solid #89bdff;
+}
+
+.selected-button#showExamples {
+	border-top: 2px solid #65B042;
+}
+
+.selected-button#showInfo {
+	border-top: 2px solid #E28964;
+}
+
 .showDisplay {
 	display: block;
 }
