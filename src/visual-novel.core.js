@@ -79,6 +79,8 @@
 	 *
 	 * Holds the modules.
 	 * Each module has an init and reset method.
+	 *
+	 * TODO: implement each module using browserify / webpack
 	 */
 	VisualNovel.prototype.modules = [];
 
