@@ -281,7 +281,7 @@
 	 */
 	VisualNovel.prototype.log = function log( msg ) {
 
-		console.log( msg );
+		console && console.log && console.log( msg );
 
 	};
 
