@@ -190,6 +190,8 @@
 	 * Variable: novelContainerTemplate
 	 *
 	 * Template for novel container.
+	 *
+	 * TODO: let each module add its own container to the main container
 	 */
 	VisualNovel.prototype.novelContainerTemplate = [
 		"<div class='novel-container unSelectable'>",
