@@ -4,6 +4,8 @@
 	 * Class: Util
 	 *
 	 * Utility ( General purpose ) functions
+	 *
+	 * TODO: remove or replace with underscore / lodash ?
 	 */
 	function Util() {
 
