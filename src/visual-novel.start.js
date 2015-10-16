@@ -43,6 +43,8 @@
 	 * Variable: startMenuTemplate
 	 *
 	 * Template for start menu.
+	 *
+	 * TODO: extend start menu with other options
 	 */
 	VN.prototype.startMenuTemplate = [
 		"<div id='{novelId}-novelTitleContainer' class='novelTitleContainer'>",
