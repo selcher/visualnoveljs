@@ -31,8 +31,6 @@
 
 	VN.prototype.setBgSize = function setBgSize( width, height, duration, delay ) {
 
-		// TODO : implement as zoom?
-		//		  duration, delay
 		// Note: for animation: use setBGScale instead
 
 		var bg = this.screenBgId;
@@ -140,11 +138,12 @@
 
 	VN.prototype.stopRotateBg = function stopRotateBg( delay ) {
 
+		// TODO: implement and test with rotateBgTo
+
 		var self = this;
 
 		function eventToAdd() {
 
-			// TODO: implement
 			// window.clearInterval( self.screenBgId.timer.rotate );
 
 		}
@@ -359,10 +358,6 @@
 
 	ScreenBg.prototype.setBgPosition = function setBgPosition( x, y, duration ) {
 
-		// TODO : refactor for smoother animation
-		//		  look for better method or optimization techniques
-		//		  using requestAimationFrame
-
 		var previousPosition = this.getBgPosition();
 		var distance = {
 			"x": x - previousPosition.x,
@@ -470,7 +465,9 @@
 
 		if ( action == "rotate" ) {
 
+			// TODO: remove commented code once stopRotateBg is implemented
 			// window.clearInterval( screenBg.timer.rotate );
+
 			screenBg.setRotation( 0, 0, 0 ).update();
 		
 		}
