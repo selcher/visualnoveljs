@@ -28,6 +28,7 @@
 			var self = this;
 			var timerDelay = delay ? delay : 100;
 
+			// TODO: refactor since it is long
 			var eventToAdd = function eventToAdd() {
 
 				// check if loop exists, and clear if it does
@@ -122,6 +123,7 @@
 
 		if ( timerInfo ) {
 
+			// TODO: refactor as another function
 			if ( timerInfo.type === "timeout" ) {
 
 				clearTimeout( timerInfo.timer );
@@ -149,6 +151,7 @@
 		var loops = this.timers;
 		var loopType = null;
 
+		// TODO: research for more efficient way
 		for ( var loopId in loops ) {
 
 			loopType = loops[ loopId ] ? loops[ loopId ].type : null;
