@@ -11,7 +11,7 @@
 			n = prefixes.length,
 			i;
 
-		for( i = n; i--; ) {
+		for ( i = n; i--; ) {
 
 			prefix = prefixes[ i ];
 
@@ -43,10 +43,14 @@
 		if ( this instanceof Spritely ) {
 
 			// create an empty <div> if no element is provided
-			if ( typeof element === "undefined" ) { element = document.createElement( "div" ); }
+			if ( typeof element === "undefined" ) {
+				element = document.createElement( "div" );
+			}
 
 			// add whitespace in content for Firefox to render the div
-			if ( element.innerHTML === "" ) { element.innerHTML = "&nbsp;"; }
+			if ( element.innerHTML === "" ) {
+				element.innerHTML = "&nbsp;";
+			}
 
 			// prepare for 3D positionning
 			element.style[ this._browserPrefix + "TransformStyle" ] = "preserve-3d";
