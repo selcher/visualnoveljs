@@ -291,12 +291,18 @@
 	 *
 	 * @param event = event (function) to perform
 	 * @param type = type of event (wait / nowait)
+	 * @param delay
 	 */
-	VN.prototype.createEvent = function createEvent( event, type ) {
+	VN.prototype.createEvent = function createEvent( event, type, delay ) {
 
+		// TODO: update docs for custom events
 		if ( event ) {
 
-			this.eventTracker.addEvent( type && typeof type === "string" ? type : "nowait", event );
+			this.eventTracker.addEvent(
+				type && typeof type === "string" ? type : "nowait",
+				event,
+				delay
+			);
 
 		}
 
