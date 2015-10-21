@@ -295,7 +295,6 @@
 	 */
 	VN.prototype.createEvent = function createEvent( event, type, delay ) {
 
-		// TODO: update docs for custom events
 		if ( event ) {
 
 			this.eventTracker.addEvent(
@@ -313,7 +312,6 @@
 	 *
 	 * Perform the next event.
 	 * Used with custom events ( type = wait ) to trigger next event.
-	 *
 	 */
 	VN.prototype.nextEvent = function nextEvent() {
 

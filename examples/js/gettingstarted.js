@@ -90,7 +90,8 @@ function initMenu() {
 		{ "link" : "showDocsLoop", "content" : "docs-loop" },
 		{ "link" : "showDocsScene", "content" : "docs-scene" },
 		{ "link" : "showDocsSceneText", "content" : "docs-scene-text" },
-		{ "link" : "showDocsSceneObject", "content" : "docs-scene-object" }
+		{ "link" : "showDocsSceneObject", "content" : "docs-scene-object" },
+		{ "link" : "showDocsEvents", "content" : "docs-events" }
 	);
 	initMenuLinks( "docsLink", tabs.list, tabs.map );
 

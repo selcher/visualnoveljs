@@ -144,15 +144,36 @@ vn.reset();
 			<div id="docs" class="hideDisplay">
 				
 				<div class="tabLinkContainer docTabLinkContainer">
-					<div id="showDocsConfig" class="docsLink button selected-button">Config</div>
-					<div id="showDocsCharacter" class="docsLink button">Character</div>
-					<div id="showDocsSay" class="docsLink button">Say</div>
-					<div id="showDocsMenu" class="docsLink button">Menu</div>
-					<div id="showDocsCondition" class="docsLink button">Condition</div>
-					<div id="showDocsLoop" class="docsLink button">Loop</div>
-					<div id="showDocsScene" class="docsLink button">Scene</div>
-					<div id="showDocsSceneText" class="docsLink button">Scene Text</div>
-					<div id="showDocsSceneObject" class="docsLink button">Scene Object</div>
+					<div id="showDocsConfig" class="docsLink button selected-button">
+						Config
+					</div>
+					<div id="showDocsCharacter" class="docsLink button">
+						Character
+					</div>
+					<div id="showDocsSay" class="docsLink button">
+						Say
+					</div>
+					<div id="showDocsMenu" class="docsLink button">
+						Menu
+					</div>
+					<div id="showDocsCondition" class="docsLink button">
+						Condition
+					</div>
+					<div id="showDocsLoop" class="docsLink button">
+						Loop
+					</div>
+					<div id="showDocsScene" class="docsLink button">
+						Scene
+					</div>
+					<div id="showDocsSceneText" class="docsLink button">
+						Scene Text
+					</div>
+					<div id="showDocsSceneObject" class="docsLink button">
+						Scene Object
+					</div>
+					<div id="showDocsEvents" class="docsLink button">
+						Custom Events
+					</div>
 				</div>
 
 				<div class="tabContentContainer">
@@ -617,6 +638,44 @@ vn.removeSceneObject( "fool" );
 					</pre>
 				</div>
 				<br/><br/>
+
+				</div>
+
+				<div id="docs-events" class="docTabContent hideDisplay">
+
+				Add a custom event:
+				<div class="container docCodeContainer">
+					<pre class="prettyprint lang-js">
+// To create an event:
+// vn.createEvent( event, type, delay )
+ 
+// @event = function
+// @type = wait / no wait
+// @delay = delay in milliseconds for nowait type events
+
+// wait = wait for nextEvent call before proceeding
+vn.createEvent(
+    function myEvent() {
+
+        // do something
+
+        // continue to next event
+        vn.nextEvent();
+    },
+    "wait"
+);
+
+// nowait = proceed to next event after calling myEvent
+vn.createEvent(
+    function myEvent() {
+
+        // do something
+    
+    },
+    "nowait"
+);
+					</pre>
+				</div>
 
 				</div>
 
