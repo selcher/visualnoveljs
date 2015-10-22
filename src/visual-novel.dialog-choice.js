@@ -1,11 +1,23 @@
 ( function( VN ) {
 
-	VN.prototype.choice = function choice( choiceEventId, listOfChoices, menuPos, menuImg ) {
+	/**
+	 * function: choice
+	 *
+	 * Display menu with the choices provided.
+	 *
+	 * @param choiceEventId
+	 * @param listOfChoices
+	 * @param settings
+	 */
+	VN.prototype.choice = function choice( choiceEventId, listOfChoices, settings ) {
 
 		// choiceEventId = to track the choice event
 
 		var self = this;
 		var totalChoices = listOfChoices.length;
+
+		var menuPos = settings.pos;
+		var menuImg = settings.img;
 
 		// For choice menu:
 		// 1. build choice buttons
@@ -107,19 +119,19 @@
 
 	VN.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, imgPath, imgWidth, imgHeight ) {
 
-		// variables to replace in template
-		var toReplace = {
-			"novelId": this.novelId,
-			"choices": choices,
-			"imgPath": imgPath,
-			"imgWidth": imgWidth,
-			"imgHeight": imgHeight
-		};
-
 		// get template
 		var menuChoiceTemplate = "";
 
 		if ( this.parser ) {
+
+			// variables to replace in template
+			var toReplace = {
+				"novelId": this.novelId,
+				"choices": choices,
+				"imgPath": imgPath,
+				"imgWidth": imgWidth,
+				"imgHeight": imgHeight
+			};
 
 			menuChoiceTemplate = this.parser.parseTemplate( this.menuChoiceTemplate, toReplace );
 
@@ -191,7 +203,6 @@
 
 		this.dialogMenuId = document.getElementById( this.novelId + "-dialog-menu" );
 
-		// Init dialog menu container
 		this.hideDialogMenuContainer();
 
 	};
@@ -219,14 +230,13 @@
 		var self = this;
 		var doc = document;
 		var novelId = this.novelId;
-		var onMenuChoiceClick = function( i ) {
+		var onMenuChoiceClick = function onMenuChoiceClick( i ) {
 
 			var index = i;
 
 			return function clickDialogMenuChoiceButton() {
 
-				// hide menu
-				self.dialogMenuId.style.display = "none";
+				self.hideDialogMenuContainer();
 
 				self.performMenuChoice( choiceEventId, index );
 
