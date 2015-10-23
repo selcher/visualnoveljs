@@ -664,7 +664,12 @@
 				vn.choice(
 					"progTopics",
 					progTopics,
-					{ x : 0.6,  y : 0.3 }
+					{
+						"pos": {
+							"x": 0.6,
+							"y": 0.3
+						}
+					}
 				);
 
 				vn.changeCharacterImage( lin, "sleep" );
@@ -863,7 +868,12 @@
 					vn.choice( 
 						quizName,
 						quiz.choices,
-						{ x : 0.3, y : 0.4 }
+						{
+							"pos": {
+								"x": 0.3,
+								"y": 0.4
+							}
+						}
 					);
 
 					vn.addCondition( "answer", "=", "true",
@@ -921,10 +931,15 @@
 				];
 
 				vn.choice(
-						"hiraganaMenu",
-						hiraganaMenu,
-						{ x : 0.2, y : 0.3 }
-					);
+					"hiraganaMenu",
+					hiraganaMenu,
+					{
+						"pos": {
+							"x": 0.2,
+							"y": 0.3
+						}
+					}
+				);
 
 			}
 
@@ -954,10 +969,15 @@
 				];
 
 				vn.choice(
-						"katakanaMenu",
-						katakanaMenu,
-						{ x : 0.2, y : 0.3 }
-					);
+					"katakanaMenu",
+					katakanaMenu,
+					{
+						"pos": {
+							"x": 0.2,
+							"y": 0.3
+						}
+					}
+				);
 
 			}
 
@@ -1106,7 +1126,12 @@
 					vn.choice( 
 						quizName,
 						quiz.choices,
-						{ x : 0.1, y : 0.4 }
+						{
+							"pos": {
+								"x": 0.1,
+								"y": 0.4
+							}
+						}
 					);
 
 					vn.addCondition( "answer", "=", "true",
@@ -1137,10 +1162,15 @@
 							var wordsChoices = buildWordsMenuChoices( vn, char, wordList );
 
 							vn.choice(
-									"wordsList",
-									wordsChoices,
-									{ x : 0.2, y : 0.3 }
-								);
+								"wordsList",
+								wordsChoices,
+								{
+									"pos": {
+										"x": 0.2,
+										"y": 0.3
+									}
+								}
+							);
 							vn.showSayDialog( false );
 							vn.repeatEvent();
 
@@ -1163,10 +1193,15 @@
 				];
 
 				vn.choice(
-						"wordsMenu",
-						wordsMenu,
-						{ x : 0.2, y : 0.3 }
-					);
+					"wordsMenu",
+					wordsMenu,
+					{
+						"pos": {
+							"x": 0.2,
+							"y": 0.3
+						}
+					}
+				);
 
 			}
 

@@ -304,8 +304,17 @@
 				novel.choice(
 					"progTopics",
 					progTopics,
-					{ x : 0.1,  y : 0.3 },
-					{ image : "character/na1_pe_000.png", width : 100, height : 100 }
+					{
+						"pos": {
+							"x": 0.1,
+							"y": 0.3
+						},
+						"img": {
+							"image": "character/na1_pe_000.png",
+							"width": 100,
+							"height": 100
+						}
+					}
 				);
 
 				novel.clearLoop( "nao" );

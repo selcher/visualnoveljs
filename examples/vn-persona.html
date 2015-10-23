@@ -558,7 +558,12 @@
 							vn.choice(
 								"learnAboutArcana",
 								ArcanaList,
-								{ x : 0.1,  y : 0.1 }
+								{
+									"pos": {
+										"x": 0.1,
+										"y": 0.1
+									}
+								}
 							);
 							vn.showSayDialog( false );
 
@@ -601,8 +606,17 @@
 				vn.choice(
 					"learnAboutPersona",
 					learnAboutPersonaChoices,
-					{ x : 0.1,  y : 0.3 },
-					{ image : "character/el0_pe_000.png", width : 100, height : 100 }
+					{
+						"pos": {
+							"x": 0.1,
+							"y": 0.3
+						},
+						"img": {
+							"image": "character/el0_pe_000.png",
+							"width": 100,
+							"height": 100
+						}
+					}
 				);
 
 				vn.say( "Elizabeth", "See you again!", 2000 );
