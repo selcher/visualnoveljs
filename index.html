@@ -669,32 +669,32 @@ vn.removeSceneObject( "fool" );
 				<div class="container docCodeContainer">
 					<pre class="prettyprint lang-js">
 // To create an event:
-// vn.createEvent( event, type, delay )
+// vn.createEvent( type, event, delay )
  
-// @event = function
 // @type = wait / no wait
+// @event = function
 // @delay = delay in milliseconds for nowait type events
 
 // wait = wait for nextEvent call before proceeding
 vn.createEvent(
+    "wait",
     function myEvent() {
 
         // do something
 
         // continue to next event
         vn.nextEvent();
-    },
-    "wait"
+    }
 );
 
 // nowait = proceed to next event after calling myEvent
 vn.createEvent(
+    "nowait",
     function myEvent() {
 
         // do something
 
-    },
-    "nowait"
+    }
 );
 					</pre>
 				</div>

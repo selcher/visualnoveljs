@@ -289,11 +289,11 @@
 	 *
 	 * Create a custom event
 	 *
-	 * @param event = event (function) to perform
 	 * @param type = type of event (wait / nowait)
+	 * @param event = event (function) to perform
 	 * @param delay
 	 */
-	VN.prototype.createEvent = function createEvent( event, type, delay ) {
+	VN.prototype.createEvent = function createEvent( type, event, delay ) {
 
 		if ( event ) {
 
