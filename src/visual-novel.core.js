@@ -187,6 +187,27 @@
 	};
 
 	/**
+	 * Function: attachToNovelContainer
+	 *
+	 * Attach template of new element to the novel container
+	 *
+	 * @param template = template of element to be attached
+	 */
+	VisualNovel.prototype.attachToNovelContainer = function attachToNovelContainer( template ) {
+
+		var div = document.createElement( "div" );
+
+		div.innerHTML = template;
+
+		var attachedElement = div.firstChild;
+
+		this.novelContainerId.firstChild.appendChild( attachedElement );
+
+		return attachedElement;
+
+	};
+
+	/**
 	 * Variable: novelContainerTemplate
 	 *
 	 * Template for novel container.
