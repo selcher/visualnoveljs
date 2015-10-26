@@ -16,13 +16,14 @@ The aim of this project is to:
 - menu choices
 - conditions
 - basic animations ( fade, move )
+- custom events
 
 #### Upcoming Features: ####
 - save / load state
 - custom menus
 - more animations
 - music
-- custom events
+- online editor
 
 #### Contribute ####
 All contributions for the project are welcome.
