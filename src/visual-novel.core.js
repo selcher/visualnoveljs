@@ -41,9 +41,9 @@
 		if ( this instanceof VisualNovel ) {
 
 			this.novelId = id;
-			this.novelTitle = "";
-			this.novelSubtitle = "";
-			this.novelMode = "dialog"; // dialog or novel
+
+			// dialog / novel
+			this.novelMode = "dialog";
 
 			// store images for preloading, or let user handle it?
 			// preloading not yet implemented ( use preloadjs )
@@ -123,7 +123,7 @@
 
 		}
 
-		this.eventTracker.addEvent( "wait", eventToAdd.bind( this ) );
+		this.createEvent( "wait", eventToAdd.bind( this ) );
 
 	};
 
@@ -182,7 +182,6 @@
 		var content = this.buildNovelContainerContent( novelId );
 
 		this.setNovelContainerContent( content );
-		this.setNovelContainerSize( this.screenWidth, this.screenHeight );
 
 	};
 
@@ -211,21 +210,9 @@
 	 * Variable: novelContainerTemplate
 	 *
 	 * Template for novel container.
-	 *
-	 * TODO: let each module add its own container to the main container
 	 */
-	VisualNovel.prototype.novelContainerTemplate = [
-		"<div class='novel-container unSelectable'>",
-			"<div id='{novelId}-screen-start' class='novel screen-start'></div>",
-			"<div id='{novelId}-dialog-menu' class='novel dialog-menu'></div>",
-			"<div id='{novelId}-dialog-input' class='novel dialog-input'></div>",
-			"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode'></div>",
-			"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode'></div>",
-			"<div id='{novelId}-screen-character' class='novel screen-character'></div>",
-			"<div id='{novelId}-screen-scene' class='novel screen-scene'></div>",
-			"<div id='{novelId}-screen-bg' class='novel screen-bg'></div>",
-		"</div>"
-	].join( "" );
+	VisualNovel.prototype.novelContainerTemplate = "<div class='novel-container unSelectable' " +
+		"style='width:{width}px;height:{height}px;overflow:hidden;'></div>";
 
 	/**
 	 * Function: buildNovelContainer
@@ -240,7 +227,14 @@
 
 		if ( this.parser ) {
 
-			content = this.parser.parseTemplate( this.novelContainerTemplate, { "novelId": novelId } );
+			content = this.parser.parseTemplate(
+					this.novelContainerTemplate,
+					{
+						"novelId": novelId,
+						"width": this.screenWidth,
+						"height": this.screenHeight
+					}
+				);
 
 		} else {
 
@@ -262,36 +256,6 @@
 	VisualNovel.prototype.setNovelContainerContent = function setNovelContainerContent( content ) {
 
 		this.novelContainerId.innerHTML = content;
-
-	};
-
-	/**
-	 * Function: setNovelContainerSize
-	 *
-	 * Set the size of the main novel container, and the containers inside.
-	 *
-	 * @param width = new width
-	 * @param height = new height
-	 */
-	VisualNovel.prototype.setNovelContainerSize = function setNovelContainerSize( width, height ) {
-
-		// TODO : may need refactoring
-
-		// novel container
-		var novelContainer = this.novelContainerId;
-		var sizeStyle = ";width:" + width + "px;height:" + height + "px;";
-		var newStyle = ";overflow:hidden" + sizeStyle;
-		
-		novelContainer.style.cssText += newStyle;
-
-		// containers ( scene, character, dialog, menu, ... )
-		var containers = novelContainer.getElementsByClassName( "novel" );
-
-		for ( var i = containers.length; i--; ) {
-
-			containers[ i ].style.cssText += sizeStyle;
-
-		}
 
 	};
 
