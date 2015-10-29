@@ -69,7 +69,17 @@
 		{
 			"init": function init( novelId ) {
 
-				this.screenSceneId = document.getElementById( this.novelId + "-screen-scene" );
+				var template = this.parser.parseTemplate(
+						"<div id='{novelId}-screen-scene' class='novel screen-scene' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var screenSceneId = this.screenSceneId = this.attachToNovelContainer( template );
 
 				var result = this.createSceneContainer( this.screenSceneId, this.sceneFloorWidth, this.sceneFloorHeight );
 				
