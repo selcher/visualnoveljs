@@ -191,11 +191,23 @@
 		{
 			"init": function init( novelId ) {
 
+				var template = this.parser.parseTemplate(
+						"<div id='{novelId}-screen-bg' class='novel screen-bg' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var screenBgId = this.attachToNovelContainer( template );
+
 				// create screen bg sprite container
 				this.screenBgId = new ScreenBg(
 					this.objectFactory(
 						"ScreenBg",
-						document.getElementById( novelId + "-screen-bg" )
+						screenBgId
 					)
 				);
 
