@@ -322,21 +322,30 @@
 
 				// TODO: refactor
 
-				this.screenCharacterId = document.getElementById( this.novelId + "-screen-character" );
+				var template = this.parser.parseTemplate(
+						"<div id='{novelId}-screen-character' class='novel screen-character' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var screenCharacterId = this.screenCharacterId = this.attachToNovelContainer( template );
+
 				this.characterContainer = null;
 				this.characters = [];
-
-				var screenCharacter = this.screenCharacterId;
 
 				// set character container size and hide it
 				var newStyle = ";display:none;width:" + this.screenWidth + 
 					"px;height:" + this.screenHeight + "px;";
 					
-				screenCharacter.style.cssText += newStyle;
+				screenCharacterId.style.cssText += newStyle;
 
 				// create character sprite container
 				var spritely = this.spritely;
-				var characterContainer = new spritely( screenCharacter );
+				var characterContainer = new spritely( screenCharacterId );
 
 				characterContainer.addChild( spritely.createCenteredContainer() );
 
