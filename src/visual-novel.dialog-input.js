@@ -111,7 +111,19 @@
 
 				this.inputDialog = new InputDialog( novelId );
 
-				this.inputDialog.init();
+				var template = this.parser.parseTemplate(
+						"<div id='{novelId}-dialog-input' class='novel dialog-input' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var inputDialogId = this.attachToNovelContainer( template );
+
+				this.inputDialog.init( inputDialogId );
 
 			},
 			"reset": function reset() {}
@@ -124,11 +136,11 @@
 
 	}
 
-	InputDialog.prototype.init = function init() {
+	InputDialog.prototype.init = function init( inputDialogId ) {
 
 		var novelId = this.novelId;
 
-		this.inputDialogId = document.getElementById( novelId + "-dialog-input" );
+		this.inputDialogId = inputDialogId;
 
 		this.setInputDialogDisplay( false );
 
