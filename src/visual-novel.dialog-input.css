@@ -1,0 +1,52 @@
+.dialog-input {
+	z-index: 5;
+}
+
+.userInputContainer {
+	width: 300px;
+
+	margin: 100px auto;
+	padding: 10px;
+
+	border: 10px solid lightblue;
+	border-radius: 5px;
+
+	background-color: ivory;
+}
+
+.userInputMessage {
+	color: black;
+	font-size: 15px;
+
+	text-align: center;
+}
+
+.userInputText {
+	width: 200px;
+
+	margin: 0 50px;
+
+	color: orange;
+	font-size: 15px;
+
+	border: none;
+	border-bottom: 1px solid gray;
+
+	background-color: transparent;
+}
+
+.userInputButton {
+	padding: 10px;
+	
+	font-size: 15px;
+	font-weight: bold;
+
+	border: none;
+
+	background-color: transparent;
+}
+
+.userInputButton:hover {
+	color: white;
+	background-color: black;
+}
