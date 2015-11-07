@@ -5,13 +5,11 @@
 	 *
 	 * Display menu with the choices provided.
 	 *
-	 * @param choiceEventId
-	 * @param listOfChoices
-	 * @param settings
+	 * @param choiceEventId = used to track the choice event
+	 * @param listOfChoices = list of choices
+	 * @param settings = menu settings like position, image
 	 */
 	VN.prototype.choice = function choice( choiceEventId, listOfChoices, settings ) {
-
-		// choiceEventId = to track the choice event
 
 		var self = this;
 		var totalChoices = listOfChoices.length;
@@ -81,17 +79,28 @@
 			
 		}
 
-		this.eventTracker.addEvent( "wait", eventToAdd );
+		this.createEvent( "wait", eventToAdd );
 
 	};
 
-	VN.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, menuImage ) {
+	/**
+	 * Function: buildMenuChoices
+	 *
+	 * Build html of menu containing list of choices provided.
+	 *
+	 * @param listOfChoices = list of choices
+	 * @param settings = settings for image shown in menu
+	 */
+	VN.prototype.buildMenuChoices = function buildMenuChoices( listOfChoices, settings ) {
 
-		// Get menu choices template
-		var menuImg = menuImage ? menuImage : { "image": "", "width": 0, "height": 0 };
-		var imgPath = menuImage ? this.imgPath + menuImg.image : "";
-		var menuChoiceTemplate = this.getMenuChoicesTemplate( listOfChoices, imgPath, 
-			menuImg.width, menuImg.height );
+		var menuChoiceTemplate =  this.getMenuChoicesTemplate(
+				listOfChoices,
+				{
+					"path": settings ? this.imgPath + settings.image : "",
+					"width": settings ? settings.width : 0,
+					"height": settings ? settings.height : 0
+				}
+			);
 
 		return menuChoiceTemplate;
 
@@ -117,20 +126,26 @@
 		"</div>"
 	].join( "" );
 
-	VN.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, imgPath, imgWidth, imgHeight ) {
+	/**
+	 * Function: getMenuChoicesTemplate
+	 *
+	 * Get the html template of the menu with the variables in the template replaced.
+	 *
+	 * @param choices = list of choices
+	 * @param settings = settings for image shown in menu
+	 */
+	VN.prototype.getMenuChoicesTemplate = function getMenuChoicesTemplate( choices, settings ) {
 
-		// get template
 		var menuChoiceTemplate = "";
 
 		if ( this.parser ) {
 
-			// variables to replace in template
 			var toReplace = {
 				"novelId": this.novelId,
 				"choices": choices,
-				"imgPath": imgPath,
-				"imgWidth": imgWidth,
-				"imgHeight": imgHeight
+				"imgPath": settings.path,
+				"imgWidth": settings.width,
+				"imgHeight": settings.height
 			};
 
 			menuChoiceTemplate = this.parser.parseTemplate( this.menuChoiceTemplate, toReplace );
@@ -145,6 +160,13 @@
 
 	};
 
+	/**
+	 * Function: resetMenuChoicesForEvent
+	 *
+	 * Reset choices for the provided event id.
+	 *
+	 * @param choiceEventId = id used to trach choice event
+	 */
 	VN.prototype.resetMenuChoicesForEvent = function resetMenuChoicesForEvent( choiceEventId ) {
 
 		var self = this;
@@ -155,7 +177,7 @@
 
 		}
 
-		this.eventTracker.addEvent( "nowait", eventToAdd );
+		this.createEvent( "nowait", eventToAdd );
 
 	};
 
@@ -175,7 +197,19 @@
 
 				this.menuChoicesDialog = new MenuChoicesDialog( novelId );
 
-				this.menuChoicesDialog.init();
+				var template = this.parser.parseTemplate(
+						"<div id='{novelId}-dialog-menu' class='novel dialog-menu' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var dialogMenuId = this.attachToNovelContainer( template );
+
+				this.menuChoicesDialog.init( dialogMenuId );
 
 			},
 			"reset": function reset() {
@@ -199,9 +233,9 @@
 
 	}
 
-	MenuChoicesDialog.prototype.init = function init() {
+	MenuChoicesDialog.prototype.init = function init( dialogMenuId ) {
 
-		this.dialogMenuId = document.getElementById( this.novelId + "-dialog-menu" );
+		this.dialogMenuId = dialogMenuId;
 
 		this.hideDialogMenuContainer();
 
