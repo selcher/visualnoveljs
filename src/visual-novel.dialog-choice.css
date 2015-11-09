@@ -1,0 +1,46 @@
+.dialog-menu {
+	z-index: 5;
+}
+
+.dialogMenuChoiceContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	padding: 10px;
+
+	background-color: white;
+
+	border: 10px solid lightblue;
+	border-radius: 5px;
+}
+
+.dialogMenuChoiceButtonsContainer {
+	float: left;
+}
+
+.dialogMenuChoiceImageContainer {
+	float: left;
+}
+
+.dialogMenuChoiceButton {
+
+	width: 100%;
+
+	border: none;
+
+	background-color: white;
+
+	color: black;
+	font-weight: bold;
+	font-size: 15px;
+	text-align: left;
+
+}
+
+.dialogMenuChoiceButton:hover {
+
+	background-color: black;
+	color: white;
+
+}
