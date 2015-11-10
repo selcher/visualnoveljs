@@ -545,7 +545,33 @@
 					this.screenHeight - 150
 				);
 
-				dialog.init();
+				// Novel mode
+				var template = this.parser.parseTemplate(
+						"<div id='{novelId}-dialog-novelmode' class='novel dialog-novelmode' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var novelModeId = this.attachToNovelContainer( template );
+
+				// Dialog mode
+				template = this.parser.parseTemplate(
+						"<div id='{novelId}-dialog-dialogmode' class='novel dialog-dialogmode' " +
+						"style='width:{width}px;height:{height}px;'></div>",
+						{
+							"novelId": novelId,
+							"width": this.screenWidth,
+							"height": this.screenHeight
+						}
+					);
+
+				var dialogModeId = this.attachToNovelContainer( template );
+
+				dialog.init( novelModeId, dialogModeId );
 
 			},
 			"reset": function reset() {}
@@ -625,18 +651,17 @@
 
 	}
 
-	Dialog.prototype.init = function() {
+	Dialog.prototype.init = function( novelModeId, dialogModeId ) {
 
 		var novelId = this.novelId;
 		var doc = document;
 
-		this.novelModeId = doc.getElementById( novelId + "-dialog-novelmode" );
-		this.dialogModeId = doc.getElementById( novelId + "-dialog-dialogmode" );
-
 		// Init novel mode container ( not implemented - hide )
+		this.novelModeId = novelModeId;
 		this.hideNovelModeContainer();
 
 		// Init dialog mode container
+		this.dialogModeId = dialogModeId;
 		this.setSayDialogDisplay( false );
 		this.setDialogModeContainerSize( this.dialogWidth, this.dialogHeight );
 		this.setDialogModeContainerPosition( this.x, this.y );
