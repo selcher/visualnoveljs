@@ -1,0 +1,45 @@
+.dialog-dialogmode {
+	z-index: 3;
+
+	padding: 10px;
+}
+
+.dialog-novelmode {
+	z-index: 4;
+
+	padding: 10px;
+}
+
+.dialogName {
+	color: blue;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+.dialogText {
+	padding: 10px 20px;
+	
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.dialogButton {
+	position: absolute;
+	bottom: 10px;
+	left: 650px;
+
+	padding: 5px;
+
+	border: none;
+
+	background-color: transparent;
+
+	color: black;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.dialogButton:hover {
+	color: white;
+	background-color: black;
+}
