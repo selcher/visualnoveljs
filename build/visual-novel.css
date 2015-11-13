@@ -1,4 +1,4 @@
-/* Layout */
+/* Core */
 
 .novel-container {
 	position: relative;
@@ -22,81 +22,8 @@
 	overflow: hidden;
 
 	font-family: arial;
-}
-
-.novelTitleContainer {
-
-	position: absolute;
-
-	padding: 20px;
-
-	background-color: #000;
-	color: rgba( 255, 255, 255, 0.7 );
-	text-shadow: 0px 0px 20px rgba( 255, 255, 255, 0.5 );
-
-}
-
-.novelTitleText {
-	font-size: 40px;
-	font-weight: bold;
-}
-
-.novelSubtitleText {
-	font-size: 20px;
-	font-weight: bold;
-}
-
-.screen-start {
-	border: 0px solid black;
-}
-
-.startMenuButtonContainer {
-	position: absolute;
-	top: 0;
-	left: 0;
-
-	padding: 0px;
-
-	background-color: rgba( 0, 0, 0, 0.5 );
-}
-
-.startMenuButton {
-
-	padding: 5px 10px;
-
-	border: none;
-
-	background-color: transparent;
-
-	color: rgba( 255, 255, 255, 0.5 );
-	font-size: 50px;
-	font-weight: bold;
-	text-shadow: 0px 0px 2px rgba( 255, 255, 255, 0.5 );
-
-}
-
-.startMenuButton:hover {
-
-	background-color: white;
-	color: black;
-	text-shadow: 0px 0px 5px rgba( 0, 0, 0, 0.8 );
-
-}
-
-.screen-bg {
-	
-}
-
-.screen-scene {
-	
-}
-
-.screen-character {
-	
-}
-
-.dialog-menu {
-	
+}.dialog-menu {
+	z-index: 5;
 }
 
 .dialogMenuChoiceContainer {
@@ -140,48 +67,8 @@
 	background-color: black;
 	color: white;
 
-}
-
-.dialog-dialogmode {
-	padding: 10px;
-}
-
-.dialog-novelmode {
-	padding: 10px;
-}
-
-.dialogName {
-	color: blue;
-	font-size: 25px;
-	font-weight: bold;
-}
-
-.dialogText {
-	padding: 10px 20px;
-	
-	font-size: 18px;
-	font-weight: bold;
-}
-
-.dialogButton {
-	position: absolute;
-	bottom: 10px;
-	left: 650px;
-
-	padding: 5px;
-
-	border: none;
-
-	background-color: transparent;
-
-	color: black;
-	font-weight: bold;
-	font-size: 15px;
-}
-
-.dialogButton:hover {
-	color: white;
-	background-color: black;
+}.dialog-input {
+	z-index: 5;
 }
 
 .userInputContainer {
@@ -231,33 +118,113 @@
 .userInputButton:hover {
 	color: white;
 	background-color: black;
-}/* Display Order */
-
-.screen-bg {
-	z-index : 0;
-}
-
-.screen-scene {
-	z-index: 1;
-}
-
-.screen-character {
-	z-index: 2;
-}
-
-.dialog-dialogmode {
+}.dialog-dialogmode {
 	z-index: 3;
+
+	padding: 10px;
 }
 
 .dialog-novelmode {
 	z-index: 4;
+
+	padding: 10px;
 }
 
-.dialog-menu,
-.dialog-input {
-	z-index: 5;
+.dialogName {
+	color: blue;
+	font-size: 25px;
+	font-weight: bold;
 }
 
-.screen-start {
+.dialogText {
+	padding: 10px 20px;
+	
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.dialogButton {
+	position: absolute;
+	bottom: 10px;
+	left: 650px;
+
+	padding: 5px;
+
+	border: none;
+
+	background-color: transparent;
+
+	color: black;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.dialogButton:hover {
+	color: white;
+	background-color: black;
+}.screen-scene {
+	z-index: 1;
+}.screen-character {
+	z-index: 2;
+}.screen-bg {
+	z-index : 0;
+}.start-menu {
 	z-index: 6;
+
+	border: 0px solid black;
+}
+
+.startMenuTitleContainer {
+
+	position: absolute;
+
+	padding: 20px;
+
+	background-color: #000;
+	color: rgba( 255, 255, 255, 0.7 );
+	text-shadow: 0px 0px 20px rgba( 255, 255, 255, 0.5 );
+
+}
+
+.startMenuTitleText {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.startMenuSubtitleText {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.startMenuButtonContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	padding: 0px;
+
+	background-color: rgba( 0, 0, 0, 0.5 );
+}
+
+.startMenuButton {
+
+	padding: 5px 10px;
+
+	border: none;
+
+	background-color: transparent;
+
+	color: rgba( 255, 255, 255, 0.5 );
+	font-size: 50px;
+	font-weight: bold;
+	text-shadow: 0px 0px 2px rgba( 255, 255, 255, 0.5 );
+
+}
+
+.startMenuButton:hover {
+
+	background-color: white;
+	color: black;
+	text-shadow: 0px 0px 5px rgba( 0, 0, 0, 0.8 );
+
 }
