@@ -65,7 +65,8 @@ module.exports = function( grunt ) {
 		},
 		watch : {
 			files : [ '<%= srcFiles %>', 'Gruntfile.js' ],
-			tasks : [ 'jasmine', 'qunit', 'jshint' ]
+			// tasks : [ 'jasmine', 'qunit', 'jshint' ]
+			tasks : [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy' ]
 		},
 		notify : {
 			uglify : {
