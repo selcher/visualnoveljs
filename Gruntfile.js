@@ -117,4 +117,7 @@ module.exports = function( grunt ) {
 	// Production : check code and then minify
 	grunt.registerTask( 'prod', [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
 
+	// Test: run tests
+	grunt.registerTask( 'test', [ 'qunit' ] );
+
 };
