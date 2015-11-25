@@ -10,3 +10,43 @@ QUnit.test( 'Visual Novel Constructor', function( assert ) {
 	assert.equal( vn.imgPath, '../../examples/img/' );
 
 } );
+
+QUnit.test( 'Visual Novel init', function( assert ) {
+
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+
+	var initNovelContainerCalled = false;
+	vn.initNovelContainer = function() {
+		initNovelContainerCalled = true;
+	};
+
+	var initModulesCalled = false;
+	vn.initModules = function() {
+		initModulesCalled = true;
+	};
+
+	vn.init();
+
+	assert.equal( typeof vn.init === 'function', true, 'Instance has init method' );
+	assert.equal( initNovelContainerCalled, true, 'initNovelContainer called' );
+	assert.equal( initModulesCalled, true, 'initModules called' );
+
+});
+
+QUnit.test( 'Visual Novel reset', function( assert ) {
+
+	var vn = new VisualNovel( novelId, 800, 600, '../../examples/img/' );
+
+	var eventType = '';
+	var eventCallback = null;
+	vn.createEvent = function( type, callback ) {
+		eventType = type;
+		eventCallback = callback;
+	};
+
+	vn.reset();
+
+	assert.equal( eventType, 'wait', 'wait event added' );
+	assert.equal( typeof eventCallback === 'function', true, 'event callback set' );
+
+});
