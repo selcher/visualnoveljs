@@ -44,6 +44,15 @@ QUnit.test( 'Visual Novel reset', function( assert ) {
 		eventCallback = callback;
 	};
 
+	// pollyfill bind
+	Function.prototype.bind = function( context ) {
+		var self = this;
+		return function() {
+			var args = Array.prototype.slice.call( arguments, 1 );
+			self.apply( context, args );
+		};
+	};
+
 	vn.reset();
 
 	assert.equal( eventType, 'wait', 'wait event added' );
