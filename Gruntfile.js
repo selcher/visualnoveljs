@@ -65,8 +65,8 @@ module.exports = function( grunt ) {
 		},
 		watch : {
 			files : [ '<%= srcFiles %>', 'Gruntfile.js' ],
-			// tasks : [ 'jasmine', 'qunit', 'jshint' ]
-			tasks : [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy' ]
+			tasks : [ 'qunit', 'jshint',
+				'concat', 'cssmin', 'uglify', 'copy' ]
 		},
 		notify : {
 			uglify : {
@@ -108,14 +108,14 @@ module.exports = function( grunt ) {
 	// require( 'load-grunt-tasks' )( grunt, [ 'grunt-*', '!grunt-template-jasmine-requirejs' ] );
 
 	// Defalt task : just minify code
-	grunt.registerTask( 'default', [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
+	grunt.registerTask( 'default', [ 'qunit', 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
 
 	// Development : watch for file changes and run:
 	// 1. jasmine for code testing
 	grunt.registerTask( 'dev', [ 'watch' ] );
 
 	// Production : check code and then minify
-	grunt.registerTask( 'prod', [ 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
+	grunt.registerTask( 'prod', [ 'qunit', 'jshint', 'concat', 'cssmin', 'uglify', 'copy', 'notify' ] );
 
 	// Test: run tests
 	grunt.registerTask( 'test', [ 'qunit' ] );
